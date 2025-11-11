@@ -10,7 +10,7 @@ if "uploaded_bytes" not in st.session_state:
     st.page_link("app.py", label="⬅ 홈으로")
     st.stop()
 
-lib = parser.load_lib("lib/symbols.json")
+lib = parser.load_lib("symbols.json")
 pdf_bytes = st.session_state["uploaded_bytes"]
 name = st.session_state.get("uploaded_name", "uploaded.pdf")
 

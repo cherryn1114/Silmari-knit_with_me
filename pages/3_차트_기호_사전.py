@@ -5,7 +5,7 @@ from lib import parser
 st.set_page_config(page_title="실마리 — 차트 기호 사전", page_icon="🗂️", layout="centered")
 st.title("🗂️ 차트 도안 기호 사전")
 
-lib = parser.load_lib("lib/symbols.json")
+lib = parser.load_lib("symbols.json")
 
 st.write("자주 쓰는 기호/약어 목록입니다. (각 항목을 클릭해 설명 보기)")
 for k, v in lib.items():

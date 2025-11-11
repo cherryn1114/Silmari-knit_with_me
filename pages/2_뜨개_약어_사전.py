@@ -7,7 +7,7 @@ from lib import parser
 st.set_page_config(page_title="실마리 — 약어 사전", page_icon="📚", layout="centered")
 st.title("📚 뜨개 약어 사전")
 
-lib = parser.load_lib("lib/symbols.json")
+lib = parser.load_lib("symbols.json")
 
 q = st.text_input("약어/용어를 검색하세요 (예: m1l, ssk, 오른모아, 걸어코)", "")
 if q:

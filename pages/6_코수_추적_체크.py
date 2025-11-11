@@ -10,7 +10,7 @@ if "uploaded_bytes" not in st.session_state:
     st.page_link("app.py", label="⬅ 홈으로")
     st.stop()
 
-lib = parser.load_lib("lib/symbols.json")
+lib = parser.load_lib("symbols.json")
 
 st.write("행 단위로 서술형을 입력하고, 각 행 완료 시 현재 코 수를 체크해 보세요.")
 st.caption("멀티라인 예시:\nR1: [(p, k) x 6, m1L] x 2\nR2: k2tog, k, yo, p2tog, m1R")

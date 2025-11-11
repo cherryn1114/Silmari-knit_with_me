@@ -10,7 +10,7 @@ if "uploaded_bytes" not in st.session_state:
     st.page_link("app.py", label="⬅ 홈으로")
     st.stop()
 
-lib = parser.load_lib("lib/symbols.json")
+lib = parser.load_lib("symbols.json")
 
 st.write("도안의 각 ‘행’ 또는 ‘세트’를 서술형으로 입력하면 전개/코수 변화를 만들어 드려요.")
 st.caption("예: `[(p, k) x 6, m1L] x 8`  또는  `*k, p* 4회; yo; ssk`")
