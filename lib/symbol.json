@@ -1,0 +1,64 @@
+{
+  "m1L": {
+    "name_ko": "왼코 늘림 (m1L)",
+    "desc_ko": "왼쪽 다리를 비틀어 떠서 구멍 없이 1코 늘림",
+    "aliases": ["왼코늘림","왼쪽늘림","m1 l","m1l"],
+    "delta": 1,
+    "compare": ["m1R"],
+    "media": []
+  },
+  "m1R": {
+    "name_ko": "오른코 늘림 (m1R)",
+    "desc_ko": "오른쪽 다리를 비틀어 떠서 구멍 없이 1코 늘림",
+    "aliases": ["오른코늘림","오른쪽늘림","m1 r","m1r"],
+    "delta": 1,
+    "compare": ["m1L"],
+    "media": []
+  },
+  "ssk": {
+    "name_ko": "ssk (왼기울임 2코모아뜨기)",
+    "desc_ko": "겉뜨기 방향으로 2코를 각각 slip 후 함께 겉뜨기",
+    "aliases": ["ssk","왼기울임2코모아","왼모아"],
+    "delta": -1,
+    "compare": ["k2tog"],
+    "media": []
+  },
+  "k2tog": {
+    "name_ko": "k2tog (겉뜨기 2코모아, 오른기울임)",
+    "desc_ko": "겉뜨기로 2코를 함께 떠서 1코",
+    "aliases": ["k2tog","오른모아","겉2코모아"],
+    "delta": -1,
+    "compare": ["ssk"],
+    "media": []
+  },
+  "p2tog": {
+    "name_ko": "p2tog (안뜨기 2코모아뜨기)",
+    "desc_ko": "안뜨기로 2코를 함께 떠서 1코",
+    "aliases": ["p2tog","안2코모아"],
+    "delta": -1,
+    "compare": [],
+    "media": []
+  },
+  "yo": {
+    "name_ko": "yo (걸어코, 야른오버)",
+    "desc_ko": "실을 바늘 위로 걸어 1코 늘림(구멍)",
+    "aliases": ["yo","yarnover","걸어코"],
+    "delta": 1,
+    "compare": ["m1L","m1R"],
+    "media": []
+  },
+  "k": {
+    "name_ko": "겉뜨기 (k)",
+    "desc_ko": "겉뜨기 1코",
+    "aliases": ["k","겉"],
+    "delta": 0,
+    "media": []
+  },
+  "p": {
+    "name_ko": "안뜨기 (p)",
+    "desc_ko": "안뜨기 1코",
+    "aliases": ["p","안"],
+    "delta": 0,
+    "media": []
+  }
+}
