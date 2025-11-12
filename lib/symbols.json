@@ -81,8 +81,8 @@
   },
   "RC": {
     "name_en": "Right Cross",
-    "name_ko": "오른코 교차뜨기",
-    "desc_ko": "오른쪽으로 교차. 케이블/교차 기법.",
+    "name_ko": "왼코 위 교차뜨기",
+    "desc_ko": "왼코 오른쪽으로 교차. 케이블/교차 기법.",
     "aliases": ["right cross", "2/2 RC", "RC"],
     "delta": 0,
     "videos": [
@@ -91,8 +91,8 @@
   },
   "LC": {
     "name_en": "Left Cross",
-    "name_ko": "왼코 교차뜨기",
-    "desc_ko": "왼쪽으로 교차.",
+    "name_ko": "오른코 위 교차뜨기",
+    "desc_ko": "오른코 왼쪽으로 교차.",
     "aliases": ["left cross", "2/2 LC", "LC"],
     "delta": 0,
     "videos": [
