@@ -151,38 +151,55 @@ else:
     video_link = [""] * len(base_df)
 
 # ─────────────────────────────────────────────────────────────
-# 4) 검색 + 표 렌더링 (하이퍼링크 1개)
+# ─── 검색 + 표 렌더링 (하이퍼링크 1개) ─────────────────────
 table_df = base_df[["약자(약어)", "용어(영문)", "한국어", "설명"]].copy()
 table_df["영상"] = video_link  # 개별 영상 URL 또는 빈칸
 
-c1, c2 = st.columns([2,1])
+c1, c2, c3 = st.columns([2,1,1])
 with c1:
-    q = st.text_input("검색 (예: m1l / cast on / 겉뜨기 / 게이지 등)", "")
+    q = st.text_input("검색 (예: m1l / cast on / 겉뜨기 / 게이지 등)", value="")
 with c2:
-    show_cols = st.multiselect(
-        "표시할 열",
-        ["약자(약어)", "용어(영문)", "한국어", "설명", "영상"],
-        default=["약자(약어)", "용어(영문)", "한국어", "설명", "영상"]
-    )
+    only_with_video = st.checkbox("영상 있는 것만", value=False)
+with c3:
+    sort_key = st.selectbox("정렬", ["약자(약어)", "용어(영문)", "한국어"])
 
 fdf = table_df.copy()
-if q.strip():
-    key = norm(q)
-    fdf = fdf[base_df["_idx"].str.contains(key)].copy()
 
-# 하이퍼링크 컬럼(열기 버튼 형식)
-link_cfg = {
-    "영상": st.column_config.LinkColumn(
-        "영상", help="개별 유튜브 영상 링크 (한국어 우선, 없으면 영어).", display_text="열기", max_chars=300
-    )
-}
+# 필터 (검색창이 비어있으면 전체 표시)
+if q.strip():
+    key = (q or "").strip().lower()
+    idx = base_df["_idx"].str.contains(key)
+    fdf = fdf[idx]
+
+# 영상 있는 것만 보기 옵션
+if only_with_video:
+    fdf = fdf[fdf["영상"].astype(str).str.startswith("http")]
+
+# 정렬
+fdf = fdf.sort_values(by=sort_key, kind="stable")
+
+# 몇 개가 로드됐는지 숫자 표시 + 실제 로드한 symbols.json 경로/개수 디버그
+try:
+    loaded_path = parser._resolve_path("symbols.json")  # 내부 함수지만 사용 가능
+    st.caption(f"로드된 항목: 총 **{len(table_df)}개** · 현재 표시: **{len(fdf)}개** · 파일: {loaded_path}")
+except Exception:
+    st.caption(f"로드된 항목: 총 **{len(table_df)}개** · 현재 표시: **{len(fdf)}개**")
+
+# 표를 '전부' 보이도록 높이를 동적으로 크게 지정
+row_height = 34  # 대략적인 행 높이(px)
+max_height = 5000
+height = min(max_height, 120 + len(fdf) * row_height)
+
 st.data_editor(
-    fdf[show_cols],
+    fdf[["약자(약어)", "용어(영문)", "한국어", "설명", "영상"]],
     use_container_width=True,
     hide_index=True,
     disabled=True,
-    column_config=link_cfg,
+    column_config={
+        "영상": st.column_config.LinkColumn(
+            "영상", help="개별 유튜브 영상 링크 (한국어 우선, 없으면 영어).", display_text="열기", max_chars=300
+        )
+    },
     num_rows="fixed",
+    height=height,  # ← 한 화면에 전부 보이게!
 )
-
-st.caption("※ 영상은 제공된 두 재생목록의 **개별 영상**을 제목-키워드로 자동 매칭해 1개만 연결합니다. 해당 영상이 없으면 빈칸으로 둡니다.")
