@@ -3,6 +3,7 @@
 import json, os
 from pathlib import Path
 from lib import parser
+import pandas as pd
 
 BASE_PATH = "symbols.json"
 EXTRA_PATH = "symbols_extra.json"   # parser.load_lib는 lib/ 아래에서 찾습니다.
