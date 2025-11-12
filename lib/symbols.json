@@ -33,7 +33,7 @@
     "name_en": "Yarn Over",
     "name_ko": "바늘 비우기(구멍뜨기, 걸기코)",
     "desc_ko": "실을 바늘 위로 걸어 1코를 늘리는 기법.",
-    "aliases": ["YO", "yarnover", "yarn over", "걸기코", "구멍뜨기"],
+    "aliases": ["YO", "yarnover", "yarn over", "걸기코", "구멍뜨기", "바늘비우기", "바늘 비우기"],
     "delta": 1,
     "videos": [
       {"title": "Yarn over (YO) - increase", "url": "https://youtube.com/playlist?list=PLp5XrSgnenszb2E_yfQ-X2KFwHsUhRTyJ"}
@@ -43,7 +43,7 @@
     "name_en": "Pick up",
     "name_ko": "코 줍기",
     "desc_ko": "원단 모서리 등에서 코를 주워 새 코를 만든다.",
-    "aliases": ["pick up", "PU sts", "코줍기"],
+    "aliases": ["pick up", "PU sts", "코줍기","코 줍기"],
     "delta": 0,
     "videos": [
       {"title": "Pick up stitches on an edge", "url": "https://youtube.com/playlist?list=PLtqSRloqJqzodilL7rTKkd6BwS8RvVpTq"}
@@ -69,31 +69,51 @@
       {"title": "Purl through the back loop (ptbl)", "url": "https://youtube.com/playlist?list=PLtqSRloqJqzodilL7rTKkd6BwS8RvVpTq"}
     ]
   },
-  "RC": {
-    "name_en": "Right Cross",
+  "1/1 RC": {
+    "name_en": "1/1 Right Cross",
     "name_ko": "왼코 위 교차뜨기",
-    "desc_ko": "왼코 오른쪽으로 교차. 케이블/교차 기법.",
-    "aliases": ["right cross", "2/2 RC", "RC"],
+    "desc_ko": "왼코 1개 오른쪽으로 교차. 케이블/교차 기법.",
+    "aliases": ["right cross", "RC", "1/1 RC", "1/1RC"],
     "delta": 0,
     "videos": [
-      {"title": "Right cross cable", "url": "https://youtube.com/playlist?list=PLtqSRloqJqzodilL7rTKkd6BwS8RvVpTq"}
+      {"title": "Right cross cable", "url": "https://youtu.be/crUQBKrhq54?si=KF84Xj1zDxfNMGOO"}
     ]
   },
-  "LC": {
-    "name_en": "Left Cross",
-    "name_ko": "오른코 위 교차뜨기",
-    "desc_ko": "오른코 왼쪽으로 교차.",
-    "aliases": ["left cross", "2/2 LC", "LC"],
+  "2/2 RC": {
+    "name_en": "2/2 Right Cross",
+    "name_ko": "왼코 위 교차뜨기",
+    "desc_ko": "왼코 2개 오른쪽으로 교차. 케이블/교차 기법.",
+    "aliases": ["right cross", "RC", "2/2 RC", "2/2RC"],
     "delta": 0,
     "videos": [
-      {"title": "Left cross cable", "url": "https://youtube.com/playlist?list=PLtqSRloqJqzodilL7rTKkd6BwS8RvVpTq"}
+      {"title": "Right cross cable", "url": "https://youtu.be/XMcZns9_Jbs?si=ZKQADveqgSPX7o3_"}
+    ]
+  },
+  "1/1 LC": {
+    "name_en": "Left Cross",
+    "name_ko": "오른코 위 교차뜨기",
+    "desc_ko": "오른코 1개 왼쪽으로 교차.",
+    "aliases": ["left cross", "1/1 LC","1/1LC", "LC"],
+    "delta": 0,
+    "videos": [
+      {"title": "Left cross cable", "url": "https://youtu.be/crUQBKrhq54?si=KF84Xj1zDxfNMGOO"}
+    ]
+  },
+  "2/2 RC": {
+    "name_en": "2/2 Right Cross",
+    "name_ko": "왼코 위 교차뜨기",
+    "desc_ko": "왼코 2개 오른쪽으로 교차. 케이블/교차 기법.",
+    "aliases": ["right cross", "RC", "2/2 RC", "2/2RC"],
+    "delta": 0,
+    "videos": [
+      {"title": "Right cross cable", "url": "https://youtu.be/XMcZns9_Jbs?si=ZKQADveqgSPX7o3_"}
     ]
   },
   "CO": {
     "name_en": "Cast on",
     "name_ko": "코 만들기/코 잡기",
     "desc_ko": "작품 시작 시 코를 만드는 작업(여러 방식 존재).",
-    "aliases": ["cast on", "CO sts"],
+    "aliases": ["cast on", "CO sts", "caston", "캐스트온", "캐스트 온", "코잡기", "코만들기"],
     "delta": 0,
     "videos": [
       {"title": "Cast on methods", "url": "https://youtube.com/playlist?list=PLp5XrSgnenszb2E_yfQ-X2KFwHsUhRTyJ"}
