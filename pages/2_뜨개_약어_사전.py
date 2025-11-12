@@ -1,24 +1,31 @@
 # pages/2_뜨개_약어_사전.py
-# 기존 사전 + ingest 스크립트로 생성된 새 사전을 합쳐 표로 표시(영상 하이퍼링크 1개)
-
-import os
-import pandas as pd
-import streamlit as st
+# 상단에 추가
+import json, os
+from pathlib import Path
 from lib import parser
 
-st.set_page_config(page_title="📘 뜨개 약어 사전", page_icon="📘", layout="wide")
-st.title("📘 뜨개 약어 사전 (기본 + 재생목록 추가)")
-
 BASE_PATH = "symbols.json"
-EXTRA_PATH = "symbols_extra.json"   # lib/ 아래 상대경로로 처리됨
+EXTRA_PATH = "symbols_extra.json"   # parser.load_lib는 lib/ 아래에서 찾습니다.
 
-# ⚠️ parser.load_lib는 파일명만 넘겨야 lib/에서 찾아요.
-base = parser.load_lib(BASE_PATH)  # lib/symbols.json
-# extra가 없을 수도 있으므로 예외 처리
-try:
-    extra = parser.load_lib(EXTRA_PATH)  # lib/symbols_extra.json
-except FileNotFoundError:
-    extra = {}
+# 안전 로딩 헬퍼
+def load_json_safe(filename: str) -> dict:
+    try:
+        return parser.load_lib(filename)
+    except FileNotFoundError:
+        return {}
+    except json.JSONDecodeError:
+        # 파일이 손상됐을 경우 자동 초기화
+        extra_abs = Path(__file__).resolve().parent.parent / "lib" / filename
+        try:
+            extra_abs.write_text("{}", encoding="utf-8")
+        except Exception:
+            pass
+        return {}
+
+# 사용처
+base = load_json_safe(BASE_PATH)
+extra = load_json_safe(EXTRA_PATH)
+merged = {**base, **extra}
 
 # 병합: 기본 우선, 새 항목은 기존 키와 충돌하지 않게 ingest에서 처리됨
 merged = {**base, **extra}
