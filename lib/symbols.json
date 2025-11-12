@@ -49,10 +49,10 @@
       {"title": "Pick up stitches on an edge", "url": "https://youtube.com/playlist?list=PLtqSRloqJqzodilL7rTKkd6BwS8RvVpTq"}
     ]
   },
-  "tbl": {
-    "name_en": "Through the back loop (knit)",
+  "ktbl": {
+    "name_en": "Knit Through the back loop",
     "name_ko": "꼬아 뜨기(겉)",
-    "desc_ko": "코의 뒤쪽 다리를 걸어 겉뜨기(ktbl).",
+    "desc_ko": "코의 뒤쪽 다리를 걸어 겉뜨기.",
     "aliases": ["k tbl", "tbl", "ktbl", "btl", "Through back loop"],
     "delta": 0,
     "videos": [
@@ -61,22 +61,12 @@
   },
   "ptbl": {
     "name_en": "Purl through the back loop",
-    "name_ko": "꼬아 안뜨기",
+    "name_ko": "꼬아 뜨기(안)",
     "desc_ko": "코의 뒤쪽 다리를 걸어 안뜨기.",
     "aliases": ["p tbl", "ptbl", "purl tbl"],
     "delta": 0,
     "videos": [
       {"title": "Purl through the back loop (ptbl)", "url": "https://youtube.com/playlist?list=PLtqSRloqJqzodilL7rTKkd6BwS8RvVpTq"}
-    ]
-  },
-  "k1-b": {
-    "name_en": "Knit 1 through the back loop",
-    "name_ko": "겉뜨기로 꼬아 뜨기 1코",
-    "desc_ko": "한 코를 뒤 다리로 겉뜨기(ktbl).",
-    "aliases": ["k1b", "k1-b", "ktbl 1"],
-    "delta": 0,
-    "videos": [
-      {"title": "K1 tbl (ktbl)", "url": "https://youtube.com/playlist?list=PLtqSRloqJqzodilL7rTKkd6BwS8RvVpTq"}
     ]
   },
   "RC": {
@@ -178,15 +168,15 @@
   "RS": {
     "name_en": "Right side",
     "name_ko": "겉면",
-    "desc_ko": "작품의 겉면(앞면).",
+    "desc_ko": "작품의 겉면.",
     "aliases": ["right side", "RS"],
     "delta": 0,
     "videos": []
   },
   "WS": {
     "name_en": "Wrong side",
-    "name_ko": "뒷면/안쪽면",
-    "desc_ko": "작품의 안쪽면.",
+    "name_ko": "안면",
+    "desc_ko": "작품의 안면.",
     "aliases": ["wrong side", "WS"],
     "delta": 0,
     "videos": []
@@ -404,7 +394,7 @@
   "M1R": {
     "name_en": "Make one Right",
     "name_ko": "오른코 늘려뜨기",
-    "desc_ko": "오른쪽 기울기의 늘림.",
+    "desc_ko": "왼쪽 바늘을 이용해 코와 코 사이의 실을 뒤에서 앞으로 가져온 후 겉뜨기.",
     "aliases": ["m1r"],
     "delta": 1,
     "videos": [
@@ -414,7 +404,7 @@
   "M1L": {
     "name_en": "Make one Left",
     "name_ko": "왼코 늘려뜨기",
-    "desc_ko": "왼쪽 기울기의 늘림.",
+    "desc_ko": "왼쪽 바늘을 이용해 코와 코 사이의 실을 앞에서 뒤로 밀어낸 후 꼬아뜨기(겉).",
     "aliases": ["m1l"],
     "delta": 1,
     "videos": [
@@ -434,7 +424,7 @@
   "k2tog": {
     "name_en": "Knit 2 stitches together",
     "name_ko": "겉뜨기로 2코 모아뜨기",
-    "desc_ko": "왼쪽 2코를 한 번에 겉뜨기(오른기울기).",
+    "desc_ko": "왼쪽 2코를 한 번에 겉뜨기.",
     "aliases": ["k2tog"],
     "delta": -1,
     "videos": [
@@ -453,8 +443,8 @@
   },
   "SSK": {
     "name_en": "Slip, Slip, Knit",
-    "name_ko": "왼기울임 2코 모아뜨기",
-    "desc_ko": "두 코를 각각 겉뜨기 방향으로 걸러 옮긴 뒤 함께 겉뜨기.",
+    "name_ko": "왼코 모아뜨기",
+    "desc_ko": "두 코를 각각 겉뜨기 방향으로 걸러 옮긴 뒤 다시 왼쪽 바늘로 옮겨 함께 겉뜨기.",
     "aliases": ["ssk", "SKP"],
     "delta": -1,
     "videos": [
@@ -463,8 +453,8 @@
   },
   "SSP": {
     "name_en": "Slip, Slip, Purl",
-    "name_ko": "왼기울임 2코 모아 안뜨기",
-    "desc_ko": "두 코를 걸러 옮긴 뒤 함께 안뜨기.",
+    "name_ko": "오른코 모아뜨기",
+    "desc_ko": "두 코를 각각 겉뜨기 방향으로 걸러 옮긴 뒤 다시 왼쪽 바늘로 옮겨 함께 꼬아뜨기(안).",
     "aliases": ["ssp"],
     "delta": -1,
     "videos": [
