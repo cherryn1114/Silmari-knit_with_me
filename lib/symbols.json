@@ -1,64 +1,474 @@
 {
-  "m1L": {
-    "name_ko": "왼코 늘림 (m1L)",
-    "desc_ko": "왼쪽 다리를 비틀어 떠서 구멍 없이 1코 늘림",
-    "aliases": ["왼코늘림","왼쪽늘림","m1 l","m1l"],
-    "delta": 1,
-    "compare": ["m1R"],
-    "media": []
-  },
-  "m1R": {
-    "name_ko": "오른코 늘림 (m1R)",
-    "desc_ko": "오른쪽 다리를 비틀어 떠서 구멍 없이 1코 늘림",
-    "aliases": ["오른코늘림","오른쪽늘림","m1 r","m1r"],
-    "delta": 1,
-    "compare": ["m1L"],
-    "media": []
-  },
-  "ssk": {
-    "name_ko": "ssk (왼기울임 2코모아뜨기)",
-    "desc_ko": "겉뜨기 방향으로 2코를 각각 slip 후 함께 겉뜨기",
-    "aliases": ["ssk","왼기울임2코모아","왼모아"],
-    "delta": -1,
-    "compare": ["k2tog"],
-    "media": []
-  },
-  "k2tog": {
-    "name_ko": "k2tog (겉뜨기 2코모아, 오른기울임)",
-    "desc_ko": "겉뜨기로 2코를 함께 떠서 1코",
-    "aliases": ["k2tog","오른모아","겉2코모아"],
-    "delta": -1,
-    "compare": ["ssk"],
-    "media": []
-  },
-  "p2tog": {
-    "name_ko": "p2tog (안뜨기 2코모아뜨기)",
-    "desc_ko": "안뜨기로 2코를 함께 떠서 1코",
-    "aliases": ["p2tog","안2코모아"],
-    "delta": -1,
-    "compare": [],
-    "media": []
-  },
-  "yo": {
-    "name_ko": "yo (걸어코, 야른오버)",
-    "desc_ko": "실을 바늘 위로 걸어 1코 늘림(구멍)",
-    "aliases": ["yo","yarnover","걸어코"],
-    "delta": 1,
-    "compare": ["m1L","m1R"],
-    "media": []
-  },
   "k": {
-    "name_ko": "겉뜨기 (k)",
-    "desc_ko": "겉뜨기 1코",
-    "aliases": ["k","겉"],
+    "name_en": "Knit",
+    "name_ko": "겉뜨기",
+    "desc_ko": "바늘 앞쪽에서 실을 뒤로 보내며 뜨는 기본 뜨기.",
+    "aliases": ["K", "겉뜨기", "knit stitch"],
     "delta": 0,
-    "media": []
+    "videos": [
+      {"title": "Knit stitch tutorial", "url": "https://youtube.com/playlist?list=PLp5XrSgnenszb2E_yfQ-X2KFwHsUhRTyJ"}
+    ]
   },
   "p": {
-    "name_ko": "안뜨기 (p)",
-    "desc_ko": "안뜨기 1코",
-    "aliases": ["p","안"],
+    "name_en": "Purl",
+    "name_ko": "안뜨기",
+    "desc_ko": "바늘 뒤쪽에서 실을 앞으로 보내며 뜨는 기본 뜨기.",
+    "aliases": ["P", "안뜨기", "purl stitch"],
     "delta": 0,
-    "media": []
+    "videos": [
+      {"title": "Purl stitch tutorial", "url": "https://youtube.com/playlist?list=PLp5XrSgnenszb2E_yfQ-X2KFwHsUhRTyJ"}
+    ]
+  },
+  "sl": {
+    "name_en": "Slip",
+    "name_ko": "걸러뜨기",
+    "desc_ko": "코를 뜨지 않고 오른바늘로 옮김.",
+    "aliases": ["SL", "slip", "걸러뜨기"],
+    "delta": 0,
+    "videos": [
+      {"title": "Slip stitch knitting", "url": "https://youtube.com/playlist?list=PLp5XrSgnenszb2E_yfQ-X2KFwHsUhRTyJ"}
+    ]
+  },
+  "yo": {
+    "name_en": "Yarn Over",
+    "name_ko": "바늘 비우기(구멍뜨기, 걸기코)",
+    "desc_ko": "실을 바늘 위로 걸어 1코를 늘리는 기법.",
+    "aliases": ["YO", "yarnover", "yarn over", "걸기코", "구멍뜨기"],
+    "delta": 1,
+    "videos": [
+      {"title": "Yarn over (YO) - increase", "url": "https://youtube.com/playlist?list=PLp5XrSgnenszb2E_yfQ-X2KFwHsUhRTyJ"}
+    ]
+  },
+  "PU": {
+    "name_en": "Pick up",
+    "name_ko": "코 줍기",
+    "desc_ko": "원단 모서리 등에서 코를 주워 새 코를 만든다.",
+    "aliases": ["pick up", "PU sts", "코줍기"],
+    "delta": 0,
+    "videos": [
+      {"title": "Pick up stitches on an edge", "url": "https://youtube.com/playlist?list=PLtqSRloqJqzodilL7rTKkd6BwS8RvVpTq"}
+    ]
+  },
+  "tbl": {
+    "name_en": "Through the back loop (knit)",
+    "name_ko": "꼬아 뜨기(겉)",
+    "desc_ko": "코의 뒤쪽 다리를 걸어 겉뜨기(ktbl).",
+    "aliases": ["k tbl", "tbl", "ktbl", "btl", "Through back loop"],
+    "delta": 0,
+    "videos": [
+      {"title": "Knit through the back loop (ktbl)", "url": "https://youtube.com/playlist?list=PLtqSRloqJqzodilL7rTKkd6BwS8RvVpTq"}
+    ]
+  },
+  "ptbl": {
+    "name_en": "Purl through the back loop",
+    "name_ko": "꼬아 안뜨기",
+    "desc_ko": "코의 뒤쪽 다리를 걸어 안뜨기.",
+    "aliases": ["p tbl", "ptbl", "purl tbl"],
+    "delta": 0,
+    "videos": [
+      {"title": "Purl through the back loop (ptbl)", "url": "https://youtube.com/playlist?list=PLtqSRloqJqzodilL7rTKkd6BwS8RvVpTq"}
+    ]
+  },
+  "k1-b": {
+    "name_en": "Knit 1 through the back loop",
+    "name_ko": "겉뜨기로 꼬아 뜨기 1코",
+    "desc_ko": "한 코를 뒤 다리로 겉뜨기(ktbl).",
+    "aliases": ["k1b", "k1-b", "ktbl 1"],
+    "delta": 0,
+    "videos": [
+      {"title": "K1 tbl (ktbl)", "url": "https://youtube.com/playlist?list=PLtqSRloqJqzodilL7rTKkd6BwS8RvVpTq"}
+    ]
+  },
+  "RC": {
+    "name_en": "Right Cross",
+    "name_ko": "오른코 교차뜨기",
+    "desc_ko": "오른쪽으로 교차. 케이블/교차 기법.",
+    "aliases": ["right cross", "2/2 RC", "RC"],
+    "delta": 0,
+    "videos": [
+      {"title": "Right cross cable", "url": "https://youtube.com/playlist?list=PLtqSRloqJqzodilL7rTKkd6BwS8RvVpTq"}
+    ]
+  },
+  "LC": {
+    "name_en": "Left Cross",
+    "name_ko": "왼코 교차뜨기",
+    "desc_ko": "왼쪽으로 교차.",
+    "aliases": ["left cross", "2/2 LC", "LC"],
+    "delta": 0,
+    "videos": [
+      {"title": "Left cross cable", "url": "https://youtube.com/playlist?list=PLtqSRloqJqzodilL7rTKkd6BwS8RvVpTq"}
+    ]
+  },
+  "CO": {
+    "name_en": "Cast on",
+    "name_ko": "코 만들기/코 잡기",
+    "desc_ko": "작품 시작 시 코를 만드는 작업(여러 방식 존재).",
+    "aliases": ["cast on", "CO sts"],
+    "delta": 0,
+    "videos": [
+      {"title": "Cast on methods", "url": "https://youtube.com/playlist?list=PLp5XrSgnenszb2E_yfQ-X2KFwHsUhRTyJ"}
+    ]
+  },
+  "Backward Loop CO": {
+    "name_en": "Backward Loop Cast on (Thumb)",
+    "name_ko": "감아코",
+    "desc_ko": "엄지로 실을 감아 만드는 간단한 코잡기.",
+    "aliases": ["Thumb Method CO", "Backward loop CO", "감아코"],
+    "delta": 0,
+    "videos": [
+      {"title": "Backward loop cast on", "url": "https://youtube.com/playlist?list=PLtqSRloqJqzodilL7rTKkd6BwS8RvVpTq"}
+    ]
+  },
+  "Cast off": {
+    "name_en": "Cast off",
+    "name_ko": "코 막기/코 마무리",
+    "desc_ko": "마지막 단에서 코를 빼서 마감.",
+    "aliases": ["cast off"],
+    "delta": 0,
+    "videos": [
+      {"title": "Bind off / Cast off", "url": "https://youtube.com/playlist?list=PLp5XrSgnenszb2E_yfQ-X2KFwHsUhRTyJ"}
+    ]
+  },
+  "BO": {
+    "name_en": "Bind off",
+    "name_ko": "덮어씌워 코 막기",
+    "desc_ko": "2코를 떠서 첫 코를 두번째 코 위로 덮어씌움.",
+    "aliases": ["bind off", "cast off", "BO"],
+    "delta": 0,
+    "videos": [
+      {"title": "Standard bind off", "url": "https://youtube.com/playlist?list=PLp5XrSgnenszb2E_yfQ-X2KFwHsUhRTyJ"}
+    ]
+  },
+  "kwise": {
+    "name_en": "Knit-wise (way)",
+    "name_ko": "겉뜨기 방향",
+    "desc_ko": "코를 겉뜨기 방향으로 바늘에 건다/옮긴다.",
+    "aliases": ["Kwise", "k-wise", "knitwise"],
+    "delta": 0,
+    "videos": [
+      {"title": "Insert/slip knit-wise", "url": "https://youtube.com/playlist?list=PLtqSRloqJqzodilL7rTKkd6BwS8RvVpTq"}
+    ]
+  },
+  "pwise": {
+    "name_en": "Purl-wise (way)",
+    "name_ko": "안뜨기 방향",
+    "desc_ko": "코를 안뜨기 방향으로 바늘에 건다/옮긴다.",
+    "aliases": ["Pwise", "p-wise", "purlwise"],
+    "delta": 0,
+    "videos": [
+      {"title": "Insert/slip purl-wise", "url": "https://youtube.com/playlist?list=PLtqSRloqJqzodilL7rTKkd6BwS8RvVpTq"}
+    ]
+  },
+  "st": {
+    "name_en": "Stitch",
+    "name_ko": "코",
+    "desc_ko": "편물의 한 코. sts는 복수.",
+    "aliases": ["sts", "st.", "stitch", "stitches", "코"],
+    "delta": 0,
+    "videos": []
+  },
+  "Row": {
+    "name_en": "Row",
+    "name_ko": "단",
+    "desc_ko": "평면 편물의 가로 한 줄.",
+    "aliases": ["row", "R"],
+    "delta": 0,
+    "videos": []
+  },
+  "RS": {
+    "name_en": "Right side",
+    "name_ko": "겉면",
+    "desc_ko": "작품의 겉면(앞면).",
+    "aliases": ["right side", "RS"],
+    "delta": 0,
+    "videos": []
+  },
+  "WS": {
+    "name_en": "Wrong side",
+    "name_ko": "뒷면/안쪽면",
+    "desc_ko": "작품의 안쪽면.",
+    "aliases": ["wrong side", "WS"],
+    "delta": 0,
+    "videos": []
+  },
+  "Lp": {
+    "name_en": "Loop",
+    "name_ko": "고리(시작코)",
+    "desc_ko": "코를 이루는 실의 고리. Lps는 복수.",
+    "aliases": ["Lps", "loop", "loops"],
+    "delta": 0,
+    "videos": []
+  },
+  "gauge": {
+    "name_en": "Gauge",
+    "name_ko": "게이지",
+    "desc_ko": "10×10cm 안의 코수/단수. 사이즈에 큰 영향.",
+    "aliases": ["guage", "게이지"],
+    "delta": 0,
+    "videos": [
+      {"title": "How to measure gauge", "url": "https://youtube.com/playlist?list=PLtqSRloqJqzodilL7rTKkd6BwS8RvVpTq"}
+    ]
+  },
+  "pattern": {
+    "name_en": "Pattern",
+    "name_ko": "도안",
+    "desc_ko": "작품 만드는 지시서.",
+    "aliases": ["패턴", "도안"],
+    "delta": 0,
+    "videos": []
+  },
+  "MC": {
+    "name_en": "Main Color",
+    "name_ko": "메인 컬러",
+    "desc_ko": "주요 색실.",
+    "aliases": ["main color", "MC"],
+    "delta": 0,
+    "videos": []
+  },
+  "CC": {
+    "name_en": "Contrasting Color",
+    "name_ko": "배색 컬러",
+    "desc_ko": "보조 색실(배색).",
+    "aliases": ["contrasting color", "CC"],
+    "delta": 0,
+    "videos": []
+  },
+  "Cable": {
+    "name_en": "Cable",
+    "name_ko": "꽈배기 무늬",
+    "desc_ko": "코를 교차시켜 생기는 꼬임 무늬.",
+    "aliases": ["cable"],
+    "delta": 0,
+    "videos": [
+      {"title": "Cable knitting basics", "url": "https://youtube.com/playlist?list=PLtqSRloqJqzodilL7rTKkd6BwS8RvVpTq"}
+    ]
+  },
+  "M": {
+    "name_en": "Marker",
+    "name_ko": "마커(단수링/표시링)",
+    "desc_ko": "구간/증감 위치 표시 도구.",
+    "aliases": ["marker", "단수링", "표시링", "PM"],
+    "delta": 0,
+    "videos": [
+      {"title": "How to use stitch markers", "url": "https://youtube.com/playlist?list=PLtqSRloqJqzodilL7rTKkd6BwS8RvVpTq"}
+    ]
+  },
+  "SM": {
+    "name_en": "Slip Marker",
+    "name_ko": "마커 옮기기",
+    "desc_ko": "마커를 오른바늘로 옮김.",
+    "aliases": ["SM", "slip marker", "M (move marker)"],
+    "delta": 0,
+    "videos": [
+      {"title": "Slip marker (SM)", "url": "https://youtube.com/playlist?list=PLtqSRloqJqzodilL7rTKkd6BwS8RvVpTq"}
+    ]
+  },
+  "PM": {
+    "name_en": "Place Marker",
+    "name_ko": "마커 끼우기",
+    "desc_ko": "해당 지점에 마커 설치.",
+    "aliases": ["place marker", "pm"],
+    "delta": 0,
+    "videos": [
+      {"title": "Place a stitch marker (PM)", "url": "https://youtube.com/playlist?list=PLtqSRloqJqzodilL7rTKkd6BwS8RvVpTq"}
+    ]
+  },
+  "yb": {
+    "name_en": "Yarn back / to the back",
+    "name_ko": "실을 뒤로 보냄",
+    "desc_ko": "겉뜨기 상태로 실을 뒤로 이동.",
+    "aliases": ["ybk", "wyib", "yarn in back", "yarn back"],
+    "delta": 0,
+    "videos": [
+      {"title": "Yarn in back (YIB)", "url": "https://youtube.com/playlist?list=PLtqSRloqJqzodilL7rTKkd6BwS8RvVpTq"}
+    ]
+  },
+  "yf": {
+    "name_en": "Yarn front / to the front",
+    "name_ko": "실을 앞으로 보냄",
+    "desc_ko": "안뜨기 상태로 실을 앞으로 이동.",
+    "aliases": ["yfwd", "wyif", "yarn in front", "yarn front"],
+    "delta": 0,
+    "videos": [
+      {"title": "Yarn in front (YIF)", "url": "https://youtube.com/playlist?list=PLtqSRloqJqzodilL7rTKkd6BwS8RvVpTq"}
+    ]
+  },
+  "Circular needle": {
+    "name_en": "Circular needle",
+    "name_ko": "줄바늘(대바늘)",
+    "desc_ko": "두 바늘이 케이블로 연결된 바늘.",
+    "aliases": ["circular needles", "줄바늘", "원형바늘"],
+    "delta": 0,
+    "videos": []
+  },
+  "dpn": {
+    "name_en": "Double-point needles",
+    "name_ko": "장갑바늘(양끝바늘)",
+    "desc_ko": "양끝이 뾰족한 바늘 세트, 원통뜨기에 사용.",
+    "aliases": ["DPN", "double-pointed needles", "원통뜨기 바늘"],
+    "delta": 0,
+    "videos": []
+  },
+  "Cn": {
+    "name_en": "Cable needle",
+    "name_ko": "꽈배기 바늘",
+    "desc_ko": "교차/케이블뜨기 시 보조 바늘.",
+    "aliases": ["cn", "cable needle"],
+    "delta": 0,
+    "videos": []
+  },
+  "holder": {
+    "name_en": "Holder",
+    "name_ko": "막음핀/어깨핀/코막음핀",
+    "desc_ko": "코를 임시로 보관하는 도구.",
+    "aliases": ["stitch holder", "코막음핀"],
+    "delta": 0,
+    "videos": []
+  },
+  "darning needle": {
+    "name_en": "Darning (tapestry) needle",
+    "name_ko": "돗바늘",
+    "desc_ko": "실 마감/꿰매기에 쓰는 굵은 바늘.",
+    "aliases": ["tapestry needle"],
+    "delta": 0,
+    "videos": []
+  },
+  "St-st": {
+    "name_en": "Stockinette Stitch (US) / Stocking Stitch (UK)",
+    "name_ko": "메리야스뜨기",
+    "desc_ko": "겉·안 번갈아(평면) / 계속 겉(원통).",
+    "aliases": ["stockinette", "stocking stitch", "st st", "St-st"],
+    "delta": 0,
+    "videos": []
+  },
+  "Rib (r-st)": {
+    "name_en": "Ribbing",
+    "name_ko": "고무뜨기",
+    "desc_ko": "겉/안 반복으로 탄성이 있는 조직.",
+    "aliases": ["rib", "r-st"],
+    "delta": 0,
+    "videos": []
+  },
+  "1x1 Rib": {
+    "name_en": "One by one ribbing",
+    "name_ko": "1코 고무뜨기",
+    "desc_ko": "k1, p1 반복.",
+    "aliases": ["1×1 rib", "1x1 rib"],
+    "delta": 0,
+    "videos": []
+  },
+  "2x2 Rib": {
+    "name_en": "Two by two ribbing",
+    "name_ko": "2코 고무뜨기",
+    "desc_ko": "k2, p2 반복.",
+    "aliases": ["2×2 rib", "2x2 rib"],
+    "delta": 0,
+    "videos": []
+  },
+  "G-st": {
+    "name_en": "Garter stitch",
+    "name_ko": "가터뜨기(이랑뜨기)",
+    "desc_ko": "1단씩 겉뜨기(평면: 겉/안 모두 겉).",
+    "aliases": ["garter", "g-st"],
+    "delta": 0,
+    "videos": []
+  },
+  "Moss st": {
+    "name_en": "Moss stitch",
+    "name_ko": "멍석뜨기",
+    "desc_ko": "겉/안이 번갈아 바둑판처럼 배치되는 조직.",
+    "aliases": ["moss", "moss st"],
+    "delta": 0,
+    "videos": []
+  },
+  "Inc": {
+    "name_en": "Increase",
+    "name_ko": "코 늘리기",
+    "desc_ko": "코 수를 늘리는 모든 기법의 총칭.",
+    "aliases": ["increase", "inc"],
+    "delta": 1,
+    "videos": [
+      {"title": "Increase methods", "url": "https://youtube.com/playlist?list=PLtqSRloqJqzodilL7rTKkd6BwS8RvVpTq"}
+    ]
+  },
+  "M1": {
+    "name_en": "Make 1",
+    "name_ko": "1코 늘리기",
+    "desc_ko": "바늘 사이 실다리를 비틀어 1코 늘림.",
+    "aliases": ["make 1", "m1"],
+    "delta": 1,
+    "videos": [
+      {"title": "Make 1 (M1) increase", "url": "https://youtube.com/playlist?list=PLtqSRloqJqzodilL7rTKkd6BwS8RvVpTq"}
+    ]
+  },
+  "M1R": {
+    "name_en": "Make one Right",
+    "name_ko": "오른코 늘려뜨기",
+    "desc_ko": "오른쪽 기울기의 늘림.",
+    "aliases": ["m1r"],
+    "delta": 1,
+    "videos": [
+      {"title": "M1R increase", "url": "https://youtube.com/playlist?list=PLtqSRloqJqzodilL7rTKkd6BwS8RvVpTq"}
+    ]
+  },
+  "M1L": {
+    "name_en": "Make one Left",
+    "name_ko": "왼코 늘려뜨기",
+    "desc_ko": "왼쪽 기울기의 늘림.",
+    "aliases": ["m1l"],
+    "delta": 1,
+    "videos": [
+      {"title": "M1L increase", "url": "https://youtube.com/playlist?list=PLtqSRloqJqzodilL7rTKkd6BwS8RvVpTq"}
+    ]
+  },
+  "Tog": {
+    "name_en": "Together",
+    "name_ko": "모아뜨기",
+    "desc_ko": "두 코 이상을 한 번에 떠서 줄임.",
+    "aliases": ["tog", "together"],
+    "delta": -1,
+    "videos": [
+      {"title": "tog (together) knitting", "url": "https://youtube.com/playlist?list=PLtqSRloqJqzodilL7rTKkd6BwS8RvVpTq"}
+    ]
+  },
+  "k2tog": {
+    "name_en": "Knit 2 stitches together",
+    "name_ko": "겉뜨기로 2코 모아뜨기",
+    "desc_ko": "왼쪽 2코를 한 번에 겉뜨기(오른기울기).",
+    "aliases": ["k2tog"],
+    "delta": -1,
+    "videos": [
+      {"title": "k2tog", "url": "https://youtube.com/playlist?list=PLtqSRloqJqzodilL7rTKkd6BwS8RvVpTq"}
+    ]
+  },
+  "p2tog": {
+    "name_en": "Purl 2 stitches together",
+    "name_ko": "안뜨기로 2코 모아뜨기",
+    "desc_ko": "왼쪽 2코를 한 번에 안뜨기.",
+    "aliases": ["p2tog"],
+    "delta": -1,
+    "videos": [
+      {"title": "p2tog", "url": "https://youtube.com/playlist?list=PLtqSRloqJqzodilL7rTKkd6BwS8RvVpTq"}
+    ]
+  },
+  "SSK": {
+    "name_en": "Slip, Slip, Knit",
+    "name_ko": "왼기울임 2코 모아뜨기",
+    "desc_ko": "두 코를 각각 겉뜨기 방향으로 걸러 옮긴 뒤 함께 겉뜨기.",
+    "aliases": ["ssk", "SKP"],
+    "delta": -1,
+    "videos": [
+      {"title": "SSK (left-leaning decrease)", "url": "https://youtube.com/playlist?list=PLtqSRloqJqzodilL7rTKkd6BwS8RvVpTq"}
+    ]
+  },
+  "SSP": {
+    "name_en": "Slip, Slip, Purl",
+    "name_ko": "왼기울임 2코 모아 안뜨기",
+    "desc_ko": "두 코를 걸러 옮긴 뒤 함께 안뜨기.",
+    "aliases": ["ssp"],
+    "delta": -1,
+    "videos": [
+      {"title": "SSP (purl decrease)", "url": "https://youtube.com/playlist?list=PLtqSRloqJqzodilL7rTKkd6BwS8RvVpTq"}
+    ]
   }
 }
