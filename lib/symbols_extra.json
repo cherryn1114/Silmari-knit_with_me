@@ -14,11 +14,11 @@
       }
     ]
   },
-  "[대바늘 왕초보] 대바늘 기법 / 일반 코잡기 / cast on / 영문도안 / 앵콜스": {
-    "name_en": "[대바늘 왕초보] 대바늘 기법 / 일반 코잡기 / cast on / 영문도안 / 앵콜스",
-    "name_ko": "[대바늘 왕초보] 대바늘 기법 / 일반 코잡기 / cast on / 영문도안 / 앵콜스",
+  "일반 코잡기": {
+    "name_en": "Long-tail cast on",
+    "name_ko": "일반 코잡기",
     "desc_ko": "",
-    "aliases": [
+    "aliases": ["longtail cast on", "longtailcaston", "long tail cast on", "Long Tail Cast On", 
       "[대바늘 왕초보] 대바늘 기법 / 일반 코잡기 / cast on / 영문도안 / 앵콜스"
     ],
     "delta": 0,
