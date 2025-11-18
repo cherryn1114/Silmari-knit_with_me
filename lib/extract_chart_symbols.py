@@ -1,195 +1,152 @@
 # lib/extract_chart_symbols.py
-"""
-symbols.json + symbols_extra.json 에서
-'차트 기호로 표현 가능한 용어'만 골라서
-lib/chart_symbols.json 으로 저장하고,
-assets/chart/ 아래에 기호 이미지를 생성하는 스크립트.
+# ─────────────────────────────────────────
+# 1) data/moony_chart.xlsx 에서
+#    - 각 행의 텍스트(기호 이름/설명 등)
+#    - 그 행에 붙어 있는 차트 그림
+#    을 읽어와서
+# 2) assets/chart_symbols/ 에 PNG로 저장
+# 3) lib/chart_symbols.json 으로 메타데이터 저장
+#
+# ※ 엑셀 구조를 100% 알 수 없어서
+#    - A열: "코드/약어" → key
+#    - B열: "기호 이름"  → name
+#    - C열: "설명"       → desc
+#   이라고 가정해서 만들었어.
+#   실제로 컬럼 구성이 다르면 A/B/C 열만 맞춰주면 돼.
 
-터미널에서:
-    cd /workspaces/Silmari-knit_with_me
-    python lib/extract_chart_symbols.py
-"""
-
-import json
-import re
 from pathlib import Path
+import io
+import json
 
-from PIL import Image, ImageDraw, ImageFont
+import pandas as pd
+from openpyxl import load_workbook
+from PIL import Image as PILImage
 
 BASE = Path(__file__).resolve().parent
-ROOT = BASE.parent
 
-SYMBOLS_PATH = BASE / "symbols.json"
-EXTRA_PATH   = BASE / "symbols_extra.json"
-OUT_JSON     = BASE / "chart_symbols.json"
-IMG_DIR      = ROOT / "assets" / "chart"
+EXCEL_PATH = BASE.parent / "data" / "moony_chart.xlsx"
+OUT_JSON   = BASE / "chart_symbols.json"
+IMG_DIR    = BASE.parent / "assets" / "chart_symbols"
+
 IMG_DIR.mkdir(parents=True, exist_ok=True)
 
 
-def load_json(p: Path) -> dict:
-    if not p.exists():
-        return {}
-    with p.open(encoding="utf-8") as f:
-        return json.load(f)
+def load_table_from_excel():
+    """엑셀에서 텍스트 테이블 부분만 pandas DataFrame으로 읽기"""
+    if not EXCEL_PATH.exists():
+        raise FileNotFoundError(f"엑셀 파일을 찾을 수 없습니다: {EXCEL_PATH}")
+
+    df = pd.read_excel(EXCEL_PATH)
+    df = df.dropna(how="all")  # 완전 빈 행 제거
+
+    # 컬럼명 공백 제거
+    df.columns = [str(c).strip() for c in df.columns]
+
+    # 아무 컬럼도 없으면 종료
+    if df.shape[1] == 0:
+        raise RuntimeError("엑셀에 유효한 컬럼이 없습니다.")
+
+    return df
 
 
-base = load_json(SYMBOLS_PATH)
-extra = load_json(EXTRA_PATH)
-merged = {**base, **extra}
+def extract_images_by_row():
+    """
+    openpyxl로 엑셀 안에 포함된 이미지들을 꺼내고,
+    '위치한 행 번호(row)' 기준으로 매핑한다.
+
+    반환:
+        row → 이미지 파일명(str) 딕셔너리
+    """
+    wb = load_workbook(EXCEL_PATH, data_only=True)
+    ws = wb.active  # 첫 번째 시트 사용 (다르면 여기만 바꾸면 됨)
+
+    mapping = {}
+    idx = 1
+
+    # ws._images : openpyxl에서 워크시트에 붙은 그림 목록
+    for img in getattr(ws, "_images", []):
+        # 이미지가 붙어 있는 셀 위치 구하기
+        anchor = getattr(img, "anchor", None)
+        if anchor is None:
+            continue
+
+        # openpyxl 버전에 따라 anchor._from 에 있을 수 있음
+        if hasattr(anchor, "_from"):
+            cell_from = anchor._from
+            row = cell_from.row + 1  # 0-based → 1-based
+            col = cell_from.col + 1
+        else:
+            # 구버전 anchor: 직접 row/col 을 갖고 있을 수도 있음
+            row = getattr(anchor, "row", None)
+            col = getattr(anchor, "col", None)
+            if row is None:
+                continue
+
+        # 이미지 바이너리 뽑아서 PNG로 저장
+        try:
+            # img._data() 가 바이너리를 돌려주는 경우가 많음
+            bin_data = img._data()
+            if callable(bin_data):
+                bin_data = bin_data()
+            pil = PILImage.open(io.BytesIO(bin_data))
+        except Exception:
+            # 혹시 실패하면 그냥 넘어감
+            continue
+
+        fname = f"row{row:03d}_{idx:02d}.png"
+        out_path = IMG_DIR / fname
+        pil.save(out_path)
+        mapping[row] = fname
+        idx += 1
+
+    return mapping
 
 
-# -----------------------------
-# 차트 기호로 쓸 수 있는지 판단
-# -----------------------------
-CABLE_PATTERNS = [
-    r"\d+/\d+",       # 2/2, 2/1, 3/1 등
-    r"\bRC\b", r"\bLC\b",
-    r"RPC", r"LPC", r"Cable", r"cable", r"twist", r"cross",
-]
+def main():
+    print("📥 엑셀 텍스트 테이블 읽는 중...")
+    df = load_table_from_excel()
+    # 편의를 위해 인덱스를 reset
+    df = df.reset_index(drop=True)
 
-DECREASE_KEYS = [
-    "tog", "k2tog", "p2tog", "k3tog", "p3tog",
-    "ssk", "ssp", "skp", "cdd", "cddp", "k2tog tbl",
-]
+    # 열 이름 가정: A열=코드/약어, B열=이름, C열=설명
+    cols = list(df.columns)
+    code_col = cols[0]
+    name_col = cols[1] if len(cols) > 1 else cols[0]
+    desc_col = cols[2] if len(cols) > 2 else name_col
 
-INCREASE_KEYS = [
-    "yo", "m1", "m1l", "m1r", "kfb", "pfb", "inc",
-]
+    # 이미지 추출
+    print("🖼 엑셀 안의 차트 그림 추출 중…")
+    row_to_img = extract_images_by_row()
 
-BASIC_KEYS = [
-    "k", "p", "tbl", "ktbl", "ptbl", "k1-b", "sl", "slip",
-]
+    symbols = {}
+    for idx, row in df.iterrows():
+        # 엑셀 상에서의 실제 행 번호 (1행 = 헤더라고 가정 → 데이터는 2행부터)
+        excel_row = idx + 2
 
-def is_chartable(key: str, item: dict) -> bool:
-    k_lower = key.lower()
+        key = str(row.get(code_col, "")).strip()
+        if not key:
+            # 키가 없으면 'rowXX' 로라도 기록
+            key = f"row{excel_row:03d}"
 
-    # 기본 스티치
-    if k_lower in [b.lower() for b in BASIC_KEYS]:
-        return True
+        name = str(row.get(name_col, "")).strip()
+        desc = str(row.get(desc_col, "")).strip()
 
-    # 증가
-    if any(w in k_lower for w in [x.lower() for x in INCREASE_KEYS]):
-        return True
+        img_file = row_to_img.get(excel_row, "")
 
-    # 감소
-    if any(w in k_lower for w in [x.lower() for x in DECREASE_KEYS]):
-        return True
+        symbols[key] = {
+            "name": name,
+            "desc": desc,
+            "row": int(excel_row),
+            "image": img_file,  # assets/chart_symbols 안의 파일명
+        }
 
-    # delta 값이 +/- 인 것도 차트 가능성 ↑
-    try:
-        d = int(item.get("delta", 0))
-        if d != 0:
-            return True
-    except Exception:
-        pass
+    with OUT_JSON.open("w", encoding="utf-8") as f:
+        json.dump(symbols, f, ensure_ascii=False, indent=2)
 
-    # 케이블 / 교차
-    for pat in CABLE_PATTERNS:
-        if re.search(pat, key, flags=re.IGNORECASE):
-            return True
-
-    # name_en / name_ko 에 cable, cross 가 들어간 경우
-    name_en = (item.get("name_en") or "").lower()
-    name_ko = (item.get("name_ko") or "").lower()
-    if "cable" in name_en or "cross" in name_en or "꽈배기" in name_ko or "교차" in name_ko:
-        return True
-
-    return False
+    print(f"✅ 기호 개수: {len(symbols)}개")
+    print(f"📄 메타데이터: {OUT_JSON}")
+    print(f"🖼 이미지 폴더: {IMG_DIR}")
 
 
-def slugify(s: str) -> str:
-    # 파일 이름에 쓰기 안전한 형태로 변환
-    s = s.strip()
-    s = s.replace(" ", "_")
-    s = s.replace("/", "_")
-    s = re.sub(r"[^A-Za-z0-9_\-]", "", s)
-    if not s:
-        s = "symbol"
-    return s
-
-
-# -----------------------------
-# 1) 차트 가능 항목만 모아서 JSON 생성
-# -----------------------------
-chart_symbols = {}
-
-for key, item in merged.items():
-    if not is_chartable(key, item):
-        continue
-
-    base_entry = dict(item)  # 복사
-    # chart_image 파일명 제안
-    filename = slugify(key) + ".png"
-
-    base_entry.setdefault("chart_symbol", "")   # 나중에 수동 추가해도 됨
-    base_entry["chart_image"] = filename
-
-    chart_symbols[key] = base_entry
-
-# 저장
-OUT_JSON.write_text(json.dumps(chart_symbols, ensure_ascii=False, indent=2), encoding="utf-8")
-
-print(f"✅ 차트 기호로 판단된 항목 수: {len(chart_symbols)}개")
-print(f"→ lib/chart_symbols.json 으로 저장 완료")
-
-
-# -----------------------------
-# 2) 각 항목에 대해 단순 차트 이미지 생성
-#    (흰 배경 + 기호 텍스트)
-# -----------------------------
-def create_icon_png(key: str, filename: str):
-    size = 600  # 해상도 (원하면 1200으로 키워도 됨)
-    img = Image.new("RGB", (size, size), "white")
-    draw = ImageDraw.Draw(img)
-
-    # 바깥 사각형
-    margin = 40
-    draw.rectangle(
-        (margin, margin, size - margin, size - margin),
-        outline="black",
-        width=6,
-    )
-
-    # 텍스트: 가운데에는 약어, 아래에는 영문 이름 일부
-    text = key
-    # 기본 폰트 (환경 의존적이라 family는 지정X)
-    try:
-        font = ImageFont.truetype("arial.ttf", 80)
-        small = ImageFont.truetype("arial.ttf", 40)
-    except Exception:
-        font = ImageFont.load_default()
-        small = ImageFont.load_default()
-
-    # 가운데 큰 텍스트
-    w, h = draw.textsize(text, font=font)
-    draw.text(
-        ((size - w) / 2, (size - h) / 2 - 40),
-        text,
-        fill="black",
-        font=font,
-    )
-
-    # 아래 작은 설명(있으면)
-    desc = chart_symbols[key].get("name_en") or ""
-    if desc:
-        w2, h2 = draw.textsize(desc, font=small)
-        draw.text(
-            ((size - w2) / 2, size - h2 - 40),
-            desc,
-            fill="black",
-            font=small,
-        )
-
-    out_path = IMG_DIR / filename
-    img.save(out_path)
-    return out_path
-
-
-print("🖼 차트 기호 PNG 생성 중…")
-for k, v in chart_symbols.items():
-    fname = v["chart_image"]
-    path = create_icon_png(k, fname)
-    print(f"  - {k} → {path.relative_to(ROOT)}")
-
-print("✅ 이미지 생성 완료!")
-print("   assets/chart/ 폴더를 확인하세요.")
+if __name__ == "__main__":
+    main()
