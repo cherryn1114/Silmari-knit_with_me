@@ -4,111 +4,133 @@ import streamlit as st
 from pathlib import Path
 from lib import parser
 
-# -----------------------------
-# 기본 설정 & 경로
-# -----------------------------
 st.title("🧵 차트 도안 기호 사전")
 
-# 이미지가 들어 있는 폴더 (assets/chart)
+# gen_chart_images_v3.py 에서 사용한 키 목록과 동일하게 맞춰야 함
+CHART_KEYS = [
+    "k",
+    "p",
+    "yo",
+    "sl",
+    "ktbl",
+    "ptbl",
+    "kwise",
+    "pwise",
+    "M1",
+    "M1L",
+    "M1R",
+    "Inc",
+    "독일식 경사뜨기",
+    "옛 노르웨이식 코잡기",
+    "k2tog",
+    "Knit 3 stitches together (k3tog)",
+    "p2tog",
+    "SSK",
+    "SSP",
+    "Tog",
+    "1/1 LC",
+    "1/1 RC",
+    "2/2 LC",
+    "2/2 RC",
+    "오른코 위 2코와 1코 교차뜨기",
+    "오른코 위 2코와 1코(안뜨기) 교차뜨기",
+    "오른코 위 3코 교차뜨기",
+    "오른코 위 3코와 1코(안뜨기) 교차뜨기",
+    "오른코에 꿴 매듭뜨기 (3코)",
+    "왼코 위 2코와 1코 교차뜨기",
+    "왼코 위 2코와 1코(안뜨기) 교차뜨기",
+    "왼코 위 3코 교차뜨기",
+    "왼코 위 3코와 1코(안뜨기) 교차뜨기",
+    "걸러뜨기",
+]
+
 ASSET_DIR = Path("assets") / "chart"
 
-# -----------------------------
-# 1) 차트용 사전 로드 (chart_symbols.json 우선)
-# -----------------------------
-lib = {}
-source_label = ""
 
+def slugify(s: str) -> str:
+    s = s.strip()
+    s = s.replace(" ", "_").replace("/", "_")
+    s = "".join(ch for ch in s if ch.isalnum() or ch in "_-")
+    return s or "symbol"
+
+
+# 1) symbols.json + symbols_extra.json 병합
+base = parser.load_lib("symbols.json")
 try:
-    # extract_chart_symbols.py를 돌려서 만든 결과가 있으면 이걸 우선 사용
-    lib = parser.load_lib("chart_symbols.json")
-    source_label = "chart_symbols.json (차트 기호만)"
+    extra = parser.load_lib("symbols_extra.json")
 except FileNotFoundError:
-    # 없으면 기본 symbols.json 전체 사용
-    lib = parser.load_lib("symbols.json")
-    source_label = "symbols.json (전체 약어 사전)"
+    extra = {}
 
-if not lib:
-    st.error("차트 기호 사전을 불러오지 못했습니다. lib/symbols.json 또는 lib/chart_symbols.json을 확인하세요.")
-    st.stop()
+merged = {**base, **extra}
 
-# dict를 key 기준으로 정렬
-items = sorted(lib.items(), key=lambda kv: kv[0].lower())
+# 2) 차트 대상만 필터
+chart_items = {
+    k: v for k, v in merged.items()
+    if k in CHART_KEYS
+}
 
-# -----------------------------
-# 2) 검색 / 필터 UI
-# -----------------------------
+# 정렬
+items = sorted(chart_items.items(), key=lambda kv: kv[0].lower())
+
+st.caption(f"총 차트 기호 항목: **{len(items)}개**")
+
+# 검색 UI
 col1, col2 = st.columns([2, 1])
 with col1:
     q = st.text_input("검색 (약어 / 한글 / 영어 / 설명)", "")
 with col2:
-    only_chart_image = st.checkbox("이미지 있는 항목만 보기", value=False)
+    only_with_image = st.checkbox("이미지 있는 것만 보기", value=False)
 
-st.caption(f"불러온 사전: **{source_label}** · 총 항목 수: **{len(items)}**")
 
-# 간단 매칭 함수
-def matches(item_key: str, item_val: dict, query: str) -> bool:
+def matches(key: str, val: dict, query: str) -> bool:
     if not query:
         return True
-    q_low = query.lower()
-    name_en = (item_val.get("name_en") or "").lower()
-    name_ko = (item_val.get("name_ko") or "").lower()
-    desc    = (item_val.get("desc_ko") or "").lower()
-    aliases = " ".join(item_val.get("aliases", []))
+    ql = query.lower()
+    name_en = (val.get("name_en") or "").lower()
+    name_ko = (val.get("name_ko") or "").lower()
+    desc = (val.get("desc_ko") or "").lower()
+    aliases = " ".join(val.get("aliases", [])).lower()
 
-    if q_low in item_key.lower():
+    if ql in key.lower():
         return True
-    if q_low in name_en or q_low in name_ko or q_low in desc:
+    if ql in name_en or ql in name_ko or ql in desc:
         return True
-    if q_low in aliases.lower():
+    if ql in aliases:
         return True
     return False
 
-# slugify: key를 이미지 파일명으로 추정할 때 사용 (chart_image가 없을 경우 대비)
-def slugify(s: str) -> str:
-    s = s.strip()
-    s = s.replace(" ", "_")
-    s = s.replace("/", "_")
-    s = "".join(ch for ch in s if ch.isalnum() or ch in ["_", "-"])
-    return s or "symbol"
 
-# -----------------------------
-# 3) 항목 렌더링
-# -----------------------------
 shown = 0
 
 for key, val in items:
     if not matches(key, val, q):
         continue
 
-    # chart_image 필드가 있으면 우선 사용, 없으면 key 기반으로 추정
-    img_name = val.get("chart_image") or (slugify(key) + ".png")
+    img_name = slugify(key) + ".png"
     img_path = ASSET_DIR / img_name
-
     has_image = img_path.exists()
 
-    if only_chart_image and not has_image:
+    if only_with_image and not has_image:
         continue
 
     name_ko = val.get("name_ko", "")
     name_en = val.get("name_en", "")
 
-    # 각 기호를 접이식(expander) 카드로 표시
-    with st.expander(f"{key} — {name_ko or name_en}"):
+    title = f"{key}"
+    if name_ko or name_en:
+        title += f" — {name_ko or name_en}"
+
+    with st.expander(title):
         cols = st.columns([1, 2])
 
-        # ▸ 왼쪽: 차트 이미지 (또는 대체 텍스트)
+        # 왼쪽: 이미지
         with cols[0]:
             if has_image:
                 st.image(str(img_path), use_column_width=True, caption=img_name)
             else:
-                chart_sym = val.get("chart_symbol", "")
-                if chart_sym:
-                    st.markdown(f"### `{chart_sym}`")
-                    st.caption("등록된 이미지가 없어서 심볼 텍스트만 표시합니다.")
-                else:
-                    st.warning("🖼 등록된 차트 이미지가 없습니다.\nassets/chart/ 폴더와 chart_image 필드를 확인하세요.")
+                st.warning("🖼 등록된 차트 이미지가 없습니다.\nassets/chart/ 폴더를 확인하세요.")
 
-        # ▸ 오른쪽: 이름 / 설명 / 기타 정보
+        # 오른쪽: 설명
         with cols[1]:
             st.markdown(f"**영문 이름**: {name_en or '-'}")
             st.markdown(f"**한국어 이름**: {name_ko or '-'}")
@@ -116,25 +138,23 @@ for key, val in items:
             desc = val.get("desc_ko") or "(설명 없음)"
             st.write(desc)
 
-            # delta(코수 증감) 정보가 있으면 함께 표시
-            delta = val.get("delta", None)
+            # delta(코 증감) 있으면 표시
             try:
-                d_int = int(delta)
-                if d_int > 0:
-                    st.info(f"🔺 이 기법을 한 번 사용하면 **코 수가 +{d_int}코** 늘어납니다.")
-                elif d_int < 0:
-                    st.info(f"🔻 이 기법을 한 번 사용하면 **코 수가 {d_int}코** 줄어듭니다.")
+                d = int(val.get("delta", 0))
+                if d > 0:
+                    st.info(f"🔺 이 기법을 한 번 사용하면 **코 수가 +{d}코** 늘어납니다.")
+                elif d < 0:
+                    st.info(f"🔻 이 기법을 한 번 사용하면 **코 수가 {d}코** 줄어듭니다.")
             except Exception:
                 pass
-
-            # 비교(compare) 필드가 있으면 함께 보여주기 (예: m1L vs m1R)
-            if val.get("compare"):
-                st.markdown("**비교 기법:** " + ", ".join(val["compare"]))
 
     shown += 1
 
 if shown == 0:
-    st.info("조건에 맞는 차트 기호가 없습니다. 검색어/필터를 확인해 보세요.")
+    st.info("조건에 맞는 차트 기호가 없습니다. 검색어/필터를 확인해보세요.")
 
 st.divider()
-st.caption("※ chart_symbols.json이 있으면 그것을 사용하고, 없으면 symbols.json 전체를 기반으로 차트 기호를 보여줍니다. 이미지 파일은 assets/chart/ 폴더에 두면 자동으로 연결됩니다.")
+st.caption(
+    "※ 이 페이지는 symbols.json(+symbols_extra.json)에 정의된 용어 중 "
+    "차트로 표현 가능한 용어들만 모아, assets/chart/ 폴더의 이미지를 연결해서 보여줍니다."
+)
