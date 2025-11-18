@@ -1,610 +1,325 @@
 {
-  "[Beginner's Knitting Needle] Knitting Techniques / Knit and Purl / Knit & Purl / English Pattern ...": {
-    "name_en": "[Beginner's Knitting Needle] Knitting Techniques / Knit and Purl / Knit & Purl / English Pattern ...",
-    "name_ko": "[Beginner's Knitting Needle] Knitting Techniques / Knit and Purl / Knit & Purl / English Pattern ...",
-    "desc_ko": "",
+  "걸러뜨기": {
+    "name_en": "slip",
+    "name_ko": "걸러뜨기",
+    "desc_ko": "왼바늘에 걸려있는 한 코를 뜨지 않고 오른쪽 바늘로 옮기기",
     "aliases": [
-      "[Beginner's Knitting Needle] Knitting Techniques / Knit and Purl / Knit & Purl / English Pattern ..."
+      "걸러 뜨기", "sl"
     ],
     "delta": 0,
     "videos": [
       {
-        "title": "[Beginner's Knitting Needle] Knitting Techniques / Knit and Purl / Knit & Purl / English Pattern ...",
-        "url": "https://www.youtube.com/watch?v=9ZmADvdpRJI"
-      }
-    ]
-  },
-  "일반 코잡기": {
-    "name_en": "Long-tail cast on",
-    "name_ko": "일반 코잡기",
-    "desc_ko": "",
-    "aliases": ["longtail cast on", "longtailcaston", "long tail cast on", "Long Tail Cast On", 
-      "[대바늘 왕초보] 대바늘 기법 / 일반 코잡기 / cast on / 영문도안 / 앵콜스"
-    ],
-    "delta": 0,
-    "videos": [
-      {
-        "title": "[대바늘 왕초보] 대바늘 기법 / 일반 코잡기 / cast on / 영문도안 / 앵콜스",
-        "url": "https://www.youtube.com/watch?v=d3VexYyRYug"
-      }
-    ]
-  },
-  "[Beginner's Needle] Needle technique / Left-handed knit / K2tog / English pattern / Encore": {
-    "name_en": "[Beginner's Needle] Needle technique / Left-handed knit / K2tog / English pattern / Encore",
-    "name_ko": "[Beginner's Needle] Needle technique / Left-handed knit / K2tog / English pattern / Encore",
-    "desc_ko": "",
-    "aliases": [
-      "[Beginner's Needle] Needle technique / Left-handed knit / K2tog / English pattern / Encore"
-    ],
-    "delta": 0,
-    "videos": [
-      {
-        "title": "[Beginner's Needle] Needle technique / Left-handed knit / K2tog / English pattern / Encore",
-        "url": "https://www.youtube.com/watch?v=o1SMwygZ_jA"
-      }
-    ]
-  },
-  "[Beginner's Needle] / Needle Technique / Left Stitch and Purl / P2tog / English Pattern / Encores": {
-    "name_en": "[Beginner's Needle] / Needle Technique / Left Stitch and Purl / P2tog / English Pattern / Encores",
-    "name_ko": "[Beginner's Needle] / Needle Technique / Left Stitch and Purl / P2tog / English Pattern / Encores",
-    "desc_ko": "",
-    "aliases": [
-      "[Beginner's Needle] / Needle Technique / Left Stitch and Purl / P2tog / English Pattern / Encores"
-    ],
-    "delta": 0,
-    "videos": [
-      {
-        "title": "[Beginner's Needle] / Needle Technique / Left Stitch and Purl / P2tog / English Pattern / Encores",
-        "url": "https://www.youtube.com/watch?v=iCfLHQsjhZM"
-      }
-    ]
-  },
-  "[대바늘 왕초보] 대바늘 기법 / 걸러뜨기 / 영문도안 / 앵콜스": {
-    "name_en": "[대바늘 왕초보] 대바늘 기법 / 걸러뜨기 / 영문도안 / 앵콜스",
-    "name_ko": "[대바늘 왕초보] 대바늘 기법 / 걸러뜨기 / 영문도안 / 앵콜스",
-    "desc_ko": "",
-    "aliases": [
-      "[대바늘 왕초보] 대바늘 기법 / 걸러뜨기 / 영문도안 / 앵콜스"
-    ],
-    "delta": 0,
-    "videos": [
-      {
-        "title": "[대바늘 왕초보] 대바늘 기법 / 걸러뜨기 / 영문도안 / 앵콜스",
+        "title": "걸러뜨기",
         "url": "https://www.youtube.com/watch?v=-mDDmE3A2SE"
       }
     ]
   },
-  "[대바늘 왕초보] 대바늘 기법 / 오른코 늘리기 / M1R / 영문도안 / 앵콜스": {
-    "name_en": "[대바늘 왕초보] 대바늘 기법 / 오른코 늘리기 / M1R / 영문도안 / 앵콜스",
-    "name_ko": "[대바늘 왕초보] 대바늘 기법 / 오른코 늘리기 / M1R / 영문도안 / 앵콜스",
-    "desc_ko": "",
-    "aliases": [
-      "[대바늘 왕초보] 대바늘 기법 / 오른코 늘리기 / M1R / 영문도안 / 앵콜스"
+
+  "SKPO": {
+    "name_en": "slip, knit, pass over the slipped stitch",
+    "name_ko": "오른코 모아뜨기",
+    "desc_ko": "한 코 걸러뜨고, 다음 코 겉뜨기로 뜬 뒤, 걸러뜬 코로 덮어씌우기",
+    "aliases": ["skpo", "slip, knit, pass over the slipped st", "slip-knit-pass-over-the-slipped-stitch","오른코 모아 겉뜨기"
     ],
     "delta": 0,
     "videos": [
       {
-        "title": "[대바늘 왕초보] 대바늘 기법 / 오른코 늘리기 / M1R / 영문도안 / 앵콜스",
-        "url": "https://www.youtube.com/watch?v=pbxInWq0mWc"
-      }
-    ]
-  },
-  "[Beginner's Needle] Knitting Techniques / Right-hand Knit / SKPO / English Pattern / Encores": {
-    "name_en": "[Beginner's Needle] Knitting Techniques / Right-hand Knit / SKPO / English Pattern / Encores",
-    "name_ko": "[Beginner's Needle] Knitting Techniques / Right-hand Knit / SKPO / English Pattern / Encores",
-    "desc_ko": "",
-    "aliases": [
-      "[Beginner's Needle] Knitting Techniques / Right-hand Knit / SKPO / English Pattern / Encores"
-    ],
-    "delta": 0,
-    "videos": [
-      {
-        "title": "[Beginner's Needle] Knitting Techniques / Right-hand Knit / SKPO / English Pattern / Encores",
+        "title": "SKPO",
         "url": "https://www.youtube.com/watch?v=MpqT_RwLI30"
       }
     ]
   },
-  "[Beginner's Needle] Needle technique / Right-hand purl / SSP / English pattern / Encore": {
-    "name_en": "[Beginner's Needle] Needle technique / Right-hand purl / SSP / English pattern / Encore",
-    "name_ko": "[Beginner's Needle] Needle technique / Right-hand purl / SSP / English pattern / Encore",
+  "변형 고무뜨기": {
+    "name_en": "Fisherman Rib Stitch",
+    "name_ko": "변형 고무뜨기",
     "desc_ko": "",
     "aliases": [
-      "[Beginner's Needle] Needle technique / Right-hand purl / SSP / English pattern / Encore"
+      "피셔맨고무뜨기", "fisherman-rib-stitch", "fisherman rib stitch", "fisherman-rib stitch", "고무뜨기", "고무단"
     ],
     "delta": 0,
     "videos": [
       {
-        "title": "[Beginner's Needle] Needle technique / Right-hand purl / SSP / English pattern / Encore",
-        "url": "https://www.youtube.com/watch?v=46xSmQ-gEM8"
-      }
-    ]
-  },
-  "[Beginner's Guide to Large Needles] Technique Video / Left-Hand Extension / M1L / English Pattern...": {
-    "name_en": "[Beginner's Guide to Large Needles] Technique Video / Left-Hand Extension / M1L / English Pattern...",
-    "name_ko": "[Beginner's Guide to Large Needles] Technique Video / Left-Hand Extension / M1L / English Pattern...",
-    "desc_ko": "",
-    "aliases": [
-      "[Beginner's Guide to Large Needles] Technique Video / Left-Hand Extension / M1L / English Pattern..."
-    ],
-    "delta": 0,
-    "videos": [
-      {
-        "title": "[Beginner's Guide to Large Needles] Technique Video / Left-Hand Extension / M1L / English Pattern...",
-        "url": "https://www.youtube.com/watch?v=jAEdiSchIUs"
-      }
-    ]
-  },
-  "[대바늘 왕초보] 대바늘 기법 / 바늘비우기 / YO / 영문도안 / 앵콜스": {
-    "name_en": "[대바늘 왕초보] 대바늘 기법 / 바늘비우기 / YO / 영문도안 / 앵콜스",
-    "name_ko": "[대바늘 왕초보] 대바늘 기법 / 바늘비우기 / YO / 영문도안 / 앵콜스",
-    "desc_ko": "",
-    "aliases": [
-      "[대바늘 왕초보] 대바늘 기법 / 바늘비우기 / YO / 영문도안 / 앵콜스"
-    ],
-    "delta": 0,
-    "videos": [
-      {
-        "title": "[대바늘 왕초보] 대바늘 기법 / 바늘비우기 / YO / 영문도안 / 앵콜스",
-        "url": "https://www.youtube.com/watch?v=6ivU38tF4ow"
-      }
-    ]
-  },
-  "[대바늘 왕초보] 대바늘 기법 / 메리야스 뜨기 / Stocking Stitch / 영문도안 / 앵콜스": {
-    "name_en": "[대바늘 왕초보] 대바늘 기법 / 메리야스 뜨기 / Stocking Stitch / 영문도안 / 앵콜스",
-    "name_ko": "[대바늘 왕초보] 대바늘 기법 / 메리야스 뜨기 / Stocking Stitch / 영문도안 / 앵콜스",
-    "desc_ko": "",
-    "aliases": [
-      "[대바늘 왕초보] 대바늘 기법 / 메리야스 뜨기 / Stocking Stitch / 영문도안 / 앵콜스"
-    ],
-    "delta": 0,
-    "videos": [
-      {
-        "title": "[대바늘 왕초보] 대바늘 기법 / 메리야스 뜨기 / Stocking Stitch / 영문도안 / 앵콜스",
-        "url": "https://www.youtube.com/watch?v=5V7YEv6Wmws"
-      }
-    ]
-  },
-  "[대바늘 왕초보] 대바늘 기법 / 한코 고무뜨기 / 1X1 Rib Stitch / 영문도안 / 앵콜스": {
-    "name_en": "[대바늘 왕초보] 대바늘 기법 / 한코 고무뜨기 / 1X1 Rib Stitch / 영문도안 / 앵콜스",
-    "name_ko": "[대바늘 왕초보] 대바늘 기법 / 한코 고무뜨기 / 1X1 Rib Stitch / 영문도안 / 앵콜스",
-    "desc_ko": "",
-    "aliases": [
-      "[대바늘 왕초보] 대바늘 기법 / 한코 고무뜨기 / 1X1 Rib Stitch / 영문도안 / 앵콜스"
-    ],
-    "delta": 0,
-    "videos": [
-      {
-        "title": "[대바늘 왕초보] 대바늘 기법 / 한코 고무뜨기 / 1X1 Rib Stitch / 영문도안 / 앵콜스",
-        "url": "https://www.youtube.com/watch?v=GM9-iZZxjhw"
-      }
-    ]
-  },
-  "[대바늘 왕초보] 대바늘 기법 / 2코 고무뜨기 / 2X2 Rib Stitch / 영문도안 / 앵콜스": {
-    "name_en": "[대바늘 왕초보] 대바늘 기법 / 2코 고무뜨기 / 2X2 Rib Stitch / 영문도안 / 앵콜스",
-    "name_ko": "[대바늘 왕초보] 대바늘 기법 / 2코 고무뜨기 / 2X2 Rib Stitch / 영문도안 / 앵콜스",
-    "desc_ko": "",
-    "aliases": [
-      "[대바늘 왕초보] 대바늘 기법 / 2코 고무뜨기 / 2X2 Rib Stitch / 영문도안 / 앵콜스"
-    ],
-    "delta": 0,
-    "videos": [
-      {
-        "title": "[대바늘 왕초보] 대바늘 기법 / 2코 고무뜨기 / 2X2 Rib Stitch / 영문도안 / 앵콜스",
-        "url": "https://www.youtube.com/watch?v=pbISOCXxRR8"
-      }
-    ]
-  },
-  "[대바늘 왕초보] 대바늘 기법 / 변형 고무뜨기 / Fisherman Rib Stitch / 영문도안 / 앵콜스": {
-    "name_en": "[대바늘 왕초보] 대바늘 기법 / 변형 고무뜨기 / Fisherman Rib Stitch / 영문도안 / 앵콜스",
-    "name_ko": "[대바늘 왕초보] 대바늘 기법 / 변형 고무뜨기 / Fisherman Rib Stitch / 영문도안 / 앵콜스",
-    "desc_ko": "",
-    "aliases": [
-      "[대바늘 왕초보] 대바늘 기법 / 변형 고무뜨기 / Fisherman Rib Stitch / 영문도안 / 앵콜스"
-    ],
-    "delta": 0,
-    "videos": [
-      {
-        "title": "[대바늘 왕초보] 대바늘 기법 / 변형 고무뜨기 / Fisherman Rib Stitch / 영문도안 / 앵콜스",
+        "title": "변형고무뜨기",
         "url": "https://www.youtube.com/watch?v=7aXU48mxz8M"
       }
     ]
   },
-  "[Beginner's Guide to Crochet] Crochet Techniques / Garter Stitch / English Pattern / Encores": {
-    "name_en": "[Beginner's Guide to Crochet] Crochet Techniques / Garter Stitch / English Pattern / Encores",
-    "name_ko": "[Beginner's Guide to Crochet] Crochet Techniques / Garter Stitch / English Pattern / Encores",
-    "desc_ko": "",
-    "aliases": [
-      "[Beginner's Guide to Crochet] Crochet Techniques / Garter Stitch / English Pattern / Encores"
+  "왼코 위 3코와 1코(안뜨기) 교차뜨기": {
+    "name_en": "3/1 Right Purl Cross (RPC)",
+    "name_ko": "왼코 위 3코와 1코(안뜨기) 교차뜨기",
+    "desc_ko": "오른쪽 한 코를 뒤로 빼고, 왼쪽 3코를 겉뜨기로 뜬 후, 뒤로 뺴놓은 코를 안뜨기로 뜨기",
+    "aliases": [ 
+      "3/1 RPC", "RPC", "교차뜨기"
     ],
     "delta": 0,
     "videos": [
       {
-        "title": "[Beginner's Guide to Crochet] Crochet Techniques / Garter Stitch / English Pattern / Encores",
-        "url": "https://www.youtube.com/watch?v=KttbW_0mwg8"
-      }
-    ]
-  },
-  "[대바늘 왕초보] 대바늘 기법 / 덮어씌워 코막음 / cast off / 영문도안 / 앵콜스": {
-    "name_en": "[대바늘 왕초보] 대바늘 기법 / 덮어씌워 코막음 / cast off / 영문도안 / 앵콜스",
-    "name_ko": "[대바늘 왕초보] 대바늘 기법 / 덮어씌워 코막음 / cast off / 영문도안 / 앵콜스",
-    "desc_ko": "",
-    "aliases": [
-      "[대바늘 왕초보] 대바늘 기법 / 덮어씌워 코막음 / cast off / 영문도안 / 앵콜스"
-    ],
-    "delta": 0,
-    "videos": [
-      {
-        "title": "[대바늘 왕초보] 대바늘 기법 / 덮어씌워 코막음 / cast off / 영문도안 / 앵콜스",
-        "url": "https://www.youtube.com/watch?v=ffLivFBglzg"
-      }
-    ]
-  },
-  "[대바늘 왕초보] 대바늘 기법 / 오른코 위 2코 교차뜨기 / 2/2 LC / 영문도안 / 앵콜스": {
-    "name_en": "[대바늘 왕초보] 대바늘 기법 / 오른코 위 2코 교차뜨기 / 2/2 LC / 영문도안 / 앵콜스",
-    "name_ko": "[대바늘 왕초보] 대바늘 기법 / 오른코 위 2코 교차뜨기 / 2/2 LC / 영문도안 / 앵콜스",
-    "desc_ko": "",
-    "aliases": [
-      "[대바늘 왕초보] 대바늘 기법 / 오른코 위 2코 교차뜨기 / 2/2 LC / 영문도안 / 앵콜스"
-    ],
-    "delta": 0,
-    "videos": [
-      {
-        "title": "[대바늘 왕초보] 대바늘 기법 / 오른코 위 2코 교차뜨기 / 2/2 LC / 영문도안 / 앵콜스",
-        "url": "https://www.youtube.com/watch?v=wVGY3wKh2eo"
-      }
-    ]
-  },
-  "[대바늘 왕초보] 대바늘 기법 / 왼코 위 2코 교차뜨기 / 2/2 RC / 영문도안 / 앵콜스": {
-    "name_en": "[대바늘 왕초보] 대바늘 기법 / 왼코 위 2코 교차뜨기 / 2/2 RC / 영문도안 / 앵콜스",
-    "name_ko": "[대바늘 왕초보] 대바늘 기법 / 왼코 위 2코 교차뜨기 / 2/2 RC / 영문도안 / 앵콜스",
-    "desc_ko": "",
-    "aliases": [
-      "[대바늘 왕초보] 대바늘 기법 / 왼코 위 2코 교차뜨기 / 2/2 RC / 영문도안 / 앵콜스"
-    ],
-    "delta": 0,
-    "videos": [
-      {
-        "title": "[대바늘 왕초보] 대바늘 기법 / 왼코 위 2코 교차뜨기 / 2/2 RC / 영문도안 / 앵콜스",
-        "url": "https://www.youtube.com/watch?v=xGJ0EKHUMPY"
-      }
-    ]
-  },
-  "[대바늘 왕초보] 대바늘 기법 / 왼코 위 3코와 1코(안뜨기) 교차뜨기 / 3/1 RPC / 영문도안 / 앵콜스": {
-    "name_en": "[대바늘 왕초보] 대바늘 기법 / 왼코 위 3코와 1코(안뜨기) 교차뜨기 / 3/1 RPC / 영문도안 / 앵콜스",
-    "name_ko": "[대바늘 왕초보] 대바늘 기법 / 왼코 위 3코와 1코(안뜨기) 교차뜨기 / 3/1 RPC / 영문도안 / 앵콜스",
-    "desc_ko": "",
-    "aliases": [
-      "[대바늘 왕초보] 대바늘 기법 / 왼코 위 3코와 1코(안뜨기) 교차뜨기 / 3/1 RPC / 영문도안 / 앵콜스"
-    ],
-    "delta": 0,
-    "videos": [
-      {
-        "title": "[대바늘 왕초보] 대바늘 기법 / 왼코 위 3코와 1코(안뜨기) 교차뜨기 / 3/1 RPC / 영문도안 / 앵콜스",
+        "title": "3/1 RPC",
         "url": "https://www.youtube.com/watch?v=zhWeMAJzazI"
       }
     ]
   },
-  "[대바늘 왕초보] 대바늘 기법 / 오른코 위 3코와 1코(안뜨기) 교차뜨기 / 3/1 LPC / 영문도안 / 앵콜스": {
-    "name_en": "[대바늘 왕초보] 대바늘 기법 / 오른코 위 3코와 1코(안뜨기) 교차뜨기 / 3/1 LPC / 영문도안 / 앵콜스",
-    "name_ko": "[대바늘 왕초보] 대바늘 기법 / 오른코 위 3코와 1코(안뜨기) 교차뜨기 / 3/1 LPC / 영문도안 / 앵콜스",
-    "desc_ko": "",
+  "오른코 위 3코와 1코(안뜨기) 교차뜨기": {
+    "name_en": "3/1 Left Purl Cross (LPC)",
+    "name_ko": "오른코 위 3코와 1코(안뜨기) 교차뜨기",
+    "desc_ko": "오른코 3코를 앞으로 뺴고, 왼쪽 한 코를 안뜨기로 뜬 후, 앞으로 뺀 3코를 겉뜨기로 뜨기",
     "aliases": [
-      "[대바늘 왕초보] 대바늘 기법 / 오른코 위 3코와 1코(안뜨기) 교차뜨기 / 3/1 LPC / 영문도안 / 앵콜스"
+      "3/1 LPC", "LPC","교차뜨기"
     ],
     "delta": 0,
     "videos": [
       {
-        "title": "[대바늘 왕초보] 대바늘 기법 / 오른코 위 3코와 1코(안뜨기) 교차뜨기 / 3/1 LPC / 영문도안 / 앵콜스",
+        "title": "3/1 LPC",
         "url": "https://www.youtube.com/watch?v=QxBKEeqs_CY"
       }
     ]
   },
-  "[대바늘 왕초보] 대바늘 기법 / 왼코 위 2코와 1코(안뜨기) 교차뜨기 / 2/1 RPC / 영문도안 / 앵콜스": {
-    "name_en": "[대바늘 왕초보] 대바늘 기법 / 왼코 위 2코와 1코(안뜨기) 교차뜨기 / 2/1 RPC / 영문도안 / 앵콜스",
-    "name_ko": "[대바늘 왕초보] 대바늘 기법 / 왼코 위 2코와 1코(안뜨기) 교차뜨기 / 2/1 RPC / 영문도안 / 앵콜스",
-    "desc_ko": "",
+  "왼코 위 2코와 1코(안뜨기) 교차뜨기": {
+    "name_en": "2/1 Right Purl Cross (RPC)",
+    "name_ko": "왼코 위 2코와 1코(안뜨기) 교차뜨기",
+    "desc_ko": "오른코 한 코를 뒤로 뺴고, 왼코 2코를 겉뜨기로 뜬 후, 뒤로 뺸 코를 안뜨기로 뜨기",
     "aliases": [
-      "[대바늘 왕초보] 대바늘 기법 / 왼코 위 2코와 1코(안뜨기) 교차뜨기 / 2/1 RPC / 영문도안 / 앵콜스"
+      "2/1 RPC", "RPC", "교차뜨기"
     ],
     "delta": 0,
     "videos": [
       {
-        "title": "[대바늘 왕초보] 대바늘 기법 / 왼코 위 2코와 1코(안뜨기) 교차뜨기 / 2/1 RPC / 영문도안 / 앵콜스",
+        "title": "2/1 RPC",
         "url": "https://www.youtube.com/watch?v=o52v5_2Fd9Y"
       }
     ]
   },
-  "[대바늘 왕초보] 대바늘 기법 / 오른코 위 2코와 1코(안뜨기) 교차뜨기 / 2/1 LPC / 영문도안 / 앵콜스": {
-    "name_en": "[대바늘 왕초보] 대바늘 기법 / 오른코 위 2코와 1코(안뜨기) 교차뜨기 / 2/1 LPC / 영문도안 / 앵콜스",
-    "name_ko": "[대바늘 왕초보] 대바늘 기법 / 오른코 위 2코와 1코(안뜨기) 교차뜨기 / 2/1 LPC / 영문도안 / 앵콜스",
-    "desc_ko": "",
+  "오른코 위 2코와 1코(안뜨기) 교차뜨기": {
+    "name_en": "2/1 Left Purl Cross (LPC)",
+    "name_ko": "오른코 위 2코와 1코(안뜨기) 교차뜨기",
+    "desc_ko": "오른코 2코를 앞으로 뺴고, 왼쪽 한 코를 안뜨기로 뜬 후, 앞으로 뺸 2코를 겉뜨기로 뜨기",
     "aliases": [
-      "[대바늘 왕초보] 대바늘 기법 / 오른코 위 2코와 1코(안뜨기) 교차뜨기 / 2/1 LPC / 영문도안 / 앵콜스"
+      "2/1 LPC", "LPC", "교차뜨기"
     ],
     "delta": 0,
     "videos": [
       {
-        "title": "[대바늘 왕초보] 대바늘 기법 / 오른코 위 2코와 1코(안뜨기) 교차뜨기 / 2/1 LPC / 영문도안 / 앵콜스",
+        "title": "2/1 LPC",
         "url": "https://www.youtube.com/watch?v=-IH2tZBeBDY"
       }
     ]
   },
-  "[대바늘 왕초보] 대바늘 기법 / 오른코 위 2코와 1코 교차뜨기 / 2/1 LC / 영문도안 / 앵콜스": {
-    "name_en": "[대바늘 왕초보] 대바늘 기법 / 오른코 위 2코와 1코 교차뜨기 / 2/1 LC / 영문도안 / 앵콜스",
-    "name_ko": "[대바늘 왕초보] 대바늘 기법 / 오른코 위 2코와 1코 교차뜨기 / 2/1 LC / 영문도안 / 앵콜스",
-    "desc_ko": "",
+  "오른코 위 2코와 1코 교차뜨기": {
+    "name_en": "2/1 Left Cross",
+    "name_ko": "오른코 위 2코와 1코 교차뜨기",
+    "desc_ko": "오른코 2코를 앞으로 빼고, 왼코 1코를 겉뜨기로 뜬 후, 앞으로 뺸 2코를 겉뜨기로 뜨기",
     "aliases": [
-      "[대바늘 왕초보] 대바늘 기법 / 오른코 위 2코와 1코 교차뜨기 / 2/1 LC / 영문도안 / 앵콜스"
+      "2/1 LC", "LC", "교차뜨기"
     ],
     "delta": 0,
     "videos": [
       {
-        "title": "[대바늘 왕초보] 대바늘 기법 / 오른코 위 2코와 1코 교차뜨기 / 2/1 LC / 영문도안 / 앵콜스",
+        "title": "2/1 LC",
         "url": "https://www.youtube.com/watch?v=dbiOTD5d6ZA"
       }
     ]
   },
-  "[대바늘 왕초보] 대바늘 기법 / 왼코 위 2코와 1코 교차뜨기 / 2/1 RC / 영문도안 / 앵콜스": {
-    "name_en": "[대바늘 왕초보] 대바늘 기법 / 왼코 위 2코와 1코 교차뜨기 / 2/1 RC / 영문도안 / 앵콜스",
-    "name_ko": "[대바늘 왕초보] 대바늘 기법 / 왼코 위 2코와 1코 교차뜨기 / 2/1 RC / 영문도안 / 앵콜스",
-    "desc_ko": "",
+  "왼코 위 2코와 1코 교차뜨기": {
+    "name_en": "2/1 Right Cross",
+    "name_ko": "왼코 위 2코와 1코 교차뜨기",
+    "desc_ko": "오른코 1코를 뒤로 뺴고, 왼코 2코를 겉뜨기로 뜬 후, 뒤로 뺸 코 겉뜨기로 뜨기",
     "aliases": [
-      "[대바늘 왕초보] 대바늘 기법 / 왼코 위 2코와 1코 교차뜨기 / 2/1 RC / 영문도안 / 앵콜스"
+      "2/1 RC", "RC", "교차뜨기"
     ],
     "delta": 0,
     "videos": [
       {
-        "title": "[대바늘 왕초보] 대바늘 기법 / 왼코 위 2코와 1코 교차뜨기 / 2/1 RC / 영문도안 / 앵콜스",
+        "title": "2/1 RC",
         "url": "https://www.youtube.com/watch?v=drZxgOINTrE"
       }
     ]
   },
-  "[대바늘 왕초보] 대바늘 기법 / 오른코 위 3코 교차뜨기 / 3/3 LC / 영문도안 / 앵콜스": {
-    "name_en": "[대바늘 왕초보] 대바늘 기법 / 오른코 위 3코 교차뜨기 / 3/3 LC / 영문도안 / 앵콜스",
-    "name_ko": "[대바늘 왕초보] 대바늘 기법 / 오른코 위 3코 교차뜨기 / 3/3 LC / 영문도안 / 앵콜스",
-    "desc_ko": "",
+  "오른코 위 3코 교차뜨기": {
+    "name_en": "3/3 Left Cross",
+    "name_ko": "오른코 위 3코 교차뜨기",
+    "desc_ko": "오른코 3코를 앞으로 빼고, 왼코 3코를 겉뜨기로 뜬 후, 앞으로 뺸 코 겉뜨기로 뜨기",
     "aliases": [
-      "[대바늘 왕초보] 대바늘 기법 / 오른코 위 3코 교차뜨기 / 3/3 LC / 영문도안 / 앵콜스"
+      "3/3 LC", "LC", "교차뜨기"
     ],
     "delta": 0,
     "videos": [
       {
-        "title": "[대바늘 왕초보] 대바늘 기법 / 오른코 위 3코 교차뜨기 / 3/3 LC / 영문도안 / 앵콜스",
+        "title": "3/3 LC",
         "url": "https://www.youtube.com/watch?v=U8SMCBp-Z2E"
       }
     ]
   },
-  "[대바늘 왕초보] 대바늘 기법 / 왼코 위 3코 교차뜨기 / 3/3 RC / 영문도안 / 앵콜스": {
-    "name_en": "[대바늘 왕초보] 대바늘 기법 / 왼코 위 3코 교차뜨기 / 3/3 RC / 영문도안 / 앵콜스",
-    "name_ko": "[대바늘 왕초보] 대바늘 기법 / 왼코 위 3코 교차뜨기 / 3/3 RC / 영문도안 / 앵콜스",
-    "desc_ko": "",
+  "왼코 위 3코 교차뜨기": {
+    "name_en": "3/3 Right Cross",
+    "name_ko": "왼코 위 3코 교차뜨기",
+    "desc_ko": "오른코 3코를 뒤로 뺴고, 왼코 3코를 겉뜨기로 뜬 후, 뒤로 뺸 코 겉뜨기로 뜨기",
     "aliases": [
-      "[대바늘 왕초보] 대바늘 기법 / 왼코 위 3코 교차뜨기 / 3/3 RC / 영문도안 / 앵콜스"
+      "3/3 RC", "RC", "교차뜨기"
     ],
     "delta": 0,
     "videos": [
       {
-        "title": "[대바늘 왕초보] 대바늘 기법 / 왼코 위 3코 교차뜨기 / 3/3 RC / 영문도안 / 앵콜스",
+        "title": "3/3 RC",
         "url": "https://www.youtube.com/watch?v=388dPztJ6wk"
       }
     ]
   },
-  "[대바늘 왕초보] 대바늘 기법 / 꼬아뜨기 (겉뜨기) / ktbl / 영문도안 / 앵콜스": {
-    "name_en": "[대바늘 왕초보] 대바늘 기법 / 꼬아뜨기 (겉뜨기) / ktbl / 영문도안 / 앵콜스",
-    "name_ko": "[대바늘 왕초보] 대바늘 기법 / 꼬아뜨기 (겉뜨기) / ktbl / 영문도안 / 앵콜스",
-    "desc_ko": "",
+  "오른코에 꿴 매듭뜨기 (3코)": {
+    "name_en": "Slip, knit together",
+    "name_ko": "오른코에 꿴 매듭뜨기 (3코)",
+    "desc_ko": "영상 참고",
     "aliases": [
-      "[대바늘 왕초보] 대바늘 기법 / 꼬아뜨기 (겉뜨기) / ktbl / 영문도안 / 앵콜스"
+      "오른코에 꿴 매듭뜨기 (3코)", "skt", "SKT"
     ],
     "delta": 0,
     "videos": [
       {
-        "title": "[대바늘 왕초보] 대바늘 기법 / 꼬아뜨기 (겉뜨기) / ktbl / 영문도안 / 앵콜스",
-        "url": "https://www.youtube.com/watch?v=RRbvoHAuuHo"
-      }
-    ]
-  },
-  "[대바늘 왕초보] 대바늘 기법 / 꼬아뜨기 (안뜨기) / ptbl / 영문도안 / 앵콜스": {
-    "name_en": "[대바늘 왕초보] 대바늘 기법 / 꼬아뜨기 (안뜨기) / ptbl / 영문도안 / 앵콜스",
-    "name_ko": "[대바늘 왕초보] 대바늘 기법 / 꼬아뜨기 (안뜨기) / ptbl / 영문도안 / 앵콜스",
-    "desc_ko": "",
-    "aliases": [
-      "[대바늘 왕초보] 대바늘 기법 / 꼬아뜨기 (안뜨기) / ptbl / 영문도안 / 앵콜스"
-    ],
-    "delta": 0,
-    "videos": [
-      {
-        "title": "[대바늘 왕초보] 대바늘 기법 / 꼬아뜨기 (안뜨기) / ptbl / 영문도안 / 앵콜스",
-        "url": "https://www.youtube.com/watch?v=PyI2hGENcEg"
-      }
-    ]
-  },
-  "[대바늘 왕초보] 대바늘 기법 / 오른코에 꿴 매듭뜨기 (3코) / 영문도안 / 앵콜스": {
-    "name_en": "[대바늘 왕초보] 대바늘 기법 / 오른코에 꿴 매듭뜨기 (3코) / 영문도안 / 앵콜스",
-    "name_ko": "[대바늘 왕초보] 대바늘 기법 / 오른코에 꿴 매듭뜨기 (3코) / 영문도안 / 앵콜스",
-    "desc_ko": "",
-    "aliases": [
-      "[대바늘 왕초보] 대바늘 기법 / 오른코에 꿴 매듭뜨기 (3코) / 영문도안 / 앵콜스"
-    ],
-    "delta": 0,
-    "videos": [
-      {
-        "title": "[대바늘 왕초보] 대바늘 기법 / 오른코에 꿴 매듭뜨기 (3코) / 영문도안 / 앵콜스",
+        "title": "오른코에 꿴 매듭뜨기 (3코)",
         "url": "https://www.youtube.com/watch?v=c6RY2TMRmhk"
       }
     ]
   },
-  "[대바늘 왕초보] 대바늘 기법 / 왼코에 꿴 매듭뜨기 (3코) / 영문도안 / 앵콜스": {
-    "name_en": "[대바늘 왕초보] 대바늘 기법 / 왼코에 꿴 매듭뜨기 (3코) / 영문도안 / 앵콜스",
-    "name_ko": "[대바늘 왕초보] 대바늘 기법 / 왼코에 꿴 매듭뜨기 (3코) / 영문도안 / 앵콜스",
-    "desc_ko": "",
+  "왼코에 꿴 매듭뜨기 (3코)": {
+    "name_en": "",
+    "name_ko": "왼코에 꿴 매듭뜨기 (3코)",
+    "desc_ko": "영상 참고",
     "aliases": [
-      "[대바늘 왕초보] 대바늘 기법 / 왼코에 꿴 매듭뜨기 (3코) / 영문도안 / 앵콜스"
+      "왼코에 꿴 매듭뜨기 (3코)"
     ],
     "delta": 0,
     "videos": [
       {
-        "title": "[대바늘 왕초보] 대바늘 기법 / 왼코에 꿴 매듭뜨기 (3코) / 영문도안 / 앵콜스",
+        "title": "왼코에 꿴 매듭뜨기 (3코)",
         "url": "https://www.youtube.com/watch?v=037lXj2KO5g"
       }
     ]
   },
-  "[대바늘 왕초보] 대바늘 기법 / 겉뜨기 코늘리기 / Kfb(knit front and back) / 영문도안 / 앵콜스": {
-    "name_en": "[대바늘 왕초보] 대바늘 기법 / 겉뜨기 코늘리기 / Kfb(knit front and back) / 영문도안 / 앵콜스",
-    "name_ko": "[대바늘 왕초보] 대바늘 기법 / 겉뜨기 코늘리기 / Kfb(knit front and back) / 영문도안 / 앵콜스",
-    "desc_ko": "",
+  "Kfb(knit front and back)": {
+    "name_en": "knit front and back",
+    "name_ko": "겉뜨기 코늘리기",
+    "desc_ko": "코의 앞쪽 실에 겉르기를 한 후, 코를 왼쪽 바늘에서 뺴지 않고, 뒤쪽 실에 겉뜨기로 뜨기",
     "aliases": [
-      "[대바늘 왕초보] 대바늘 기법 / 겉뜨기 코늘리기 / Kfb(knit front and back) / 영문도안 / 앵콜스"
+      "Kfb", "kfb"
     ],
     "delta": 0,
     "videos": [
       {
-        "title": "[대바늘 왕초보] 대바늘 기법 / 겉뜨기 코늘리기 / Kfb(knit front and back) / 영문도안 / 앵콜스",
+        "title": "Kfb(knit front and back)",
         "url": "https://www.youtube.com/watch?v=NwUSmzLOTHg"
       }
     ]
   },
-  "[대바늘 왕초보] 대바늘 기법 / 메리야스 옆선잇기 / 영문도안 / 앵콜스": {
-    "name_en": "[대바늘 왕초보] 대바늘 기법 / 메리야스 옆선잇기 / 영문도안 / 앵콜스",
-    "name_ko": "[대바늘 왕초보] 대바늘 기법 / 메리야스 옆선잇기 / 영문도안 / 앵콜스",
-    "desc_ko": "",
+  "메리야스 옆선잇기": {
+    "name_en": "Mattress Stitch",
+    "name_ko": "메리야스 옆선잇기",
+    "desc_ko": "영상 참고",
     "aliases": [
-      "[대바늘 왕초보] 대바늘 기법 / 메리야스 옆선잇기 / 영문도안 / 앵콜스"
+      "메리야스 잇기", "메리야스잇기", "mattress stitch", "mattress-stitch"
     ],
     "delta": 0,
     "videos": [
       {
-        "title": "[대바늘 왕초보] 대바늘 기법 / 메리야스 옆선잇기 / 영문도안 / 앵콜스",
+        "title": "메리야스 옆선잇기",
         "url": "https://www.youtube.com/watch?v=Bir-OyBiLkM"
       }
     ]
   },
-  "[Beginner's Knitting] Knitting Techniques / German Knitting / English Patterns / Encores": {
-    "name_en": "[Beginner's Knitting] Knitting Techniques / German Knitting / English Patterns / Encores",
-    "name_ko": "[Beginner's Knitting] Knitting Techniques / German Knitting / English Patterns / Encores",
-    "desc_ko": "",
+  "독일식 경사뜨기": {
+    "name_en": "German Short Row",
+    "name_ko": "독일식 경사뜨기",
+    "desc_ko": "영상 참고",
     "aliases": [
-      "[Beginner's Knitting] Knitting Techniques / German Knitting / English Patterns / Encores"
+      "gsr", "german short row", "german-short-row", "독일식 경사뜨기", "경사뜨기"
     ],
     "delta": 0,
     "videos": [
       {
-        "title": "[Beginner's Knitting] Knitting Techniques / German Knitting / English Patterns / Encores",
+        "title": "독일식 경사뜨기",
         "url": "https://www.youtube.com/watch?v=x5Z1NYgjgqs"
       }
     ]
   },
-  "[대바늘 왕초보] 대바늘 기법 / 1코 고무뜨기 돗바늘마무리 / 영문도안 / 앵콜스": {
-    "name_en": "[대바늘 왕초보] 대바늘 기법 / 1코 고무뜨기 돗바늘마무리 / 영문도안 / 앵콜스",
-    "name_ko": "[대바늘 왕초보] 대바늘 기법 / 1코 고무뜨기 돗바늘마무리 / 영문도안 / 앵콜스",
-    "desc_ko": "",
+  "1코 고무뜨기 돗바늘마무리": {
+    "name_en": "Italian Bind Off for 1x1 Rib",
+    "name_ko": "1코 고무단 돗바늘마무리",
+    "desc_ko": "영상 참고",
     "aliases": [
-      "[대바늘 왕초보] 대바늘 기법 / 1코 고무뜨기 돗바늘마무리 / 영문도안 / 앵콜스"
+      "1코 고무단 마무리", "italian bind off for 1x1 rib", "italian-bind-off-for-1x1-rib", "tubular bind off", "tubular-bind-off", "1x1 rib bind off", "1x1-rib-bind-off"
     ],
     "delta": 0,
     "videos": [
       {
-        "title": "[대바늘 왕초보] 대바늘 기법 / 1코 고무뜨기 돗바늘마무리 / 영문도안 / 앵콜스",
+        "title": "1코 고무뜨기 돗바늘마무리",
         "url": "https://www.youtube.com/watch?v=dFkNlz4PKL0"
       }
     ]
   },
-  "[대바늘 왕초보] 대바늘 기법 / 옛 노르웨이식 코잡기 / 영문도안 / 앵콜스": {
-    "name_en": "[대바늘 왕초보] 대바늘 기법 / 옛 노르웨이식 코잡기 / 영문도안 / 앵콜스",
-    "name_ko": "[대바늘 왕초보] 대바늘 기법 / 옛 노르웨이식 코잡기 / 영문도안 / 앵콜스",
-    "desc_ko": "",
+  "옛 노르웨이식 코잡기": {
+    "name_en": "German twisted cast on",
+    "name_ko": "옛 노르웨이식 코잡기",
+    "desc_ko": "영상 참고",
     "aliases": [
-      "[대바늘 왕초보] 대바늘 기법 / 옛 노르웨이식 코잡기 / 영문도안 / 앵콜스"
+      "옛 노르웨이식 코잡기", "german twisted cast on", "german-twisted-cast-on", "코잡기", "캐스트온"
     ],
     "delta": 0,
     "videos": [
       {
-        "title": "[대바늘 왕초보] 대바늘 기법 / 옛 노르웨이식 코잡기 / 영문도안 / 앵콜스",
+        "title": "옛 노르웨이식 코잡기",
         "url": "https://www.youtube.com/watch?v=fIBVzLLPJ-M"
       }
     ]
   },
-  "[Beginner's Needle] Needle technique / Right-handed knit / SSK / English pattern / Encore": {
-    "name_en": "[Beginner's Needle] Needle technique / Right-handed knit / SSK / English pattern / Encore",
-    "name_ko": "[Beginner's Needle] Needle technique / Right-handed knit / SSK / English pattern / Encore",
-    "desc_ko": "",
+  "돗바늘 마무리": {
+    "name_en": "",
+    "name_ko": "돗바늘 마무리",
+    "desc_ko": "영상 참고",
     "aliases": [
-      "[Beginner's Needle] Needle technique / Right-handed knit / SSK / English pattern / Encore"
+      "돗바늘 마무리", "마무리"
     ],
     "delta": 0,
     "videos": [
       {
-        "title": "[Beginner's Needle] Needle technique / Right-handed knit / SSK / English pattern / Encore",
-        "url": "https://www.youtube.com/watch?v=DCh2l-6vxa4"
+        "title": "돗바늘 마무리",
+        "url": "https://www.youtube.com/watch?v=ZhM0lGagRAs"
       }
     ]
   },
-  "대바늘기법 / 겉뜨기 코 늘리기(Kf&b), 안뜨기 코 늘리기(Pf&b) / 앵콜스": {
-    "name_en": "대바늘기법 / 겉뜨기 코 늘리기(Kf&b), 안뜨기 코 늘리기(Pf&b) / 앵콜스",
-    "name_ko": "대바늘기법 / 겉뜨기 코 늘리기(Kf&b), 안뜨기 코 늘리기(Pf&b) / 앵콜스",
-    "desc_ko": "",
+  "옆 감침질": {
+    "name_en": "",
+    "name_ko": "옆 감침질",
+    "desc_ko": "영상 참고",
     "aliases": [
-      "대바늘기법 / 겉뜨기 코 늘리기(Kf&b), 안뜨기 코 늘리기(Pf&b) / 앵콜스"
-    ],
-    "delta": 0,
-    "videos": [
-      {
-        "title": "대바늘기법 / 겉뜨기 코 늘리기(Kf&b), 안뜨기 코 늘리기(Pf&b) / 앵콜스",
-        "url": "https://www.youtube.com/watch?v=6lZqG1wlkG8"
-      }
-    ]
-  },
-  "대바늘기법 / 돗바늘 마무리_ 옆 감침질 / 앵콜스": {
-    "name_en": "대바늘기법 / 돗바늘 마무리_ 옆 감침질 / 앵콜스",
-    "name_ko": "대바늘기법 / 돗바늘 마무리_ 옆 감침질 / 앵콜스",
-    "desc_ko": "",
-    "aliases": [
-      "대바늘기법 / 돗바늘 마무리_ 옆 감침질 / 앵콜스"
+      "감침질"
     ],
     "delta": 0,
     "videos": [
       {
         "title": "대바늘기법 / 돗바늘 마무리_ 옆 감침질 / 앵콜스",
-        "url": "https://www.youtube.com/watch?v=ZhM0lGagRAs"
+        "url": "https://youtu.be/ZhM0lGagRAs?si=XddFXeB7C3epk6yH&t=82"
       }
     ]
   },
-  "[대바늘 왕초보] 대바늘 기법 / 랩앤턴 경사뜨기 (Wrap & Turn) / 영문도안 / 앵콜스": {
-    "name_en": "[대바늘 왕초보] 대바늘 기법 / 랩앤턴 경사뜨기 (Wrap & Turn) / 영문도안 / 앵콜스",
-    "name_ko": "[대바늘 왕초보] 대바늘 기법 / 랩앤턴 경사뜨기 (Wrap & Turn) / 영문도안 / 앵콜스",
-    "desc_ko": "",
+  "랩앤턴 경사뜨기 (Wrap & Turn)": {
+    "name_en": "Wrap & Turn",
+    "name_ko": "랩앤턴 경사뜨기",
+    "desc_ko": "영상 참고",
     "aliases": [
-      "[대바늘 왕초보] 대바늘 기법 / 랩앤턴 경사뜨기 (Wrap & Turn) / 영문도안 / 앵콜스"
+      "Wrap & Turn", "wrap and turn", "Wrao and turn", "wrap&turn", "wrap & turn", "Wrap&Turn", "Wrap-and-Turn", "경사뜨기"
     ],
     "delta": 0,
     "videos": [
       {
-        "title": "[대바늘 왕초보] 대바늘 기법 / 랩앤턴 경사뜨기 (Wrap & Turn) / 영문도안 / 앵콜스",
+        "title": "랩앤턴 경사뜨기 (Wrap & Turn)",
         "url": "https://www.youtube.com/watch?v=XNxktkyUl2Q"
       }
     ]
   },
-  "[Beginner's Needle] Backward loop method / English pattern / Encore": {
-    "name_en": "[Beginner's Needle] Backward loop method / English pattern / Encore",
-    "name_ko": "[Beginner's Needle] Backward loop method / English pattern / Encore",
-    "desc_ko": "",
+  "아이슬란드식 코막음 (Icelandic Bind Off)": {
+    "name_en": "Icelandic Bind Off",
+    "name_ko": "아이슬란드식 코막음",
+    "desc_ko": "영상 참고",
     "aliases": [
-      "[Beginner's Needle] Backward loop method / English pattern / Encore"
-    ],
-    "delta": 0,
-    "videos": [
-      {
-        "title": "[Beginner's Needle] Backward loop method / English pattern / Encore",
-        "url": "https://www.youtube.com/watch?v=FTJ1tQ-XM2M"
-      }
-    ]
-  },
-  "[대바늘 왕초보] 대바늘 기법 / 아이슬란드식 코막음 (Icelandic Bind Off) / 영문도안 / 앵콜스": {
-    "name_en": "[대바늘 왕초보] 대바늘 기법 / 아이슬란드식 코막음 (Icelandic Bind Off) / 영문도안 / 앵콜스",
-    "name_ko": "[대바늘 왕초보] 대바늘 기법 / 아이슬란드식 코막음 (Icelandic Bind Off) / 영문도안 / 앵콜스",
-    "desc_ko": "",
-    "aliases": [
-      "[대바늘 왕초보] 대바늘 기법 / 아이슬란드식 코막음 (Icelandic Bind Off) / 영문도안 / 앵콜스"
+      "Icelandic Bind Off", "icelandic bind off", "Icelandic-bind-off", "icelandic-bind-off", "bind off", "코막음"
     ],
     "delta": 0,
     "videos": [
@@ -614,213 +329,183 @@
       }
     ]
   },
-  "[대바늘 왕초보] 대바늘 기법 / 넥 밴드 원형코 만들기 / 원형코 시작점 벌어지지 않게 뜨는 법 / 영문도안 / 앵콜스": {
-    "name_en": "[대바늘 왕초보] 대바늘 기법 / 넥 밴드 원형코 만들기 / 원형코 시작점 벌어지지 않게 뜨는 법 / 영문도안 / 앵콜스",
-    "name_ko": "[대바늘 왕초보] 대바늘 기법 / 넥 밴드 원형코 만들기 / 원형코 시작점 벌어지지 않게 뜨는 법 / 영문도안 / 앵콜스",
-    "desc_ko": "",
+  "원통뜨기": {
+    "name_en": "",
+    "name_ko": "원통뜨기",
+    "desc_ko": "영상 참고",
     "aliases": [
-      "[대바늘 왕초보] 대바늘 기법 / 넥 밴드 원형코 만들기 / 원형코 시작점 벌어지지 않게 뜨는 법 / 영문도안 / 앵콜스"
+      "원형뜨기"
     ],
     "delta": 0,
     "videos": [
       {
-        "title": "[대바늘 왕초보] 대바늘 기법 / 넥 밴드 원형코 만들기 / 원형코 시작점 벌어지지 않게 뜨는 법 / 영문도안 / 앵콜스",
+        "title": "원통뜨기",
         "url": "https://www.youtube.com/watch?v=eBfr1l6ZFfw"
       }
     ]
   },
-  "[대바늘 왕초보] 대바늘 기법 / 바늘 3개로 어깨 연결하기 (3 needle bind off) / 영문도안 / 앵콜스": {
-    "name_en": "[대바늘 왕초보] 대바늘 기법 / 바늘 3개로 어깨 연결하기 (3 needle bind off) / 영문도안 / 앵콜스",
-    "name_ko": "[대바늘 왕초보] 대바늘 기법 / 바늘 3개로 어깨 연결하기 (3 needle bind off) / 영문도안 / 앵콜스",
-    "desc_ko": "",
+  "3 needle bind off": {
+    "name_en": "3 needle bind off",
+    "name_ko": "바늘 3개로 어깨 연결하기",
+    "desc_ko": "영상 참고",
     "aliases": [
-      "[대바늘 왕초보] 대바늘 기법 / 바늘 3개로 어깨 연결하기 (3 needle bind off) / 영문도안 / 앵콜스"
+      "Three needle bind off", "3 needle bind off", "3-needle bind off", "바늘 3개로 어깨 연결하기", "bind off", "코막음", "어깨잇기"
     ],
     "delta": 0,
     "videos": [
       {
-        "title": "[대바늘 왕초보] 대바늘 기법 / 바늘 3개로 어깨 연결하기 (3 needle bind off) / 영문도안 / 앵콜스",
+        "title": "3 needle bind off",
         "url": "https://www.youtube.com/watch?v=YYQsrhAzTQ8"
       }
     ]
   },
-  "[대바늘 왕초보] 대바늘 기법 /  4코 아이코드 마무리 (i Cord Edge) / 앵콜스": {
-    "name_en": "[대바늘 왕초보] 대바늘 기법 /  4코 아이코드 마무리 (i Cord Edge) / 앵콜스",
-    "name_ko": "[대바늘 왕초보] 대바늘 기법 /  4코 아이코드 마무리 (i Cord Edge) / 앵콜스",
-    "desc_ko": "",
+  "4코 아이코드 마무리 (i Cord Edge": {
+    "name_en": "i Cord Edge",
+    "name_ko": "4코 아이코드 마무리",
+    "desc_ko": "영상 참고",
     "aliases": [
-      "[대바늘 왕초보] 대바늘 기법 /  4코 아이코드 마무리 (i Cord Edge) / 앵콜스"
+      "아이코드 마무리", "i cord edge", "i-cord-edge", "아이코드", "아이코드마무리", "i cord"
     ],
     "delta": 0,
     "videos": [
       {
-        "title": "[대바늘 왕초보] 대바늘 기법 /  4코 아이코드 마무리 (i Cord Edge) / 앵콜스",
+        "title": "(i Cord Edge)",
         "url": "https://www.youtube.com/watch?v=b6XX6UP4CVA"
       }
     ]
   },
-  "[Beginner's Needle] Needle Techniques / Weave in Ends / Encores": {
-    "name_en": "[Beginner's Needle] Needle Techniques / Weave in Ends / Encores",
-    "name_ko": "[Beginner's Needle] Needle Techniques / Weave in Ends / Encores",
-    "desc_ko": "",
+  "꼬리실 정리하기": {
+    "name_en": "",
+    "name_ko": "꼬리실 정리하기",
+    "desc_ko": "영상 참고",
     "aliases": [
-      "[Beginner's Needle] Needle Techniques / Weave in Ends / Encores"
+      "꼬리실 정리", "꼬리실 마무리", "Weave in Ends"
     ],
     "delta": 0,
     "videos": [
       {
-        "title": "[Beginner's Needle] Needle Techniques / Weave in Ends / Encores",
+        "title": "Weave in Ends",
         "url": "https://www.youtube.com/watch?v=oYnPZ4L6Qxw"
       }
     ]
   },
-  "[Beginner's Guide to Knitting Needles] Knitting Needle Techniques / Folded Hem / Encores": {
-    "name_en": "[Beginner's Guide to Knitting Needles] Knitting Needle Techniques / Folded Hem / Encores",
-    "name_ko": "[Beginner's Guide to Knitting Needles] Knitting Needle Techniques / Folded Hem / Encores",
-    "desc_ko": "",
+  "겹단 만들기": {
+    "name_en": "Folded Hem",
+    "name_ko": "겹단 만들기",
+    "desc_ko": "영상 참고",
     "aliases": [
-      "[Beginner's Guide to Knitting Needles] Knitting Needle Techniques / Folded Hem / Encores"
+      "겹단 만들기", "folded hem", "folded-hem", "겹단"
     ],
     "delta": 0,
     "videos": [
       {
-        "title": "[Beginner's Guide to Knitting Needles] Knitting Needle Techniques / Folded Hem / Encores",
+        "title": "Folded Hem",
         "url": "https://www.youtube.com/watch?v=SNS8zu21h54"
       }
     ]
   },
-  "[Beginner's Guide to Knitting Needles] Knitting Needle Techniques / Kitchener Stitch / Encores": {
-    "name_en": "[Beginner's Guide to Knitting Needles] Knitting Needle Techniques / Kitchener Stitch / Encores",
-    "name_ko": "[Beginner's Guide to Knitting Needles] Knitting Needle Techniques / Kitchener Stitch / Encores",
-    "desc_ko": "",
+  "중심3코 모아뜨기": {
+    "name_en": "Center 3 Stitches (s2kp)",
+    "name_ko": "중심 3코 모아뜨기",
+    "desc_ko": "영상 참고",
     "aliases": [
-      "[Beginner's Guide to Knitting Needles] Knitting Needle Techniques / Kitchener Stitch / Encores"
+      "중심 3코 모아뜨기", "center 3 stitches", "center-3-stitches", "모아뜨기", "s2kp", "S2KP"
     ],
     "delta": 0,
     "videos": [
       {
-        "title": "[Beginner's Guide to Knitting Needles] Knitting Needle Techniques / Kitchener Stitch / Encores",
-        "url": "https://www.youtube.com/watch?v=xwM408Vo5m4"
-      }
-    ]
-  },
-  "[Beginner's Needle] Large Needle Technique / Center 3 Stitches (S2KP) / Encores": {
-    "name_en": "[Beginner's Needle] Large Needle Technique / Center 3 Stitches (S2KP) / Encores",
-    "name_ko": "[Beginner's Needle] Large Needle Technique / Center 3 Stitches (S2KP) / Encores",
-    "desc_ko": "",
-    "aliases": [
-      "[Beginner's Needle] Large Needle Technique / Center 3 Stitches (S2KP) / Encores"
-    ],
-    "delta": 0,
-    "videos": [
-      {
-        "title": "[Beginner's Needle] Large Needle Technique / Center 3 Stitches (S2KP) / Encores",
+        "title": "Center 3 Stitches",
         "url": "https://www.youtube.com/watch?v=Gj75SCjeuQU"
       }
     ]
   },
-  "[Beginner's Knitting Needle] Knitting technique / Knit 3 stitches together (k3tog) / Encores": {
-    "name_en": "[Beginner's Knitting Needle] Knitting technique / Knit 3 stitches together (k3tog) / Encores",
-    "name_ko": "[Beginner's Knitting Needle] Knitting technique / Knit 3 stitches together (k3tog) / Encores",
-    "desc_ko": "",
+  "Knit 3 stitches together (k3tog)": {
+    "name_en": "Knit 3 stitches together (k3tog)",
+    "name_ko": "왼코 중심 3코 모아뜨기",
+    "desc_ko": "영상 참고",
     "aliases": [
-      "[Beginner's Knitting Needle] Knitting technique / Knit 3 stitches together (k3tog) / Encores"
+      "Knit 3 stitches together", "k3tog", "K3TOG", "왼코 중심 3코 모아뜨기", "모아뜨기"
     ],
     "delta": 0,
     "videos": [
       {
-        "title": "[Beginner's Knitting Needle] Knitting technique / Knit 3 stitches together (k3tog) / Encores",
+        "title": "Knit 3 stitches together (k3tog)",
         "url": "https://www.youtube.com/watch?v=Lvlu5ilQHHk"
       }
     ]
   },
-  "[Beginner's Needle] Needle Technique / Right-hand 3-stitch Knit (sk2p) / Encore": {
-    "name_en": "[Beginner's Needle] Needle Technique / Right-hand 3-stitch Knit (sk2p) / Encore",
-    "name_ko": "[Beginner's Needle] Needle Technique / Right-hand 3-stitch Knit (sk2p) / Encore",
-    "desc_ko": "",
+  "Right-hand 3-stitch Knit (sk2p)": {
+    "name_en": "Right-hand 3-stitch Knit (sk2p)",
+    "name_ko": "오른코 3코 모아뜨기",
+    "desc_ko": "영상 참고",
     "aliases": [
-      "[Beginner's Needle] Needle Technique / Right-hand 3-stitch Knit (sk2p) / Encore"
+      "Right-hand 3-stitch Knit (sk2p)", "오른코 3코 모아뜨기", "sk2p", "SK2P", "모아뜨기"
     ],
     "delta": 0,
     "videos": [
       {
-        "title": "[Beginner's Needle] Needle Technique / Right-hand 3-stitch Knit (sk2p) / Encore",
+        "title": "Right-hand 3-stitch Knit (sk2p)",
         "url": "https://www.youtube.com/watch?v=nTp1Z37SBIQ"
       }
     ]
   },
-  "[Beginner's Needle] Needle Technique / Neckline Double Finish / Encore": {
-    "name_en": "[Beginner's Needle] Needle Technique / Neckline Double Finish / Encore",
-    "name_ko": "[Beginner's Needle] Needle Technique / Neckline Double Finish / Encore",
-    "desc_ko": "",
+  "목둘레 겹단 마무리": {
+    "name_en": "Neckline Double Finish",
+    "name_ko": "목둘레 겹단 마무리",
+    "desc_ko": "영상 참고",
     "aliases": [
-      "[Beginner's Needle] Needle Technique / Neckline Double Finish / Encore"
+      "Neckline Double Finish", "neckline double finish", "neckline-double-finish", "목둘레 겹단 마무리", "겹단"
     ],
     "delta": 0,
     "videos": [
       {
-        "title": "[Beginner's Needle] Needle Technique / Neckline Double Finish / Encore",
+        "title": "Neckline Double Finish",
         "url": "https://www.youtube.com/watch?v=mt0qsxymWLI"
       }
     ]
   },
-  "[Beginner's Needle] Needle Techniques / Joining the Crochet and the End / Encores": {
-    "name_en": "[Beginner's Needle] Needle Techniques / Joining the Crochet and the End / Encores",
-    "name_ko": "[Beginner's Needle] Needle Techniques / Joining the Crochet and the End / Encores",
-    "desc_ko": "",
+  "코와 단 잇기": {
+    "name_en": "Open stitches to edge",
+    "name_ko": "코와 단 잇기",
+    "desc_ko": "영상 참고",
     "aliases": [
-      "[Beginner's Needle] Needle Techniques / Joining the Crochet and the End / Encores"
+      "Open stitches to edge", "코와 단 잇기", "잇기", "코와단잇기"
     ],
     "delta": 0,
     "videos": [
       {
-        "title": "[Beginner's Needle] Needle Techniques / Joining the Crochet and the End / Encores",
+        "title": "코와단 잇기",
         "url": "https://www.youtube.com/watch?v=8SgSbyLA0tc"
       }
     ]
   },
-  "[Private video]": {
-    "name_en": "[Private video]",
-    "name_ko": "[Private video]",
-    "desc_ko": "",
+  "더블니팅 버튼밴드": {
+    "name_en": "Making a Double Knit Button Band",
+    "name_ko": "더블니팅 버튼밴드",
+    "desc_ko": "영상 참고",
     "aliases": [
-      "[Private video]"
+      "더블니팅 버튼밴드", "making a double knit button band", "making-a-double-knit-button-band", "double knitting", "double knitting button band", "더블니팅", "더블니팅버튼밴드", "버튼밴드"
     ],
     "delta": 0,
     "videos": [
       {
-        "title": "[Private video]",
-        "url": "https://www.youtube.com/watch?v=V9Y4JFULYfw"
-      }
-    ]
-  },
-  "[Beginner's Needle] Knitting Techniques / Making a Double Knit Button Band / Encores": {
-    "name_en": "[Beginner's Needle] Knitting Techniques / Making a Double Knit Button Band / Encores",
-    "name_ko": "[Beginner's Needle] Knitting Techniques / Making a Double Knit Button Band / Encores",
-    "desc_ko": "",
-    "aliases": [
-      "[Beginner's Needle] Knitting Techniques / Making a Double Knit Button Band / Encores"
-    ],
-    "delta": 0,
-    "videos": [
-      {
-        "title": "[Beginner's Needle] Knitting Techniques / Making a Double Knit Button Band / Encores",
+        "title": "더블니팅 버튼밴드",
         "url": "https://www.youtube.com/watch?v=oPyhnki7-24"
       }
     ]
   },
-  "[Beginner's Needle] Needle Technique / Making a Rocking Needle (Italian Tubular Cast On) / Encores": {
-    "name_en": "[Beginner's Needle] Needle Technique / Making a Rocking Needle (Italian Tubular Cast On) / Encores",
-    "name_ko": "[Beginner's Needle] Needle Technique / Making a Rocking Needle (Italian Tubular Cast On) / Encores",
-    "desc_ko": "",
+  "흔들코 만들기": {
+    "name_en": "Italian Tubular Cast On",
+    "name_ko": "흔들코 만들기",
+    "desc_ko": "영상 참고",
     "aliases": [
-      "[Beginner's Needle] Needle Technique / Making a Rocking Needle (Italian Tubular Cast On) / Encores"
+      "흔들코", "italian tubular cast on", "italian-tubular-cast-on", "Italian tubular cast on", "cast on", "Italian cast on", "캐스트온", "코 만들기"
     ],
     "delta": 0,
     "videos": [
       {
-        "title": "[Beginner's Needle] Needle Technique / Making a Rocking Needle (Italian Tubular Cast On) / Encores",
-        "url": "https://www.youtube.com/watch?v=ZReTNjoOFGk"
+        "title": "흔들코 만들기",
+        "url": "https://www.youtube.com/watch?v= ZReTNjoOFGk"
       }
     ]
   }

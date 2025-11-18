@@ -109,7 +109,7 @@
       {"title": "Left cross cable", "url": "https://youtu.be/XMcZns9_Jbs?si=ZKQADveqgSPX7o3_"}
     ]
   },
-  "CO": {
+  "Cast on": {
     "name_en": "Cast on",
     "name_ko": "코 만들기/코 잡기",
     "desc_ko": "작품 시작 시 코를 만드는 작업(여러 방식 존재).",
@@ -133,13 +133,13 @@
     "name_en": "Bind off",
     "name_ko": "코 막기/코 마무리",
     "desc_ko": "마지막 단에서 코를 빼서 마감.",
-    "aliases": ["Bind off", "bind-off", "코막기", "코 마무리", "cast off"]
+    "aliases": ["Bind off", "bind-off", "코막기", "코 마무리", "cast off"],
     "delta": 0,
     "videos": [
       {"title": "Bind off / Cast off", "url": "https://youtu.be/wbKsZx2h0CE?si=SBeNSpad2gpqhI9k"}
     ]
   },
-  "CO": {
+  "Cast off": {
     "name_en": "Cast off",
     "name_ko": "덮어씌워 코 막기",
     "desc_ko": "2코를 떠서 첫 코를 두번째 코 위로 덮어씌움.",
@@ -347,7 +347,7 @@
     "desc_ko": "겉·안 번갈아(평면) / 계속 겉(원통).",
     "aliases": ["stockinette", "stocking stitch", "st st", "St-st"],
     "delta": 0,
-    "videos": []
+    "videos": [{"title": "메리야스 뜨기", "url": "https://youtu.be/IvCgZbdbnaM?si=yryPKmCLN_BU45YQ"}]
   },
   "Rib (r-st)": {
     "name_en": "Ribbing",
@@ -363,7 +363,7 @@
     "desc_ko": "k1, p1 반복.",
     "aliases": ["1×1 rib", "1x1 rib"],
     "delta": 0,
-    "videos": []
+    "videos": [{"title": "1코 고무뜨기", "url": "https://youtu.be/GM9-iZZxjhw?si=b4ZwZbLLY2adUA3b"}]
   },
   "2x2 Rib": {
     "name_en": "Two by two ribbing",
@@ -371,7 +371,7 @@
     "desc_ko": "k2, p2 반복.",
     "aliases": ["2×2 rib", "2x2 rib"],
     "delta": 0,
-    "videos": []
+    "videos": [{"title": "2코 고무뜨기", "url": "https://youtu.be/pbISOCXxRR8?si=fdRWAt1Dncx3Dt8C"}]
   },
   "G-st": {
     "name_en": "Garter stitch",
@@ -379,7 +379,7 @@
     "desc_ko": "1단씩 겉뜨기(평면: 겉/안 모두 겉).",
     "aliases": ["garter", "g-st"],
     "delta": 0,
-    "videos": []
+    "videos": [{"title": "가터뜨기", "url": "https://youtu.be/KttbW_0mwg8?si=IL-IYJyQffiM_zl5"}]
   },
   "Moss st": {
     "name_en": "Moss stitch",
@@ -392,8 +392,8 @@
   "Inc": {
     "name_en": "Increase",
     "name_ko": "코 늘리기",
-    "desc_ko": "코 수를 늘리는 모든 기법의 총칭.", "kfb, m1l, ml4, kll, krl, yarn over(yo), 감아코 등 포함. "
-    "aliases": ["increase", "inc"],
+    "desc_ko": "코 수를 늘리는 모든 기법의 총칭. kfb, m1l, ml4, kll, krl, yarn over(yo), 감아코 등 포함.",
+    "aliases": ["alias1", "alias2"],
     "delta": 1,
     "videos": []
   },
@@ -430,7 +430,7 @@
   "Tog": {
     "name_en": "Together",
     "name_ko": "모아뜨기",
-    "desc_ko": "두 코 이상을 한 번에 떠서 줄임.", "k2tog, p2tog, ssk, ssp 등 포함."
+    "desc_ko": "두 코 이상을 한 번에 떠서 줄임. k2tog, p2tog, ssk, ssp 등 포함.",
     "aliases": ["tog", "together"],
     "delta": -1,
     "videos": []
@@ -457,7 +457,7 @@
   },
   "SSK": {
     "name_en": "Slip, Slip, Knit",
-    "name_ko": "왼코 모아뜨기",
+    "name_ko": "오른코 모아뜨기",
     "desc_ko": "두 코를 각각 겉뜨기 방향으로 걸러 옮긴 뒤 다시 왼쪽 바늘로 옮겨 함께 겉뜨기.",
     "aliases": ["ssk", "SKP"],
     "delta": -1,
