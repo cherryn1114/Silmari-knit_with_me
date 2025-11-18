@@ -1,94 +1,58 @@
 # pages/3_차트_기호_사전.py
-# 엑셀에서 뽑아낸 차트 기호 이미지 + 설명 보여주는 페이지
-
-import json
-from pathlib import Path
+# 엑셀에서 추출된 차트 기호 이미지들(assets/chart_from_excel)을
+# 그대로 갤러리 형태로 보여주는 페이지
 
 import streamlit as st
+from pathlib import Path
 
 BASE = Path(__file__).resolve().parent.parent
-JSON_PATH = BASE / "lib" / "chart_symbols.json"
-IMG_DIR   = BASE / "assets" / "chart_symbols"
+IMG_DIR = BASE / "assets" / "chart_from_excel"
 
 st.set_page_config(
-    page_title="실마리 – 차트 기호 사전",
+    page_title="차트 기호 사전",
     page_icon="📈",
     layout="wide",
 )
 
-st.title("📈 차트 도안 기호 사전")
+st.title("📈 차트 도안 기호 사전 (엑셀 이미지 갤러리)")
 
-if not JSON_PATH.exists():
-    st.error("`lib/chart_symbols.json` 파일을 찾을 수 없습니다.\n\n터미널에서 `python lib/extract_chart_symbols.py` 를 먼저 실행해 주세요.")
+if not IMG_DIR.exists():
+    st.error(f"`{IMG_DIR}` 폴더를 찾을 수 없습니다.\n\n먼저 `python lib/extract_excel_images.py` 를 실행해 주세요.")
     st.stop()
 
-with JSON_PATH.open(encoding="utf-8") as f:
-    data = json.load(f)  # {key: {name, desc, row, image}}
+# 폴더 안의 이미지 파일들 찾기
+image_files = sorted(
+    [p for p in IMG_DIR.iterdir() if p.suffix.lower() in [".png", ".jpg", ".jpeg"]],
+    key=lambda p: p.name,
+)
 
-# dict → list 로 변환 (정렬하기 쉽게)
-items = []
-for key, info in data.items():
-    item = {"key": key}
-    item.update(info)
-    items.append(item)
+if not image_files:
+    st.warning("📂 `assets/chart_from_excel` 안에 표시할 이미지가 없습니다.")
+    st.stop()
 
-# 행 번호 기준 정렬
-items = sorted(items, key=lambda x: x.get("row", 0))
+st.caption(f"추출된 차트 기호 이미지 수: **{len(image_files)}개**")
 
-# 검색 UI
-col_search, col_filter = st.columns([3, 1])
-with col_search:
-    q = st.text_input("검색 (약어, 이름, 설명 등)", "")
-with col_filter:
-    only_with_img = st.checkbox("이미지 있는 것만", value=True)
-
-def matches(item, q):
-    if not q:
-        return True
-    q = q.lower()
-    return (
-        q in item["key"].lower()
-        or q in str(item.get("name","")).lower()
-        or q in str(item.get("desc","")).lower()
-    )
+# 검색(파일명 기준, 간단 필터)
+q = st.text_input("파일명으로 필터링 (예: 001, knit, purl 등 포함되는 문자열)", "")
 
 filtered = []
-for it in items:
-    if only_with_img and not it.get("image"):
-        continue
-    if not matches(it, q):
-        continue
-    filtered.append(it)
+for img in image_files:
+    name = img.name.lower()
+    if q.strip():
+        if q.strip().lower() not in name:
+            continue
+    filtered.append(img)
 
-st.caption(f"총 기호: {len(items)}개 · 현재 표시: {len(filtered)}개")
+st.caption(f"현재 표시: **{len(filtered)}개**")
 
-# 카드 형태로 렌더링
-for it in filtered:
-    key  = it["key"]
-    name = it.get("name", "")
-    desc = it.get("desc", "")
-    img_file = it.get("image", "")
+# 3열 갤러리 레이아웃
+cols = st.columns(3)
 
-    st.markdown("---")
-    st.markdown(f"### 🔹 {key} — {name}")
-
-    cols = st.columns([1, 2])
-
-    # 이미지
-    if img_file:
-        img_path = IMG_DIR / img_file
-        if img_path.exists():
-            cols[0].image(str(img_path), use_column_width=True)
-        else:
-            cols[0].warning("이미지 파일을 찾을 수 없습니다.")
-    else:
-        cols[0].info("이미지 없음")
-
-    # 설명 텍스트
-    if desc:
-        cols[1].markdown(desc)
-    else:
-        cols[1].markdown("_설명 없음_")
+for idx, img_path in enumerate(filtered):
+    col = cols[idx % 3]
+    with col:
+        st.image(str(img_path), use_column_width=True)
+        st.markdown(f"<sub>{img_path.name}</sub>", unsafe_allow_html=True)
 
 st.markdown("---")
-st.page_link("HOME.py", label="⬅️ 홈으로")
+st.page_link("HOME.py", label="⬅️ 홈으로 돌아가기", icon="🏠")
