@@ -1,0 +1,948 @@
+{
+  "1코 기호": {
+    "sheet": "1코 기호",
+    "img_dir": "assets/chart_from_excel/1코_기호",
+    "count_images": 32,
+    "count_names": 32,
+    "count_matched": 32,
+    "items": [
+      {
+        "file": "chart_001.png",
+        "abbr": "chart_001.png",
+        "desc": "겉뜨기"
+      },
+      {
+        "file": "chart_002.png",
+        "abbr": "chart_002.png",
+        "desc": "안뜨기"
+      },
+      {
+        "file": "chart_003.png",
+        "abbr": "chart_003.png",
+        "desc": "바늘비우기"
+      },
+      {
+        "file": "chart_004.png",
+        "abbr": "chart_004.png",
+        "desc": "덮어씌우기"
+      },
+      {
+        "file": "chart_005.png",
+        "abbr": "chart_005.png",
+        "desc": "꼬아뜨기"
+      },
+      {
+        "file": "chart_006.png",
+        "abbr": "chart_006.png",
+        "desc": "꼬아뜨기  안뜨기"
+      },
+      {
+        "file": "chart_007.png",
+        "abbr": "chart_007.png",
+        "desc": "SSK(오른코 겹쳐 2코 모아뜨기)"
+      },
+      {
+        "file": "chart_008.png",
+        "abbr": "chart_008.png",
+        "desc": "k2tog(왼코 겹쳐 2코 모아뜨기)"
+      },
+      {
+        "file": "chart_009.png",
+        "abbr": "chart_009.png",
+        "desc": "SSP(오른코 겹쳐 2코 모아 안뜨기)"
+      },
+      {
+        "file": "chart_010.png",
+        "abbr": "chart_010.png",
+        "desc": "p2tog"
+      },
+      {
+        "file": "chart_011.png",
+        "abbr": "chart_011.png",
+        "desc": "중심 3코 모아뜨기"
+      },
+      {
+        "file": "chart_012.png",
+        "abbr": "chart_012.png",
+        "desc": "중심 3코 모아 안뜨기"
+      },
+      {
+        "file": "chart_013.png",
+        "abbr": "chart_013.png",
+        "desc": "오른코 겹쳐 3코 모아뜨기"
+      },
+      {
+        "file": "chart_014.png",
+        "abbr": "chart_014.png",
+        "desc": "오른코 겹쳐 3코 모아 안뜨기"
+      },
+      {
+        "file": "chart_015.png",
+        "abbr": "chart_015.png",
+        "desc": "왼코 겹쳐 3코 모아뜨기"
+      },
+      {
+        "file": "chart_016.png",
+        "abbr": "chart_016.png",
+        "desc": "왼코 겹쳐 3코 모아 안뜨기"
+      },
+      {
+        "file": "chart_017.png",
+        "abbr": "chart_017.png",
+        "desc": "오른코 겹쳐 4코 모아뜨기"
+      },
+      {
+        "file": "chart_018.png",
+        "abbr": "chart_018.png",
+        "desc": "왼코 겹쳐 4코 모아뜨기"
+      },
+      {
+        "file": "chart_019.png",
+        "abbr": "chart_019.png",
+        "desc": "중심 5코 모아뜨기"
+      },
+      {
+        "file": "chart_020.png",
+        "abbr": "chart_020.png",
+        "desc": "오른코 겹쳐 5코 모아뜨기"
+      },
+      {
+        "file": "chart_021.png",
+        "abbr": "chart_021.png",
+        "desc": "왼코 겹쳐 5코 모아뜨기"
+      },
+      {
+        "file": "chart_022.png",
+        "abbr": "chart_022.png",
+        "desc": "M1R"
+      },
+      {
+        "file": "chart_023.png",
+        "abbr": "chart_023.png",
+        "desc": "M1L"
+      },
+      {
+        "file": "chart_024.png",
+        "abbr": "chart_024.png",
+        "desc": "M1RP"
+      },
+      {
+        "file": "chart_025.png",
+        "abbr": "chart_025.png",
+        "desc": "M1LP"
+      },
+      {
+        "file": "chart_026.png",
+        "abbr": "chart_026.png",
+        "desc": "kfb(겉면), pfb(안면)"
+      },
+      {
+        "file": "chart_027.png",
+        "abbr": "chart_027.png",
+        "desc": "감아코"
+      },
+      {
+        "file": "chart_028.png",
+        "abbr": "chart_028.png",
+        "desc": "방울뜨기"
+      },
+      {
+        "file": "chart_029.png",
+        "abbr": "chart_029.png",
+        "desc": "k2tog tbl"
+      },
+      {
+        "file": "chart_030.png",
+        "abbr": "chart_030.png",
+        "desc": "p2tog tbl"
+      },
+      {
+        "file": "chart_031.png",
+        "abbr": "chart_031.png",
+        "desc": "k2tog tbl_vogue knitting 책 표기"
+      },
+      {
+        "file": "chart_032.png",
+        "abbr": "chart_032.png",
+        "desc": "p2tog tbl_vogue knitting 책 표기"
+      }
+    ]
+  },
+  "1코 2단 기호": {
+    "sheet": "1코 2단 기호",
+    "img_dir": "assets/chart_from_excel/1코_2단_기호",
+    "count_images": 4,
+    "count_names": 4,
+    "count_matched": 4,
+    "items": [
+      {
+        "file": "chart_001.png",
+        "abbr": "chart_002.png",
+        "desc": "걸러 안뜨기"
+      },
+      {
+        "file": "chart_002.png",
+        "abbr": "chart_003.png",
+        "desc": "걸쳐뜨기"
+      },
+      {
+        "file": "chart_003.png",
+        "abbr": "chart_004.png",
+        "desc": "걸쳐 안뜨기"
+      },
+      {
+        "file": "chart_004.png",
+        "abbr": "",
+        "desc": ""
+      }
+    ]
+  },
+  "2코 교차뜨기": {
+    "sheet": "2코 교차뜨기",
+    "img_dir": "assets/chart_from_excel/2코_교차뜨기",
+    "count_images": 10,
+    "count_names": 10,
+    "count_matched": 10,
+    "items": [
+      {
+        "file": "chart_001.png",
+        "abbr": "chart_002.png",
+        "desc": "오른코 위 교차뜨기"
+      },
+      {
+        "file": "chart_002.png",
+        "abbr": "chart_003.png",
+        "desc": "왼코 위 교차뜨기_뒤쪽 1코 안뜨기"
+      },
+      {
+        "file": "chart_003.png",
+        "abbr": "chart_004.png",
+        "desc": "오른코 위 교차뜨기_뒤쪽 1코 안뜨기"
+      },
+      {
+        "file": "chart_004.png",
+        "abbr": "chart_005.png",
+        "desc": "왼코 위 교차뜨기_2코 모두 안뜨기"
+      },
+      {
+        "file": "chart_005.png",
+        "abbr": "chart_006.png",
+        "desc": "오른코 위 교차뜨기_2코 모두 안뜨기"
+      },
+      {
+        "file": "chart_006.png",
+        "abbr": "chart_007.png",
+        "desc": "왼코 위 꼬아뜨기 교차뜨기"
+      },
+      {
+        "file": "chart_007.png",
+        "abbr": "chart_008.png",
+        "desc": "오른코 위 꼬아뜨기 교차뜨기"
+      },
+      {
+        "file": "chart_008.png",
+        "abbr": "chart_009.png",
+        "desc": "왼코 위 꼬아뜨기 교차뜨기_뒤쪽 1코 안뜨기"
+      },
+      {
+        "file": "chart_009.png",
+        "abbr": "chart_010.png",
+        "desc": "오른코 위 꼬아뜨기 교차뜨기_뒤쪽 1코 안뜨기"
+      },
+      {
+        "file": "chart_010.png",
+        "abbr": "",
+        "desc": ""
+      }
+    ]
+  },
+  "3코 교차뜨기": {
+    "sheet": "3코 교차뜨기",
+    "img_dir": "assets/chart_from_excel/3코_교차뜨기",
+    "count_images": 10,
+    "count_names": 10,
+    "count_matched": 10,
+    "items": [
+      {
+        "file": "chart_001.png",
+        "abbr": "chart_002.png",
+        "desc": "오른코 2코 위 교차뜨기"
+      },
+      {
+        "file": "chart_002.png",
+        "abbr": "chart_003.png",
+        "desc": "왼코 2코 위 교차뜨기_뒤쪽 1코 안뜨기"
+      },
+      {
+        "file": "chart_003.png",
+        "abbr": "chart_004.png",
+        "desc": "오른코 2코 위 교차뜨기_뒤쪽 1코 안뜨기"
+      },
+      {
+        "file": "chart_004.png",
+        "abbr": "chart_005.png",
+        "desc": "왼코 1코 위 교차뜨기"
+      },
+      {
+        "file": "chart_005.png",
+        "abbr": "chart_006.png",
+        "desc": "오른코 1코 위 교차뜨기"
+      },
+      {
+        "file": "chart_006.png",
+        "abbr": "chart_007.png",
+        "desc": "왼코 1코 위 교차뜨기_뒤쪽 2코 안뜨기"
+      },
+      {
+        "file": "chart_007.png",
+        "abbr": "chart_008.png",
+        "desc": "오른코 1코 위 교차뜨기_뒤쪽 2코 안뜨기"
+      },
+      {
+        "file": "chart_008.png",
+        "abbr": "chart_009.png",
+        "desc": "왼코 1코 위 교차뜨기_뒤쪽 안1겉1"
+      },
+      {
+        "file": "chart_009.png",
+        "abbr": "chart_010.png",
+        "desc": "오른코 1코 위 교차뜨기_뒤쪽 겉1안1"
+      },
+      {
+        "file": "chart_010.png",
+        "abbr": "",
+        "desc": ""
+      }
+    ]
+  },
+  "4코 교차뜨기": {
+    "sheet": "4코 교차뜨기",
+    "img_dir": "assets/chart_from_excel/4코_교차뜨기",
+    "count_images": 14,
+    "count_names": 14,
+    "count_matched": 14,
+    "items": [
+      {
+        "file": "chart_001.png",
+        "abbr": "chart_002.png",
+        "desc": "오른코 2코 위 교차뜨기"
+      },
+      {
+        "file": "chart_002.png",
+        "abbr": "chart_003.png",
+        "desc": "왼코 2코 위 교차뜨기_뒤쪽 2코 안뜨기"
+      },
+      {
+        "file": "chart_003.png",
+        "abbr": "chart_004.png",
+        "desc": "오른코 2코 위 교차뜨기_뒤쪽 2코 안뜨기"
+      },
+      {
+        "file": "chart_004.png",
+        "abbr": "chart_005.png",
+        "desc": "왼코 3코 위 교차뜨기"
+      },
+      {
+        "file": "chart_005.png",
+        "abbr": "chart_006.png",
+        "desc": "오른코 3코 위 교차뜨기"
+      },
+      {
+        "file": "chart_006.png",
+        "abbr": "chart_007.png",
+        "desc": "왼코 3코 위 교차뜨기_뒤쪽 1코 안뜨기"
+      },
+      {
+        "file": "chart_007.png",
+        "abbr": "chart_008.png",
+        "desc": "오른코 3코 위 교차뜨기_뒤쪽 1코 안뜨기"
+      },
+      {
+        "file": "chart_008.png",
+        "abbr": "chart_009.png",
+        "desc": "왼코 1코 위 교차뜨기"
+      },
+      {
+        "file": "chart_009.png",
+        "abbr": "chart_010.png",
+        "desc": "오른코 1코 위 교차뜨기"
+      },
+      {
+        "file": "chart_010.png",
+        "abbr": "chart_011.png",
+        "desc": "왼코 1코 위 교차뜨기_뒤쪽 3코 안뜨기"
+      },
+      {
+        "file": "chart_011.png",
+        "abbr": "chart_012.png",
+        "desc": "오른코 1코 위 교차뜨기_뒤쪽 3코 안뜨기"
+      },
+      {
+        "file": "chart_012.png",
+        "abbr": "chart_013.png",
+        "desc": "왼코 2코 위 교차뜨기_뒤쪽 안1겉1"
+      },
+      {
+        "file": "chart_013.png",
+        "abbr": "chart_014.png",
+        "desc": "오른코 2코 위 교차뜨기_뒤쪽 겉1안1"
+      },
+      {
+        "file": "chart_014.png",
+        "abbr": "",
+        "desc": ""
+      }
+    ]
+  },
+  "5코 교차뜨기": {
+    "sheet": "5코 교차뜨기",
+    "img_dir": "assets/chart_from_excel/5코_교차뜨기",
+    "count_images": 14,
+    "count_names": 14,
+    "count_matched": 14,
+    "items": [
+      {
+        "file": "chart_001.png",
+        "abbr": "chart_002.png",
+        "desc": "오른코 4코 위 교차뜨기"
+      },
+      {
+        "file": "chart_002.png",
+        "abbr": "chart_003.png",
+        "desc": "왼코 4코 위 교차뜨기_뒤쪽 1코 안뜨기"
+      },
+      {
+        "file": "chart_003.png",
+        "abbr": "chart_004.png",
+        "desc": "오른코 4코 위 교차뜨기_뒤쪽 1코 안뜨기"
+      },
+      {
+        "file": "chart_004.png",
+        "abbr": "chart_005.png",
+        "desc": "왼코 3코 위 교차뜨기"
+      },
+      {
+        "file": "chart_005.png",
+        "abbr": "chart_006.png",
+        "desc": "오른코 3코 위 교차뜨기"
+      },
+      {
+        "file": "chart_006.png",
+        "abbr": "chart_007.png",
+        "desc": "왼코 3코 위 교차뜨기_뒤쪽 2코 안뜨기"
+      },
+      {
+        "file": "chart_007.png",
+        "abbr": "chart_008.png",
+        "desc": "오른코 3코 위 교차뜨기_뒤쪽 2코 안뜨기"
+      },
+      {
+        "file": "chart_008.png",
+        "abbr": "chart_009.png",
+        "desc": "왼코 2코 위 교차뜨기"
+      },
+      {
+        "file": "chart_009.png",
+        "abbr": "chart_010.png",
+        "desc": "오른코 2코 위 교차뜨기"
+      },
+      {
+        "file": "chart_010.png",
+        "abbr": "chart_011.png",
+        "desc": "왼코 2코 위 교차뜨기_뒤쪽 3코 안뜨기"
+      },
+      {
+        "file": "chart_011.png",
+        "abbr": "chart_012.png",
+        "desc": "오른코 2코 위 교차뜨기_뒤쪽 3코 안뜨기"
+      },
+      {
+        "file": "chart_012.png",
+        "abbr": "chart_013.png",
+        "desc": "왼코 2코 위 교차뜨기_뒤쪽 안1겉2"
+      },
+      {
+        "file": "chart_013.png",
+        "abbr": "chart_014.png",
+        "desc": "오른코 2코 위 교차뜨기_뒤쪽 겉2안1"
+      },
+      {
+        "file": "chart_014.png",
+        "abbr": "",
+        "desc": ""
+      }
+    ]
+  },
+  "6코 교차뜨기": {
+    "sheet": "6코 교차뜨기",
+    "img_dir": "assets/chart_from_excel/6코_교차뜨기",
+    "count_images": 16,
+    "count_names": 16,
+    "count_matched": 16,
+    "items": [
+      {
+        "file": "chart_001.png",
+        "abbr": "chart_002.png",
+        "desc": "오른코 5코 위 교차뜨기"
+      },
+      {
+        "file": "chart_002.png",
+        "abbr": "chart_003.png",
+        "desc": "왼코 5코 위 교차뜨기_뒤쪽 1코 안뜨기"
+      },
+      {
+        "file": "chart_003.png",
+        "abbr": "chart_004.png",
+        "desc": "오른코 5코 위 교차뜨기_뒤쪽 1코 안뜨기"
+      },
+      {
+        "file": "chart_004.png",
+        "abbr": "chart_005.png",
+        "desc": "왼코 4코 위 교차뜨기"
+      },
+      {
+        "file": "chart_005.png",
+        "abbr": "chart_006.png",
+        "desc": "오른코 4코 위 교차뜨기"
+      },
+      {
+        "file": "chart_006.png",
+        "abbr": "chart_007.png",
+        "desc": "왼코 4코 위 교차뜨기_뒤쪽 2코 안뜨기"
+      },
+      {
+        "file": "chart_007.png",
+        "abbr": "chart_008.png",
+        "desc": "오른코 4코 위 교차뜨기_뒤쪽 2코 안뜨기"
+      },
+      {
+        "file": "chart_008.png",
+        "abbr": "chart_009.png",
+        "desc": "왼코 3코 위 교차뜨기"
+      },
+      {
+        "file": "chart_009.png",
+        "abbr": "chart_010.png",
+        "desc": "오른코 3코 위 교차뜨기"
+      },
+      {
+        "file": "chart_010.png",
+        "abbr": "chart_011.png",
+        "desc": "왼코 3코 위 교차뜨기_뒤쪽 3코 안뜨기"
+      },
+      {
+        "file": "chart_011.png",
+        "abbr": "chart_012.png",
+        "desc": "오른코 3코 위 교차뜨기_뒤쪽 3코 안뜨기"
+      },
+      {
+        "file": "chart_012.png",
+        "abbr": "chart_013.png",
+        "desc": "왼코 2코 위 교차뜨기"
+      },
+      {
+        "file": "chart_013.png",
+        "abbr": "chart_014.png",
+        "desc": "오른코 2코 위 교차뜨기"
+      },
+      {
+        "file": "chart_014.png",
+        "abbr": "chart_015.png",
+        "desc": "왼코 2코 위 교차뜨기_뒤쪽 4코 안뜨기"
+      },
+      {
+        "file": "chart_015.png",
+        "abbr": "chart_016.png",
+        "desc": "오른코 2코 위 교차뜨기_뒤쪽 4코 안뜨기"
+      },
+      {
+        "file": "chart_016.png",
+        "abbr": "chart_101.png",
+        "desc": "왼코 4코 위 교차뜨기"
+      }
+    ]
+  },
+  "7코 교차뜨기": {
+    "sheet": "7코 교차뜨기",
+    "img_dir": "assets/chart_from_excel/7코_교차뜨기",
+    "count_images": 8,
+    "count_names": 8,
+    "count_matched": 8,
+    "items": [
+      {
+        "file": "chart_001.png",
+        "abbr": "chart_002.png",
+        "desc": "오른코 4코 위 교차뜨기"
+      },
+      {
+        "file": "chart_002.png",
+        "abbr": "chart_003.png",
+        "desc": "왼코 4코 위 교차뜨기_뒤쪽 3코 안뜨기"
+      },
+      {
+        "file": "chart_003.png",
+        "abbr": "chart_004.png",
+        "desc": "오른코 4코 위 교차뜨기_뒤쪽 3코 안뜨기"
+      },
+      {
+        "file": "chart_004.png",
+        "abbr": "chart_005.png",
+        "desc": "왼코 3코 위 교차뜨기"
+      },
+      {
+        "file": "chart_005.png",
+        "abbr": "chart_006.png",
+        "desc": "오른코 3코 위 교차뜨기"
+      },
+      {
+        "file": "chart_006.png",
+        "abbr": "chart_007.png",
+        "desc": "왼코 3코 위 교차뜨기_뒤쪽 4코 안뜨기"
+      },
+      {
+        "file": "chart_007.png",
+        "abbr": "chart_008.png",
+        "desc": "오른코 3코 위 교차뜨기_뒤쪽 4코 안뜨기"
+      },
+      {
+        "file": "chart_008.png",
+        "abbr": "",
+        "desc": ""
+      }
+    ]
+  },
+  "8코 교차뜨기": {
+    "sheet": "8코 교차뜨기",
+    "img_dir": "assets/chart_from_excel/8코_교차뜨기",
+    "count_images": 12,
+    "count_names": 12,
+    "count_matched": 12,
+    "items": [
+      {
+        "file": "chart_001.png",
+        "abbr": "chart_002.png",
+        "desc": "오른코 4코 위 교차뜨기"
+      },
+      {
+        "file": "chart_002.png",
+        "abbr": "chart_003.png",
+        "desc": "왼코 4코 위 교차뜨기_뒤쪽 4코 안뜨기"
+      },
+      {
+        "file": "chart_003.png",
+        "abbr": "chart_004.png",
+        "desc": "오른코 4코 위 교차뜨기_뒤쪽 4코 안뜨기"
+      },
+      {
+        "file": "chart_004.png",
+        "abbr": "chart_005.png",
+        "desc": "왼코 3코 위 교차뜨기"
+      },
+      {
+        "file": "chart_005.png",
+        "abbr": "chart_006.png",
+        "desc": "오른코 3코 위 교차뜨기"
+      },
+      {
+        "file": "chart_006.png",
+        "abbr": "chart_007.png",
+        "desc": "왼코 3코 위 교차뜨기_뒤쪽 5코 안뜨기"
+      },
+      {
+        "file": "chart_007.png",
+        "abbr": "chart_008.png",
+        "desc": "오른코 3코 위 교차뜨기_뒤쪽 5코 안뜨기"
+      },
+      {
+        "file": "chart_008.png",
+        "abbr": "chart_009.png",
+        "desc": "왼코 5코 위 교차뜨기"
+      },
+      {
+        "file": "chart_009.png",
+        "abbr": "chart_010.png",
+        "desc": "오른코 5코 위 교차뜨기"
+      },
+      {
+        "file": "chart_010.png",
+        "abbr": "chart_011.png",
+        "desc": "왼코 5코 위 교차뜨기_뒤쪽 3코 안뜨기"
+      },
+      {
+        "file": "chart_011.png",
+        "abbr": "chart_012.png",
+        "desc": "오른코 5코 위 교차뜨기_뒤쪽 3코 안뜨기"
+      },
+      {
+        "file": "chart_012.png",
+        "abbr": "",
+        "desc": ""
+      }
+    ]
+  },
+  "10코 교차뜨기": {
+    "sheet": "10코 교차뜨기",
+    "img_dir": "assets/chart_from_excel/10코_교차뜨기",
+    "count_images": 6,
+    "count_names": 6,
+    "count_matched": 6,
+    "items": [
+      {
+        "file": "chart_001.png",
+        "abbr": "chart_002.png",
+        "desc": "오른코 4코 위 교차뜨기"
+      },
+      {
+        "file": "chart_002.png",
+        "abbr": "chart_003.png",
+        "desc": "왼코 5코 위 교차뜨기"
+      },
+      {
+        "file": "chart_003.png",
+        "abbr": "chart_004.png",
+        "desc": "오른코 5코 위 교차뜨기"
+      },
+      {
+        "file": "chart_004.png",
+        "abbr": "chart_005.png",
+        "desc": "왼코 6코 위 교차뜨기"
+      },
+      {
+        "file": "chart_005.png",
+        "abbr": "chart_006.png",
+        "desc": "오른코 6코 위 교차뜨기"
+      },
+      {
+        "file": "chart_006.png",
+        "abbr": "",
+        "desc": ""
+      }
+    ]
+  },
+  "3코 방울뜨기": {
+    "sheet": "3코 방울뜨기",
+    "img_dir": "assets/chart_from_excel/3코_방울뜨기",
+    "count_images": 2,
+    "count_names": 2,
+    "count_matched": 2,
+    "items": [
+      {
+        "file": "chart_001.png",
+        "abbr": "chart_002.png",
+        "desc": "3코 방울뜨기_코 늘리기"
+      },
+      {
+        "file": "chart_002.png",
+        "abbr": "",
+        "desc": ""
+      }
+    ]
+  },
+  "5코 방울뜨기": {
+    "sheet": "5코 방울뜨기",
+    "img_dir": "assets/chart_from_excel/5코_방울뜨기",
+    "count_images": 2,
+    "count_names": 2,
+    "count_matched": 2,
+    "items": [
+      {
+        "file": "chart_001.png",
+        "abbr": "chart_002.png",
+        "desc": "5코 방울뜨기_코 늘리기"
+      },
+      {
+        "file": "chart_002.png",
+        "abbr": "",
+        "desc": ""
+      }
+    ]
+  },
+  "교차뜨기 일본식 기호": {
+    "sheet": "교차뜨기 일본식 기호",
+    "img_dir": "assets/chart_from_excel/교차뜨기_일본식_기호",
+    "count_images": 32,
+    "count_names": 32,
+    "count_matched": 32,
+    "items": [
+      {
+        "file": "chart_001.png",
+        "abbr": "chart_002.png",
+        "desc": "오른코 위 교차뜨기"
+      },
+      {
+        "file": "chart_002.png",
+        "abbr": "chart_003.png",
+        "desc": "왼코 위 교차뜨기_뒤쪽 1코 안뜨기"
+      },
+      {
+        "file": "chart_003.png",
+        "abbr": "chart_004.png",
+        "desc": "오른코 위 교차뜨기_뒤쪽 1코 안뜨기"
+      },
+      {
+        "file": "chart_004.png",
+        "abbr": "chart_005.png",
+        "desc": "왼코 위 꼬아뜨기 교차뜨기_뒤쪽 1코 겉뜨기"
+      },
+      {
+        "file": "chart_005.png",
+        "abbr": "chart_006.png",
+        "desc": "오른코 위 꼬아뜨기 교차뜨기_뒤쪽 1코 겉뜨기"
+      },
+      {
+        "file": "chart_006.png",
+        "abbr": "chart_007.png",
+        "desc": "왼코 위 꼬아뜨기 교차뜨기_뒤쪽 1코 안뜨기"
+      },
+      {
+        "file": "chart_007.png",
+        "abbr": "chart_008.png",
+        "desc": "오른코 위 꼬아뜨기 교차뜨기_뒤쪽 1코 안뜨기"
+      },
+      {
+        "file": "chart_008.png",
+        "abbr": "chart_009.png",
+        "desc": "왼코 2코 위 교차뜨기"
+      },
+      {
+        "file": "chart_009.png",
+        "abbr": "chart_010.png",
+        "desc": "오른코 2코 위 교차뜨기"
+      },
+      {
+        "file": "chart_010.png",
+        "abbr": "chart_011.png",
+        "desc": "왼코 2코 위 교차뜨기_뒤쪽 1코 안뜨기"
+      },
+      {
+        "file": "chart_011.png",
+        "abbr": "chart_012.png",
+        "desc": "오른코 2코 위 교차뜨기_뒤쪽 1코 안뜨기"
+      },
+      {
+        "file": "chart_012.png",
+        "abbr": "chart_013.png",
+        "desc": "왼코 위 교차뜨기_중앙 1코 안뜨기"
+      },
+      {
+        "file": "chart_013.png",
+        "abbr": "chart_014.png",
+        "desc": "오른코 위 교차뜨기_중앙 1코 안뜨기"
+      },
+      {
+        "file": "chart_014.png",
+        "abbr": "chart_015.png",
+        "desc": "왼코 2코 위 교차뜨기"
+      },
+      {
+        "file": "chart_015.png",
+        "abbr": "chart_016.png",
+        "desc": "오른코 2코 위 교차뜨기"
+      },
+      {
+        "file": "chart_016.png",
+        "abbr": "chart_017.png",
+        "desc": "왼코 2코 위 교차뜨기_뒷코 안뜨기"
+      },
+      {
+        "file": "chart_017.png",
+        "abbr": "chart_018.png",
+        "desc": "오른코 2코 위 교차뜨기_뒷코 안뜨기"
+      },
+      {
+        "file": "chart_018.png",
+        "abbr": "chart_019.png",
+        "desc": "왼코 2코 위 교차뜨기_뒷코 안1겉1"
+      },
+      {
+        "file": "chart_019.png",
+        "abbr": "chart_020.png",
+        "desc": "오른코 2코 위 교차뜨기_뒷코 안1겉1"
+      },
+      {
+        "file": "chart_020.png",
+        "abbr": "chart_021.png",
+        "desc": "왼코 3코 위 교차뜨기_뒷코 안뜨기"
+      },
+      {
+        "file": "chart_021.png",
+        "abbr": "chart_022.png",
+        "desc": "오른코 3코 위 교차뜨기_뒷코 안뜨기"
+      },
+      {
+        "file": "chart_022.png",
+        "abbr": "chart_023.png",
+        "desc": "왼코 2코 위 교차뜨기_중앙 1코 겉뜨기 넣기"
+      },
+      {
+        "file": "chart_023.png",
+        "abbr": "chart_024.png",
+        "desc": "오른코 2코 위 교차뜨기_중앙 1코 겉뜨기 넣기"
+      },
+      {
+        "file": "chart_024.png",
+        "abbr": "chart_025.png",
+        "desc": "왼코 2코 위 교차뜨기_중앙 1코 안뜨기 넣기"
+      },
+      {
+        "file": "chart_025.png",
+        "abbr": "chart_026.png",
+        "desc": "오른코 2코 위 교차뜨기_중앙 1코 안뜨기 넣기"
+      },
+      {
+        "file": "chart_026.png",
+        "abbr": "chart_027.png",
+        "desc": "왼코 3코 위 교차뜨기"
+      },
+      {
+        "file": "chart_027.png",
+        "abbr": "chart_028.png",
+        "desc": "오른코 3코 위 교차뜨기"
+      },
+      {
+        "file": "chart_028.png",
+        "abbr": "chart_029.png",
+        "desc": "왼코 2코 위 교차뜨기_중앙 2코 안뜨기"
+      },
+      {
+        "file": "chart_029.png",
+        "abbr": "chart_030.png",
+        "desc": "오른코 2코 위 교차뜨기_중앙 2코 안뜨기"
+      },
+      {
+        "file": "chart_030.png",
+        "abbr": "chart_031.png",
+        "desc": "왼코 3코 위 교차뜨기_중앙 1코 안뜨기"
+      },
+      {
+        "file": "chart_031.png",
+        "abbr": "chart_032.png",
+        "desc": "오른코 3코 위 교차뜨기_중앙 1코 안뜨기"
+      },
+      {
+        "file": "chart_032.png",
+        "abbr": "",
+        "desc": ""
+      }
+    ]
+  },
+  "노트뜨기": {
+    "sheet": "노트뜨기",
+    "img_dir": "assets/chart_from_excel/노트뜨기",
+    "count_images": 2,
+    "count_names": 2,
+    "count_matched": 2,
+    "items": [
+      {
+        "file": "chart_001.png",
+        "abbr": "chart_002.png",
+        "desc": "오른코 속 노트뜨기"
+      },
+      {
+        "file": "chart_002.png",
+        "abbr": "",
+        "desc": ""
+      }
+    ]
+  }
+}
