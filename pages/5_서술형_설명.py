@@ -33,5 +33,5 @@ if st.button("전개 및 설명 생성"):
     st.success(f"이 구간 종료 후 기대 코수: **{expected_end}코**")
 
 st.divider()
-st.page_link("app.py", label="⬅ 홈으로")
+st.page_link("HOME.py", label="⬅ 홈으로")
 st.page_link("pages/6_코수_추적_체크.py", label="➡ 페이지 6 (코수 추적/체크)")

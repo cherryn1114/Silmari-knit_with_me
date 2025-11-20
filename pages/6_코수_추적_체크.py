@@ -53,4 +53,4 @@ if st.button("행별 기대 코수 계산"):
         st.success("현재 코수가 기대치와 일치합니다.")
 
 st.divider()
-st.page_link("app.py", label="⬅ 홈으로")
+st.page_link("HOME.py", label="⬅ 홈으로")
