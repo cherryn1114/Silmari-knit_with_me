@@ -1,31 +1,35 @@
 # lib/pdf_utils.py
-# PyMuPDF(fitz) 안전 사용 / PDF 아닐 때 처리 / 에러 메시지 개선
 
-from typing import List
-import fitz  # pip package name: pymupdf
+from pathlib import Path
+from typing import Union
 
-def is_pdf_bytes(b: bytes) -> bool:
-    # 간단한 시그니처 검사 (예: '%PDF')
-    if not b or len(b) < 4:
-        return False
-    try:
-        head = b[:4]
-        return head == b"%PDF"
-    except Exception:
-        return False
+PdfPath = Union[str, Path]
 
-def extract_text_per_page(pdf_bytes: bytes) -> List[str]:
+
+def extract_pdf_text(path: PdfPath) -> str:
     """
-    PDF 바이트에서 페이지별 텍스트 추출
-    - PDF가 아니면 ValueError
-    - 암호/손상 등 예외는 그대로 raise
+    PDF 파일에서 모든 텍스트를 추출해서 하나의 문자열로 반환합니다.
     """
-    if not is_pdf_bytes(pdf_bytes):
-        raise ValueError("PDF 파일이 아닌 것 같습니다. 업로드한 파일 형식을 확인하세요.")
-    texts: List[str] = []
-    # stream+filetype='pdf' 방식은 byte 입력에 안전
-    with fitz.open(stream=pdf_bytes, filetype="pdf") as doc:
-        for page in doc:
-            # 필요에 따라 "text", "blocks", "rawdict" 등 교체 가능
-            texts.append(page.get_text("text"))
-    return texts
+    from PyPDF2 import PdfReader  # requirements.txt 에 PyPDF2가 있어야 합니다.
+
+    p = Path(path)
+    reader = PdfReader(str(p))
+
+    chunks: list[str] = []
+    for page in reader.pages:
+        try:
+            txt = page.extract_text() or ""
+        except Exception:
+            txt = ""
+        if txt:
+            chunks.append(txt)
+
+    return "\n".join(chunks)
+
+
+# 예전 이름 호환용 별칭 (import 에서 이 이름을 써도 동작하게)
+def extract_pdf_text_from_pdf(path: PdfPath) -> str:
+    return extract_pdf_text(path)
+
+
+__all__ = ["extract_pdf_text", "extract_pdf_text_from_pdf"]
