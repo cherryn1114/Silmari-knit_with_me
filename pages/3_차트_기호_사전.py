@@ -1,129 +1,136 @@
 # pages/3_차트_기호_사전.py
-
-import os
 import json
 from pathlib import Path
 
 import streamlit as st
 
-# ---------------- 기본 설정 ----------------
+# -----------------------------
+# 설정
+# -----------------------------
 st.set_page_config(
     page_title="실마리 — 차트 기호 사전",
-    page_icon="🧵",
+    page_icon="🧶",
     layout="wide",
 )
 
+ROOT = Path(__file__).resolve().parent.parent
+MANIFEST_PATH = ROOT / "assets" / "chart_from_excel" / "manifest.json"
+
+# 엑셀 시트(소분류) 순서 고정
+SHEET_ORDER = [
+    "1코 기호",
+    "1코 2단 기호",
+    "2코 교차뜨기",
+    "3코 교차뜨기",
+    "4코 교차뜨기",
+    "5코 교차뜨기",
+    "6코 교차뜨기",
+    "7코 교차뜨기",
+    "8코 교차뜨기",
+    "10코 교차뜨기",
+    "3코 방울뜨기",
+    "5코 방울뜨기",
+    "교차뜨기 일본식 기호",
+    "노트뜨기",
+]
+
+# -----------------------------
+# 데이터 로드
+# -----------------------------
+def load_manifest() -> dict:
+    if not MANIFEST_PATH.exists():
+        st.error(f"매니페스트 파일을 찾을 수 없습니다: {MANIFEST_PATH}")
+        return {}
+
+    with MANIFEST_PATH.open(encoding="utf-8") as f:
+        data = json.load(f)
+
+    # 시트 순서를 우리가 원하는 순서로 정렬
+    ordered = {}
+    for name in SHEET_ORDER:
+        if name in data:
+            ordered[name] = data[name]
+    for name in data.keys():
+        if name not in ordered:
+            ordered[name] = data[name]
+
+    return ordered
+
+
+manifest = load_manifest()
+
+# -----------------------------
+# UI 상단
+# -----------------------------
 st.title("🧵 차트 기호 사전")
 
-MANIFEST_PATH = Path("assets/chart_from_excel/manifest.json")
-
-if not MANIFEST_PATH.exists():
-    st.error("`assets/chart_from_excel/manifest.json` 파일을 찾을 수 없어요. "
-             "먼저 `python lib/build_chart_manifest.py` 를 실행해서 매니페스트를 만들어 주세요.")
+if not manifest:
     st.stop()
 
-# ---------------- 매니페스트 로드 ----------------
-with MANIFEST_PATH.open(encoding="utf-8") as f:
-    manifest = json.load(f)
+sheet_names = list(manifest.keys())
 
-# manifest 구조 예시:
-# {
-#   "1코 기호": {
-#       "sheet": "1코 기호",
-#       "img_dir": "assets/chart_from_excel/1코_기호",
-#       "count_images": 32,
-#       "count_named": 32,
-#       "count_matched": 32,
-#       "items": [
-#           {"file": "chart_001.png", "abbr": "겉뜨기", "desc": "기본 겉뜨기"},
-#           ...
-#       ]
-#   },
-#   ...
-# }
-
-records = []
-for sheet_title, info in manifest.items():
-    img_dir = info.get("img_dir", "")
-    for it in info.get("items", []):
-        file = it.get("file")
-        if not file:
-            continue
-        abbr = (it.get("abbr") or "").strip()
-        desc = (it.get("desc") or "").strip()
-
-        # img_dir 이 절대경로가 아니라면 assets 기준 상대경로라고 가정
-        img_path = Path(img_dir) / file
-
-        records.append(
-            {
-                "sheet": sheet_title,
-                "img_path": str(img_path),
-                "file": file,
-                "abbr": abbr,
-                "desc": desc,
-            }
-        )
-
-if not records:
-    st.warning("매니페스트에는 있지만 이미지 항목이 비어 있습니다.")
-    st.stop()
-
-# ---------------- 필터 UI ----------------
-sheet_names = sorted({r["sheet"] for r in records})
-sheet_option = st.selectbox(
+choice = st.selectbox(
     "소분류(엑셀 시트) 선택",
     options=["전체 보기"] + sheet_names,
-    index=0,
 )
 
-if sheet_option == "전체 보기":
-    shown = records
-else:
-    shown = [r for r in records if r["sheet"] == sheet_option]
+# 보여줄 시트 목록
+target_sheets = sheet_names if choice == "전체 보기" else [choice]
 
-st.caption(f"현재 표시되는 기호 수: **{len(shown)}개**")
+total_icons = sum(len(manifest[s]["items"]) for s in target_sheets)
+st.caption(f"현재 표시되는 기호 수: **{total_icons}개**")
 
-# 시트별로 묶어서 보여주기
-grouped = {}
-for r in shown:
-    grouped.setdefault(r["sheet"], []).append(r)
+# -----------------------------
+# 렌더링 함수
+# -----------------------------
+def show_sheet(sheet_title: str, data: dict):
+    img_dir = ROOT / data["img_dir"]
+    items = data.get("items", [])
 
-# ---------------- 렌더링 ----------------
-N_COLS = 5
-
-for sheet_title in sheet_names:
-    if sheet_title not in grouped:
-        continue
-
-    items = grouped[sheet_title]
     st.markdown(f"### 🧵 {sheet_title} · {len(items)}개")
 
-    cols = st.columns(N_COLS)
-    idx = 0
-    for r in items:
-        col = cols[idx % N_COLS]
-        idx += 1
+    if not img_dir.exists():
+        st.warning(f"이미지 폴더를 찾을 수 없습니다: {img_dir}")
+        return
 
-        img_path = r["img_path"]
-        file_name = r["file"]
-        name = r["abbr"] or "(이름 없음)"
-        desc = r["desc"]
+    cols = st.columns(6)
+    col_idx = 0
+
+    for item in items:
+        file_name = item.get("file", "")
+        name = (item.get("abbr", "") or "").strip()
+        desc = (item.get("desc", "") or "").strip()
+
+        img_path = img_dir / file_name
+        col = cols[col_idx % 6]
 
         with col:
-            # 이미지
-            if Path(img_path).exists():
-                st.image(img_path, use_column_width=True)
-            else:
-                st.error(f"이미지 없음\n`{img_path}`")
+            if img_path.exists():
+                # use_container_width 안 씀 → 노란 경고 없음
+                st.image(str(img_path), width=110)
 
-            # 이름 + 파일명
-            st.markdown(f"**{name}**")
+            # 파일명은 얇은 회색 캡션
             st.caption(file_name)
-            if desc:
-                st.write(desc)
+
+            # 이름(+설명)을 굵게
+            if name or desc:
+                label = name
+                if desc:
+                    # SSK (오른코 겹쳐 코 모아뜨기) 이런 식으로 표시
+                    label = f"{name} ({desc})" if name else desc
+                st.markdown(f"**{label}**")
+
+        col_idx += 1
+        if col_idx % 6 == 0 and col_idx < len(items):
+            cols = st.columns(6)
 
     st.divider()
 
-# 맨 아래 홈으로 돌아가기 링크 (원하면 삭제 가능)
-st.page_link("HOME.py", label="⬅️ 홈으로")
+
+# -----------------------------
+# 실제 표시
+# -----------------------------
+for sheet in target_sheets:
+    show_sheet(sheet, manifest[sheet])
+
+st.page_link("HOME.py", label="⬅ 홈으로")
