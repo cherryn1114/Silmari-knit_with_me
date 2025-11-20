@@ -6,7 +6,7 @@ from pathlib import Path
 import streamlit as st
 
 from lib import parser
-from lib.pdf_utils import extract_pdf_text   # 이미 프로젝트에 있는 유틸
+from lib.pdf_utils import extract_pdf_text_from_pdf as extract_pdf_text
 
 # ---------------------------------------------------
 # 경로 / 데이터 로드
