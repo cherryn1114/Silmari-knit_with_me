@@ -1,5 +1,6 @@
 # pages/3_차트_기호_사전.py
 import json
+import re
 from pathlib import Path
 import streamlit as st
 
@@ -52,6 +53,29 @@ manifest = load_manifest()
 
 
 # -----------------------------
+# 이름 정리 함수
+# -----------------------------
+def clean_name(raw: str) -> str:
+    """
+    예)
+      'chart_001.png (겉뜨기)' → '겉뜨기'
+      'chart_022.png(M1R)'     → 'M1R'
+      'SSK(오른코 겹쳐 2코 모아뜨기)' → 'SSK(오른코 겹쳐 2코 모아뜨기)' (chart_XXX 없으면 그대로)
+    """
+    if not raw:
+        return ""
+
+    # 1) chart_000.png 부분 제거
+    s = re.sub(r"chart_\d+\.png\s*", "", raw).strip()
+
+    # 2) 남은 게 괄호만 있으면 괄호 제거
+    if s.startswith("(") and s.endswith(")"):
+        s = s[1:-1].strip()
+
+    return s
+
+
+# -----------------------------
 # UI
 # -----------------------------
 st.title("🧵 차트 기호 사전")
@@ -78,9 +102,11 @@ def show_sheet(sheet_title: str, data: dict):
 
     for item in items:
         file_name = item.get("file", "")
-        name = (item.get("abbr", "") or "").strip()
+        raw_name = (item.get("abbr", "") or "").strip()
         desc = (item.get("desc", "") or "").strip()
         img_path = img_dir / file_name
+
+        name = clean_name(raw_name)
 
         col = cols[col_idx % 6]
 
@@ -88,14 +114,19 @@ def show_sheet(sheet_title: str, data: dict):
             if img_path.exists():
                 st.image(str(img_path), width=110)
 
-            # 🔥 파일명 출력 제거 (중요)
+            # ⛔ 파일명은 더 이상 표시하지 않음
             # st.caption(file_name)
 
-            # 🔥 기호 이름 + 설명만 굵게 표시
-            if name or desc:
+            # ✅ 기호 이름 / 설명만 굵게 표시
+            label = ""
+            if name and desc and desc != name:
+                label = f"{name} ({desc})"
+            elif name:
                 label = name
-                if desc:
-                    label = f"{name} ({desc})" if name else desc
+            elif desc:
+                label = desc
+
+            if label:
                 st.markdown(f"**{label}**")
 
         col_idx += 1
