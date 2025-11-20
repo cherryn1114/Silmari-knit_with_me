@@ -1,215 +1,282 @@
-# pages/4_필요기술_약어_설명.py
-import re
+# pages/4_필요_기술_약어_설명.py
 import json
+import re
 from pathlib import Path
 
 import streamlit as st
-from lib import parser, abbr_extract
 
-# -----------------------------
-# 공통 설정
-# -----------------------------
-st.set_page_config(
-    page_title="실마리 — 필요 기술 / 약어 설명",
-    page_icon="📘",
-    layout="wide",
-)
+from lib import parser
+from lib.pdf_utils import extract_pdf_text   # 이미 프로젝트에 있는 유틸
 
+# ---------------------------------------------------
+# 경로 / 데이터 로드
+# ---------------------------------------------------
 ROOT = Path(__file__).resolve().parent.parent
-
-# -----------------------------
-# 1) 뜨개 약어 사전 로드 (symbols + symbols_extra)
-# -----------------------------
-base = parser.load_lib("symbols.json")
-extra = parser.load_lib("symbols_extra.json")
-symbols = {**base, **extra}  # 기본 + 내가 추가한 것
-
-# -----------------------------
-# 2) 차트 기호 매니페스트 로드 (엑셀 → 이미지)
-# -----------------------------
-MANIFEST_PATH = ROOT / "assets" / "chart_from_excel" / "manifest.json"
-try:
-    chart_manifest = json.loads(MANIFEST_PATH.read_text(encoding="utf-8"))
-except FileNotFoundError:
-    chart_manifest = {}
-
-# 차트 이름 정리 함수 (3페이지에서 쓴 것과 동일)
-def clean_chart_name(raw: str) -> str:
-    """
-    'chart_001.png (겉뜨기)' -> '겉뜨기'
-    'chart_022.png(M1R)'    -> 'M1R'
-    """
-    if not raw:
-        return ""
-    s = re.sub(r"chart_\d+\.png\s*", "", raw).strip()
-    if s.startswith("(") and s.endswith(")"):
-        s = s[1:-1].strip()
-    return s
+CHART_MANIFEST = ROOT / "assets" / "chart_from_excel" / "manifest.json"
 
 
-# -----------------------------
-# 3) 통합 인덱스 만들기
-#    key 문자열 -> 정보(dict)
-# -----------------------------
-index: dict[str, dict] = {}
+@st.cache_data(show_spinner=False)
+def load_symbol_lib():
+    """symbols.json + symbols_extra.json 합치기"""
+    base = parser.load_lib("symbols.json") or {}
+    extra = parser.load_lib("symbols_extra.json") or {}
+    merged = {**base, **extra}
+    return merged
 
-# (a) 약어/용어 사전
-for key, v in symbols.items():
-    entry = {
-        "kind": "abbr",  # 약어/텍스트
-        "key": key,
-        "name_en": v.get("name_en", ""),
-        "name_ko": v.get("name_ko", ""),
-        "desc_ko": v.get("desc_ko", ""),
-        "image": None,
-    }
 
-    def add_label(s: str):
-        s = (s or "").strip()
-        if not s:
-            return
-        index.setdefault(s, entry)
+@st.cache_data(show_spinner=False)
+def load_chart_manifest():
+    """엑셀에서 만든 차트 기호 매니페스트 로드"""
+    if not CHART_MANIFEST.exists():
+        return {}
 
-    add_label(key)
-    add_label(v.get("name_en", ""))
-    add_label(v.get("name_ko", ""))
-    for a in v.get("aliases", []):
-        add_label(a)
+    try:
+        data = json.loads(CHART_MANIFEST.read_text(encoding="utf-8"))
+    except json.JSONDecodeError:
+        return {}
 
-# (b) 차트 기호 인덱스
-for sheet_title, sheet in chart_manifest.items():
-    img_dir = ROOT / sheet["img_dir"]
-    for item in sheet["items"]:
-        raw_abbr = (item.get("abbr", "") or "").strip()
-        name = clean_chart_name(raw_abbr)
-        desc = (item.get("desc", "") or "").strip()
-        file_name = item.get("file", "")
-        img_path = img_dir / file_name
+    return data
 
-        if not name:
-            # 이름이 없으면 파일명으로라도 등록
-            name = file_name
 
-        entry = {
-            "kind": "chart",
-            "sheet": sheet_title,
-            "key": name,
-            "name_en": "",
-            "name_ko": name,
-            "desc_ko": desc,
-            "image": str(img_path) if img_path.exists() else None,
-        }
+@st.cache_data(show_spinner=False)
+def build_indexes():
+    """텍스트에서 찾기 편하게 약어/차트 기호 인덱스 구성"""
 
-        # 이름 / 설명 / 파일명을 모두 검색 키로 사용
-        for label in {name, desc, file_name}:
-            label = (label or "").strip()
-            if not label:
+    symbols = load_symbol_lib()
+    manifest = load_chart_manifest()
+
+    # ------------ 1) 약어/기술 인덱스 ------------
+    abbr_index = {}  # token(lower) -> (key, entry)
+
+    for key, v in symbols.items():
+        tokens = set()
+        tokens.add(key)
+        tokens.add(v.get("name_en", ""))
+        tokens.add(v.get("name_ko", ""))
+        for a in v.get("aliases", []):
+            tokens.add(a)
+
+        for t in tokens:
+            t = (t or "").strip()
+            if not t:
                 continue
-            index.setdefault(label, entry)
+            abbr_index[t.lower()] = (key, v)
 
-# -----------------------------
-# 4) UI
-# -----------------------------
+    # ------------ 2) 차트 기호 인덱스 ------------
+    chart_items = []  # 리스트로 들고 있다가 텍스트에서 검색
+    for sheet_title, info in manifest.items():
+        img_dir = info.get("img_dir", "")
+        for item in info.get("items", []):
+            file = item.get("file", "")
+            abbr = (item.get("abbr") or "").strip()
+            desc = (item.get("desc") or "").strip()
+
+            # 검색용 토큰 (이름과 설명 둘 다 사용)
+            tokens = []
+            if abbr:
+                tokens.append(abbr)
+            if desc:
+                tokens.append(desc)
+
+            if not tokens:
+                continue
+
+            chart_items.append(
+                {
+                    "sheet": sheet_title,
+                    "img_dir": img_dir,
+                    "file": file,
+                    "abbr": abbr,
+                    "desc": desc,
+                    "tokens": tokens,
+                }
+            )
+
+    return abbr_index, chart_items
+
+
+def find_matches(text: str):
+    """사용자가 넣은 텍스트에서 약어/차트 기호 찾기"""
+    text_lower = text.lower()
+
+    abbr_index, chart_items = build_indexes()
+
+    # 약어 / 기술
+    abbr_hits = {}  # key -> (entry, matched_tokens)
+    for token, (key, entry) in abbr_index.items():
+        if not token:
+            continue
+
+        # 영문/숫자는 단어 경계 사용, 한글·혼합은 그냥 포함 검사
+        if re.fullmatch(r"[0-9A-Za-z+/.\-]+", token):
+            pattern = r"\b" + re.escape(token) + r"\b"
+            found = re.search(pattern, text_lower)
+        else:
+            found = token in text_lower
+
+        if found:
+            hit = abbr_hits.setdefault(key, {"entry": entry, "tokens": []})
+            hit["tokens"].append(token)
+
+    # 차트 기호 (엑셀에서 가져온 것)
+    chart_hits = []
+    for item in chart_items:
+        found_token = None
+        for token in item["tokens"]:
+            t = token.lower()
+            if not t:
+                continue
+            if t in text_lower:
+                found_token = token
+                break
+        if found_token:
+            copied = dict(item)
+            copied["matched"] = found_token
+            chart_hits.append(copied)
+
+    # 정렬: 약어는 key 알파벳 순, 차트는 시트 순 + 파일명 순
+    abbr_hits_sorted = sorted(abbr_hits.items(), key=lambda kv: kv[0].lower())
+    chart_hits_sorted = sorted(
+        chart_hits, key=lambda x: (x["sheet"], x["file"])
+    )
+
+    return abbr_hits_sorted, chart_hits_sorted
+
+
+def resolve_chart_path(img_dir: str, file: str) -> Path:
+    """
+    manifest 안에 어떤 형태로 img_dir 이 들어가 있어도
+    실제 이미지 파일 경로를 최대한 유연하게 찾아본다.
+    """
+    p = Path(img_dir)
+
+    # 1) 그대로 사용 (절대 / 상대 모두 허용)
+    cand = (ROOT / p) if not p.is_absolute() else p
+    path1 = cand / file
+    if path1.exists():
+        return path1
+
+    # 2) assets/chart_from_excel/ + img_dir
+    path2 = ROOT / "assets" / "chart_from_excel" / img_dir / file
+    if path2.exists():
+        return path2
+
+    # 3) img_dir의 마지막 이름만 사용
+    path3 = ROOT / "assets" / "chart_from_excel" / p.name / file
+    if path3.exists():
+        return path3
+
+    # 실패 시 그냥 1번 반환(어차피 존재 안 하면 Streamlit이 무시)
+    return path1
+
+
+# ===================================================
+#  Streamlit UI
+# ===================================================
+
+st.set_page_config(page_title="필요 기술 / 약어 설명", page_icon="📘", layout="centered")
+
 st.title("📘 필요 기술 / 약어 설명")
 
 st.markdown(
     """
-도안 설명이나 필요 기술 목록을 아래에 **그대로 붙여 넣으면**  
-문장 안에 있는 **약어(k2tog, SSK, YO …)** 와  
-**차트 기호 이름(예: ‘오른코 겹쳐 3코 모아뜨기’, ‘중심 5코 모아뜨기’ 등)** 을 동시에 찾아서 정리해 줍니다.
+도안 설명이나 **필요 기술 목록**을 아래에 그대로 붙여 넣으면  
+
+- 텍스트 안의 **뜨개 약어(k2tog, SSK, YO, …)** 와  
+- 3페이지에서 쓰는 **차트 기호 이름(예: ‘오른코 겉켜 3코 모아뜨기’, ‘중심 5코 모아뜨기’ 등)**  
+
+을 동시에 찾아서 정리해 줍니다.
 """
 )
 
-text = st.text_area(
-    "도안에서 필요한 기술/약어를 복사해서 붙여 넣으세요.",
-    height=200,
-    placeholder="예) k2tog, ssk, YO, 중심 5코 모아뜨기, 오른코 겹쳐 3코 모아뜨기 …",
-)
+# ---------------------------------------------------
+# 입력 영역 (텍스트 + PDF 업로드)
+# ---------------------------------------------------
+col1, col2 = st.columns([2, 1])
 
-st.divider()
+with col1:
+    st.markdown("**① 도안 텍스트 붙여넣기**")
+    default_text = ""
+    text = st.text_area(
+        "도안에서 필요한 기술/약어를 복사해서 붙여 넣으세요.",
+        value=default_text,
+        height=220,
+        placeholder="예) k2tog, ssk, YO, 중심 5코 모아뜨기, 오른코 겉켜 3코 모아뜨기 …",
+    )
 
-# -----------------------------
-# 5) 텍스트에서 용어 추출
-#    - abbr_extract로 약어 찾기
-#    - index에 있는 모든 키를 문장에서 검색
-# -----------------------------
-found_keys = set()
+with col2:
+    st.markdown("**② 또는 PDF 업로드**")
+    uploaded = st.file_uploader("PDF 도안 파일", type=["pdf"], label_visibility="collapsed")
+    if uploaded is not None:
+        # 임시 파일로 저장 후 pdf_utils 사용
+        tmp_path = ROOT / "data" / "_uploaded_tmp.pdf"
+        tmp_path.parent.mkdir(parents=True, exist_ok=True)
+        tmp_path.write_bytes(uploaded.read())
+        try:
+            extracted = extract_pdf_text(str(tmp_path))
+            if extracted.strip():
+                # 기존 텍스트에 이어 붙이기 보다는 교체하는 쪽이 직관적
+                text = extracted
+                st.success("PDF에서 텍스트를 추출했어요. 아래 텍스트 상자를 확인해 주세요.")
+        except Exception as e:
+            st.warning(f"PDF 읽기 중 오류가 발생했습니다: {e}")
 
-if text.strip():
-    # 5-1. 약어 추출 (영문 약어 위주)
-    try:
-        abbrs = abbr_extract.extract(text, symbols)
-        for a in abbrs:
-            found_keys.add(a)
-    except Exception:
-        # 혹시 extract가 실패해도 다른 방식으로 찾기
-        pass
+st.markdown("---")
 
-    # 5-2. 모든 인덱스 키에 대해 서브스트링/단어 검색
-    lowered = text.lower()
-    for label in index.keys():
-        if not label:
-            continue
-        # 한글은 그냥 포함 여부로, 영문/숫자는 단어 경계 기준으로
-        if re.search(r"[a-zA-Z0-9]", label):
-            # \blabel\b 형태로 찾기
-            pattern = r"\b" + re.escape(label) + r"\b"
-            if re.search(pattern, text, flags=re.IGNORECASE):
-                found_keys.add(label)
-        else:
-            if label in text:
-                found_keys.add(label)
-
-# found_keys 를 실제 entry 로 변환
-results = []
-seen_entries = set()
-for label in sorted(found_keys):
-    entry = index.get(label)
-    if not entry:
-        continue
-    # 같은 entry를 여러 label이 가리킬 수 있으므로 중복 제거
-    key_id = (entry["kind"], entry.get("sheet"), entry["key"])
-    if key_id in seen_entries:
-        continue
-    seen_entries.add(key_id)
-    results.append((label, entry))
-
-st.subheader(f"🔍 인식된 기술/약어: {len(results)}개")
-
-if not results:
-    st.info("텍스트에서 인식된 약어/차트 기호가 아직 없습니다. 위에 도안 내용을 붙여 넣어 보세요.")
+# ---------------------------------------------------
+# 분석 결과
+# ---------------------------------------------------
+if not text.strip():
+    st.subheader("🔍 인식된 기술/약어: 0개")
+    st.info("아직 텍스트가 없습니다. 위에 도안 내용을 붙여 넣거나 PDF를 업로드해 주세요.")
 else:
-    # 약어/차트 따로 보여주기
-    abbr_results = [item for item in results if item[1]["kind"] == "abbr"]
-    chart_results = [item for item in results if item[1]["kind"] == "chart"]
+    abbr_hits, chart_hits = find_matches(text)
+    total = len(abbr_hits) + len(chart_hits)
 
-    if abbr_results:
-        st.markdown("### ✏️ 텍스트 약어 / 용어")
-        for label, entry in abbr_results:
-            name_ko = entry.get("name_ko") or entry.get("name_en") or entry["key"]
-            desc = entry.get("desc_ko", "")
-            st.markdown(f"**{name_ko}**  (`{label}`)")
-            if desc:
-                st.write(desc)
+    st.subheader(f"🔍 인식된 기술/약어: {total}개")
+
+    # ===== 1) 텍스트 약어 / 기법 =====
+    if abbr_hits:
+        st.markdown("### ✳ 약어 / 텍스트 기법")
+
+        for key, info in abbr_hits:
+            entry = info["entry"]
+            tokens = sorted(set(info["tokens"]))
+
+            name_en = entry.get("name_en", "")
+            name_ko = entry.get("name_ko", "")
+            desc_ko = entry.get("desc_ko", "")
+
+            st.markdown(
+                f"**{key}** — {name_en} / {name_ko}"
+                + (f"<br/><small>텍스트에서 발견된 표기: {', '.join(tokens)}</small>"
+                   if tokens else ""),
+                unsafe_allow_html=True,
+            )
+            if desc_ko:
+                st.write(desc_ko)
+
+            # (원하면 여기서 2페이지처럼 유튜브 썸네일/링크도 보여줄 수 있음)
             st.markdown("---")
 
-    if chart_results:
-        st.markdown("### 🧵 차트 기호")
-        cols = st.columns(3)
-        idx = 0
-        for label, entry in chart_results:
-            col = cols[idx % 3]
-            with col:
-                if entry.get("image"):
-                    st.image(entry["image"], width=120)
-                title = entry.get("name_ko") or entry["key"]
-                desc = entry.get("desc_ko", "")
+    # ===== 2) 차트 기호 =====
+    if chart_hits:
+        st.markdown("### 🧵 차트 기호 (엑셀 차트 도안 기준)")
 
-                badge = f"{entry.get('sheet','차트')}"
-                st.markdown(f"**{title}**  \n<small>{badge}</small>", unsafe_allow_html=True)
-                if desc:
-                    st.write(desc)
-            idx += 1
-        st.markdown("---")
+        current_sheet = None
+        for item in chart_hits:
+            sheet = item["sheet"]
+            if sheet != current_sheet:
+                st.markdown(f"#### 📂 {sheet}")
+                current_sheet = sheet
 
-st.page_link("HOME.py", label="⬅ 홈으로")
+            img_path = resolve_chart_path(item["img_dir"], item["file"])
+            cols = st.columns([1, 3])
+
+            # 이미지
+            if img_path.exists():
+                cols[0].image(str(img_path), use_column_width=True)
+
+            # 설명
+            title = item.get("abbr") or item.get("desc") or item["file"]
+            desc
