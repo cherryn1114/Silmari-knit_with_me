@@ -368,7 +368,7 @@ st.write(
 3. 도안 이미지를 업로드하거나, 도안 설명/약어를 추가로 붙여넣기  
 4. ChatGPT에게 분석을 요청하면,  
    - 지금 이 앱에서 보여준 **약어 사전 + 차트 기호 사전** 기준으로  
-   - 도안에 쓰인 기호들을 표준 용어로 **정리해서 설명**해 달라고 요청하게 됩니다.
+   - 도안에 쓰인 기호들을 표준 용어로 **대치해서 표 형식으로 정리**해 달라고 요청하게 됩니다.
 """
 )
 
@@ -420,18 +420,18 @@ prompt_lines.append("-----------------------------------------------------------
 prompt_lines.append("✏️ 네가 해 줄 일")
 prompt_lines.append("")
 prompt_lines.append("1. 내가 업로드한 도안 이미지를 보고, 사용된 기호들을 가능한 한 많이 추출해.")
-prompt_lines.append("2. 각 기호를 위의 뜨개 약어/차트 기호 사전에서 **가장 가까운 표준 용어**에 매핑해.")
-prompt_lines.append("3. 아래와 같은 표 형식으로 정리해 줘:")
+prompt_lines.append("2. 각 기호를 위의 뜨개 약어/차트 기호 사전에서 **가장 가까운 표준 용어(약어)**에 매핑해.")
+prompt_lines.append("3. 아래와 같은 **마크다운 표 형식**으로 정리해 줘:")
 prompt_lines.append("")
-prompt_lines.append("   - `도안에 적힌 기호 이름 또는 모양 설명` → **표준 용어(약어)** — 뜨는 법 간단 설명")
-prompt_lines.append("   - 예시) `중심 5코 모아뜨기` → **C5B / 중앙 5코 모아뜨기** — 가운데 3코를 앞으로 두고 …")
-prompt_lines.append("   - 예시) `사선 모양 교차뜨기` → **2/2 RC** — 오른쪽으로 2코 교차 겉뜨기 …")
+prompt_lines.append("| 도안에 적힌 기호/이름 | 표준 뜨개 용어(약어) |")
+prompt_lines.append("|------------------------|----------------------|")
+prompt_lines.append("| (도안 표기 예시)       | (예: k2tog, 2/2 RC)  |")
 prompt_lines.append("")
 prompt_lines.append("4. 같은 의미의 기호가 여러 가지 이름으로 불릴 수 있으니,")
-prompt_lines.append("   최대한 **중복을 줄이고, 정리된 목록**을 만들어 줘.")
+prompt_lines.append("   최대한 **중복을 줄이고, 정리된 표**를 만들어 줘.")
 prompt_lines.append("")
-prompt_lines.append("마지막으로, 초보자도 이해할 수 있도록 각 표준 기호마다")
-prompt_lines.append("뜨는 방법을 한국어로 짧게 설명해 줘.")
+prompt_lines.append("설명 문장은 최소한으로 유지하고,")
+prompt_lines.append("가능하면 표 안에는 **'도안 표기'와 '표준 용어'**만 간단히 써 줘.")
 
 final_prompt = "\n".join(prompt_lines)
 
