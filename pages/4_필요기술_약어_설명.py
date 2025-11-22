@@ -1,401 +1,463 @@
 # pages/4_필요기술_약어_설명.py
-
-import streamlit as st
-from openai import OpenAI
+import io
 import os
 import json
-import base64
 from pathlib import Path
 from collections import defaultdict
 
+import streamlit as st
 from PIL import Image
 import numpy as np
 
-from lib import parser  # symbols.json, symbols_extra.json 로딩용
+from lib import parser
 
-# ---------- 설정 ----------
+# --- PDF 텍스트 추출 유틸 (lib/pdf_utils 가 있으면 우선 사용) -----------------
+try:
+    from lib.pdf_utils import extract_pdf_text_from_pdf as extract_pdf_text  # 최신 버전
+except Exception:
+    try:
+        from lib.pdf_utils import extract_pdf_text  # 예전 버전
+    except Exception:
+        # 완전한 예비용: PyPDF2 직접 사용
+        try:
+            import PyPDF2
+        except Exception:
+            PyPDF2 = None
+
+        def extract_pdf_text(path: str) -> str:
+            if PyPDF2 is None:
+                return ""
+            text = []
+            with open(path, "rb") as f:
+                reader = PyPDF2.PdfReader(f)
+                for page in reader.pages:
+                    try:
+                        t = page.extract_text() or ""
+                    except Exception:
+                        t = ""
+                    text.append(t)
+            return "\n".join(text)
+
+
+# --- 전역 경로 -------------------------------------------------------------
 BASE_DIR = Path(__file__).resolve().parent.parent
 ASSETS_DIR = BASE_DIR / "assets"
-IMG_ROOT = ASSETS_DIR / "chart_from_excel"
-MANIFEST_PATH = IMG_ROOT / "manifest.json"
+CHART_EXCEL_DIR = ASSETS_DIR / "chart_from_excel"
+CHART_MANIFEST = CHART_EXCEL_DIR / "manifest.json"
 
-# OpenAI 클라이언트 (환경변수 OPENAI_API_KEY 필요)
-# 없으면 나중에 체크해서 안내만 하고, 앱은 계속 동작하게 함.
-client = None
-api_key = os.getenv("OPENAI_API_KEY")
-if api_key:
-    client = OpenAI()
-
-st.set_page_config(
-    page_title="필요 기술 / 약어 설명",
-    page_icon="📘",
-    layout="wide",
-)
-
-st.title("📘 필요 기술 / 약어 설명")
-
-
-# -----------------------------------------------------------------------------
-# 0. 데이터 로딩 (symbols 사전 + 차트 기호 manifest)
-# -----------------------------------------------------------------------------
-@st.cache_resource
-def load_symbol_lib():
-    base = parser.load_lib("symbols.json")
-    try:
-        extra = parser.load_lib("symbols_extra.json")
-    except Exception:
-        extra = {}
+# --- 뜨개 약어 사전 로드 ----------------------------------------------------
+def load_symbol_dict() -> dict:
+    """symbols.json + symbols_extra.json 병합"""
+    base = parser.load_lib("symbols.json") or {}
+    extra = parser.load_lib("symbols_extra.json") or {}
     merged = {**base, **extra}
     return merged
 
 
-@st.cache_resource
+SYMBOLS = load_symbol_dict()
+
+
+def build_abbr_index(symbols: dict):
+    """
+    검색용 인덱스:
+      - key 자체 (예: k2tog)
+      - aliases
+      - 영문/한글 이름
+    """
+    index = {}
+    for key, v in symbols.items():
+        item = {
+            "key": key,
+            "name_en": v.get("name_en", ""),
+            "name_ko": v.get("name_ko", ""),
+            "desc": v.get("desc_ko", ""),
+            "aliases": v.get("aliases", []),
+        }
+        candidates = set()
+        candidates.add(key)
+        for a in v.get("aliases", []):
+            candidates.add(a)
+        if v.get("name_en"):
+            candidates.add(v["name_en"])
+        if v.get("name_ko"):
+            candidates.add(v["name_ko"])
+        for c in candidates:
+            c2 = c.strip()
+            if not c2:
+                continue
+            index[c2.lower()] = item
+    return index
+
+
+ABBR_INDEX = build_abbr_index(SYMBOLS)
+
+
+def find_abbrs_in_text(text: str):
+    """
+    아주 단순한 방식:
+    - 소문자로 바꾸고
+    - 인덱스에 있는 용어가 부분 문자열로 들어가는지 확인
+    """
+    hits = {}
+    lower = text.lower()
+    for token, item in ABBR_INDEX.items():
+        if token and token in lower:
+            key = item["key"]
+            if key in hits:
+                continue
+            hits[key] = item
+    # 표시용 리스트로 정리
+    out = []
+    for key, item in hits.items():
+        out.append(
+            {
+                "key": key,
+                "name_en": item["name_en"],
+                "name_ko": item["name_ko"],
+                "desc": item["desc"],
+            }
+        )
+    return out
+
+
+# --- 차트 기호(엑셀에서 가져온 162개 아이콘) 인덱스 --------------------------
 def load_chart_manifest():
-    if not MANIFEST_PATH.exists():
+    if not CHART_MANIFEST.exists():
+        return {}
+    try:
+        with CHART_MANIFEST.open(encoding="utf-8") as f:
+            return json.load(f)
+    except Exception:
         return {}
 
-    with MANIFEST_PATH.open(encoding="utf-8") as f:
-        manifest = json.load(f)
 
-    # 평탄화된 아이콘 리스트 준비
+CHART_MAN = load_chart_manifest()
+
+
+def build_chart_icon_index(manifest: dict):
+    """
+    manifest.json 을 평탄화해서
+    [
+      {sheet, file, path, abbr, desc},
+      ...
+    ] 형태로 만듦
+    """
     icons = []
-    for sheet_title, sheet in manifest.items():
-        img_dir = Path(sheet.get("img_dir", ""))  # 예: assets/chart_from_excel/1코_기호
-        for it in sheet.get("items", []):
-            file_name = it.get("file")
-            abbr = it.get("abbr") or ""
-            desc = it.get("desc") or ""
-            full_path = img_dir / file_name
+    root = CHART_EXCEL_DIR
+
+    for sheet_title, info in manifest.items():
+        img_dir = info.get("img_dir", "")
+        if img_dir:
+            sheet_dir = root / img_dir
+        else:
+            sheet_dir = root
+
+        for it in info.get("items", []):
+            fname = it.get("file")
+            if not fname:
+                continue
+            path = sheet_dir / fname
+            if not path.exists():
+                continue
             icons.append(
                 {
                     "sheet": sheet_title,
-                    "file": file_name,
-                    "path": full_path,
-                    "abbr": abbr,
-                    "desc": desc,
+                    "file": fname,
+                    "path": path,
+                    "abbr": it.get("abbr", ""),
+                    "desc": it.get("desc", ""),
                 }
             )
-    return manifest, icons
+    return icons
 
 
-symbol_lib = load_symbol_lib()
-manifest, chart_icons = load_chart_manifest()
+CHART_ICONS = build_chart_icon_index(CHART_MAN)
 
 
-# -----------------------------------------------------------------------------
-# 1. 텍스트 기반 필요 기술 / 약어 인식
-# -----------------------------------------------------------------------------
-st.header("1️⃣ 텍스트로 필요한 기술 / 약어 정리")
-
-st.write(
-    "도안 설명이나 필요한 기술 목록을 아래에 붙여 넣으면, "
-    "뜨개 약어 사전과 비교해서 **알려진 약어/용어**를 찾아 정리해 줍니다."
-)
-
-input_text = st.text_area(
-    "도안 설명이나 필요한 기술/약어를 붙여넣으세요.",
-    height=180,
-    placeholder="예) k2tog, ssk, YO, 중심 5코 모아뜨기, 오른코 겹쳐 3코 모아뜨기 …",
-)
-
-# 심플 매칭: key / name_ko / name_en / aliases 에 입력 텍스트가 포함되는지
-def find_abbr_hits(text: str):
-    text_low = text.lower()
-    hits = []
-    if not text_low.strip():
-        return hits
-
-    for key, v in symbol_lib.items():
-        names = [key, v.get("name_en", ""), v.get("name_ko", "")]
-        names += v.get("aliases", [])
-
-        found = False
-        for name in names:
-            n = (name or "").strip()
-            if not n:
-                continue
-            if n.lower() in text_low:
-                found = True
-                break
-        if found:
-            hits.append(
-                {
-                    "key": key,
-                    "name_en": v.get("name_en", ""),
-                    "name_ko": v.get("name_ko", ""),
-                    "desc": v.get("desc_ko", ""),
-                }
-            )
-    return hits
-
-
-abbr_hits = find_abbr_hits(input_text)
-
-st.subheader(f"🔍 인식된 기술/약어: {len(abbr_hits)}개")
-
-if abbr_hits:
-    for h in abbr_hits:
-        title = h["key"]
-        ko = h["name_ko"]
-        en = h["name_en"]
-        st.markdown(f"**{title}** — {en} / {ko}")
-        if h["desc"]:
-            st.caption(h["desc"])
-        st.markdown("---")
-else:
-    st.info("텍스트에서 인식된 약어/차트 기호가 아직 없습니다. 위에 내용을 붙여 넣어 보세요.")
-
-
-# -----------------------------------------------------------------------------
-# 2. 차트 기호 이미지로 비슷한 기호 찾기 (이미지 매칭)
-# -----------------------------------------------------------------------------
-st.header("2️⃣ 차트 기호 이미지로 비슷한 기호 찾기")
-
-st.write(
-    "PDF 도안에서 **차트 기호 한 칸만 스크린샷** 해서 업로드하면, "
-    "엑셀에서 가져온 162개의 차트 기호 중에서 **가장 비슷한 기호 후보**를 찾아 보여줍니다."
-)
-
-uploaded_chart_img = st.file_uploader(
-    "차트 기호 스크린샷(이미지)을 업로드하세요. (PNG / JPG)", type=["png", "jpg", "jpeg"]
-)
-
-# ---- 아이콘 벡터 준비 (간단한 평균 풀링 특징) ----
-@st.cache_resource
-def build_icon_vectors(icons_list):
-    db = []
-    for icon in icons_list:
-        path = BASE_DIR / icon["path"]
-        if not path.exists():
-            continue
+# 아이콘 이미지 캐시 (성능용)
+@st.cache_data(show_spinner=False)
+def load_icon_arrays():
+    arrs = []
+    for icon in CHART_ICONS:
         try:
-            img = Image.open(path).convert("L").resize((64, 64))
+            img = Image.open(icon["path"]).convert("L").resize((64, 64))
             arr = np.asarray(img, dtype=np.float32) / 255.0
-            vec = arr.flatten()
-            vec = vec / (np.linalg.norm(vec) + 1e-8)
-            icon_copy = dict(icon)
-            icon_copy["vec"] = vec
-            db.append(icon_copy)
+            arrs.append(arr)
         except Exception:
-            continue
-    return db
+            arrs.append(None)
+    return arrs
 
 
-icon_db = build_icon_vectors(chart_icons)
+ICON_ARRAYS = load_icon_arrays()
 
 
-def compute_vec_from_upload(uploaded_file):
-    img = Image.open(uploaded_file).convert("L").resize((64, 64))
-    arr = np.asarray(img, dtype=np.float32) / 255.0
-    vec = arr.flatten()
-    vec = vec / (np.linalg.norm(vec) + 1e-8)
-    return img, vec
+def find_similar_icons(upload_img: Image.Image, topk: int = 5):
+    """
+    업로드된 한 칸짜리 차트 기호 이미지를,
+    assets/chart_from_excel 에 있는 아이콘들과 비교해서
+    MSE(평균제곱오차)가 작은 순으로 topk 반환.
+    """
+    if not CHART_ICONS:
+        return []
 
-
-def find_similar_icons(uploaded_file, topk=5):
-    if not icon_db:
-        return [], None
-
-    up_img, up_vec = compute_vec_from_upload(uploaded_file)
+    # 업로드 이미지 전처리
+    img = upload_img.convert("L").resize((64, 64))
+    base = np.asarray(img, dtype=np.float32) / 255.0
 
     scores = []
-    for icon in icon_db:
-        vec = icon["vec"]
-        sim = float(np.dot(up_vec, vec))  # 코사인 유사도
-        scores.append((sim, icon))
+    for icon, ref_arr in zip(CHART_ICONS, ICON_ARRAYS):
+        if ref_arr is None:
+            continue
+        mse = float(((base - ref_arr) ** 2).mean())
+        scores.append((mse, icon))
 
-    scores.sort(key=lambda x: x[0], reverse=True)
-    best = scores[:topk]
-    return best, up_img
-
-
-if uploaded_chart_img is not None:
-    st.image(uploaded_chart_img, caption="업로드한 기호 이미지", use_column_width=False, width=260)
-
-    if st.button("🔎 비슷한 차트 기호 찾기"):
-        matches, up_img = find_similar_icons(uploaded_chart_img, topk=5)
-        if not matches:
-            st.warning("차트 아이콘 인덱스를 찾지 못했습니다. (manifest.json 또는 PNG 경로를 확인해 주세요.)")
-        else:
-            st.success("가장 비슷한 차트 기호 후보들입니다.")
-            cols = st.columns(len(matches))
-            for col, (sim, icon) in zip(cols, matches):
-                path = BASE_DIR / icon["path"]
-                try:
-                    col.image(str(path), use_column_width=True)
-                except Exception:
-                    col.write("(이미지 로드 실패)")
-
-                label = icon.get("abbr") or "(이름 미입력)"
-                desc = icon.get("desc") or ""
-                col.markdown(f"**{label}**")
-                col.caption(f"{icon['sheet']} · 유사도 {sim:.2f}")
-                if desc:
-                    col.write(desc)
-
-            st.markdown("---")
-else:
-    st.info("차트 기호 스크린샷을 업로드하면 비슷한 기호를 찾아줍니다.")
+    scores.sort(key=lambda x: x[0])
+    return scores[:topk]
 
 
-# -----------------------------------------------------------------------------
-# 3. GPT에게 이 기호 설명 요청 (앱 안에서)
-# -----------------------------------------------------------------------------
-st.header("3️⃣ GPT에게 이 기호 설명 요청하기 (선택 기능)")
+# --- ChatGPT 프롬프트 생성 -----------------------------------------------
+def build_prompt(user_text: str, abbr_hits: list, icon_hits: list):
+    """
+    사용자가 입력한 도안/범례 텍스트, 앱이 인식한 약어와
+    (선택) 차트 기호 후보들을 이용해서
+    ChatGPT 에 붙여넣을 프롬프트를 만들어 준다.
+    """
+    # 약어/기호 사전을 프롬프트 안에 같이 넣어 줄 리스트
+    abbr_lines = []
+    for key, v in SYMBOLS.items():
+        line = f"- {key} : {v.get('name_en','')} / {v.get('name_ko','')}"
+        if v.get("desc_ko"):
+            line += f" — {v['desc_ko']}"
+        abbr_lines.append(line)
+    abbr_block = "\n".join(sorted(abbr_lines))
 
-if client is None:
-    st.warning(
-        "OpenAI API 키가 설정되어 있지 않아, 앱 안에서 GPT 호출은 사용할 수 없습니다.\n\n"
-        "`OPENAI_API_KEY` 환경변수를 설정하거나, 아래 4️⃣ 프롬프트를 복사해서 ChatGPT에 직접 물어보세요."
-    )
-else:
-    st.write(
-        "업로드한 차트 기호 이미지와 위에서 인식된 약어/기술 이름을 함께 GPT에게 보내 "
-        "**이 기호가 어떤 의미인지, 어떤 뜨개 기법인지 한글로 설명**해달라고 요청합니다."
-    )
+    chart_lines = []
+    # CHART_MAN 구조를 그대로 사용
+    for sheet_title, info in CHART_MAN.items():
+        for it in info.get("items", []):
+            ab = it.get("abbr", "")
+            desc = it.get("desc", "")
+            if not ab and not desc:
+                continue
+            label = ab or desc
+            if ab and desc:
+                line = f"- {label} ({sheet_title}) — {desc}"
+            else:
+                line = f"- {label} ({sheet_title})"
+            chart_lines.append(line)
+    chart_block = "\n".join(chart_lines)
 
-    # 이미지가 있어야 Vision 사용 가능
-    can_call_gpt = uploaded_chart_img is not None and client is not None
+    # 우리가 이미 인식해 준 항목들 (참고용)
+    detected_lines = []
+    if abbr_hits:
+        detected_lines.append("● 이 앱이 텍스트에서 미리 찾아낸 뜨개 약어:")
+        for h in abbr_hits:
+            line = f"- {h['key']} : {h.get('name_en','')} / {h.get('name_ko','')}"
+            detected_lines.append(line)
+    if icon_hits:
+        detected_lines.append("\n● 이 앱이 이미지 매칭으로 추정한 차트 기호 후보:")
+        for score, icon in icon_hits:
+            label = icon.get("abbr") or icon.get("desc") or icon["file"]
+            line = f"- {label} (시트: {icon['sheet']}, 파일: {icon['file']}, MSE={score:.3f})"
+            detected_lines.append(line)
 
-    if not uploaded_chart_img:
-        st.info("먼저 위 2️⃣에서 차트 기호 이미지를 업로드해 주세요.")
-    elif client is None:
-        pass
+    detected_block = "\n".join(detected_lines) if detected_lines else "(앱에서 미리 인식한 항목은 없습니다.)"
+
+    prompt = f"""너는 뜨개질 차트 도안과 약어 설명을 분석하는 전문가야.
+
+내가 곧 올릴 이미지는 뜨개 도안(차트)이고, 아래에 붙여넣는 텍스트는 그 도안에 적힌 기호 설명/필요 기술/약어 설명이야.
+이 도안에서 쓰인 기호 이름들은 출판사/디자이너마다 다르기 때문에, 너는 가능한 한
+아래에 제공하는 "표준 뜨개 약어 사전" 과 "표준 차트 기호 사전"에 있는 용어들로 **매칭/대치**해서 정리해 줘.
+
+[1] 도안에서 복사한 원본 텍스트 (범례/필요 기술 설명)
+--------------------------------
+{user_text.strip() or "(사용자가 아직 텍스트를 붙여넣지 않았음)"}
+--------------------------------
+
+[2] 이 앱이 미리 인식한 용어 (참고용)
+--------------------------------
+{detected_block}
+--------------------------------
+
+[3] 참고용 표준 뜨개 약어 사전
+(가능하면 이 목록 안에서 가장 가까운 것을 골라서 매칭해 줘)
+--------------------------------
+{abbr_block}
+--------------------------------
+
+[4] 참고용 표준 차트 기호 사전 (엑셀에서 가져온 162종)
+(이 목록의 이름을 기준으로 도안의 기호 설명을 최대한 매칭해 줘)
+--------------------------------
+{chart_block}
+--------------------------------
+
+너의 작업:
+1. [1]의 원본 텍스트를 문장 단위/기호 단위로 나누어서 목록으로 만들어라.
+2. 각 항목마다, [3] 또는 [4]의 표준 용어 중에서 의미가 가장 비슷한 것을 찾아서 매칭해라.
+3. 만약 정확히 일치하는 표준 용어가 없으면, "새 용어"라고 표시하고, 어떤 동작인지 한글로 짧게 요약 설명해라.
+4. 최종 결과는 아래 형식의 표로 정리해라.
+
+- 원본 기호 이름/설명:
+- 추정 표준 약어(있다면):
+- 추정 표준 차트 기호 이름(있다면):
+- 동작 요약 설명(한국어, 초보자도 이해할 수 있게):
+
+가능하면 최대한 구체적으로, 하지만 표 형태로 깔끔하게 정리해 줘."""
+    return prompt
+
+
+# --------------------------------------------------------------------------
+# Streamlit UI 시작
+# --------------------------------------------------------------------------
+st.set_page_config(
+    page_title="실마리 — 필요 기술 / 약어 설명",
+    page_icon="📘",
+    layout="centered",
+)
+
+st.title("📘 필요 기술 / 약어 설명")
+
+st.markdown(
+    """
+도안의 **필요 기술·약어 설명**을 정리하고,  
+마지막에는 ChatGPT에 그대로 붙여넣을 수 있는 **프롬프트**도 자동으로 만들어줍니다.
+
+1. PDF 도안이나 텍스트를 붙여넣어 약어를 인식하고  
+2. (선택) 차트 기호 한 칸 이미지를 올려 비슷한 기호 후보를 보고  
+3. 아래에서 생성된 프롬프트를 ChatGPT에 복사해서 사용하면 됩니다.
+"""
+)
+
+# --------------------------------------------------------------------------
+# 1. PDF 업로드 → 텍스트 추출
+# --------------------------------------------------------------------------
+st.header("1️⃣ 도안 PDF / 이미지에서 텍스트 가져오기 (선택)")
+
+uploaded_pdf = st.file_uploader(
+    "도안 PDF 파일을 업로드하면 텍스트를 최대한 추출해 줍니다. (텍스트가 잘 안 나올 수도 있어요)",
+    type=["pdf"],
+    key="pdf_uploader",
+)
+
+if uploaded_pdf is not None:
+    tmp_path = BASE_DIR / "_tmp_uploaded.pdf"
+    with open(tmp_path, "wb") as f:
+        f.write(uploaded_pdf.read())
+
+    with st.spinner("PDF에서 텍스트를 추출하는 중입니다…"):
+        raw_text = extract_pdf_text(str(tmp_path)) or ""
+    tmp_path.unlink(missing_ok=True)
+
+    if raw_text.strip():
+        st.success("PDF에서 텍스트를 추출했습니다. 아래 2번 영역의 텍스트에 복사해 넣어 사용하세요.")
+        st.text_area("추출된 원본 텍스트 (읽기전용)", raw_text, height=200, key="pdf_text", disabled=True)
     else:
-        if st.button("🧵 GPT에게 이 기호 설명 요청하기"):
-            try:
-                # 업로드 이미지 Base64 인코딩
-                img_bytes = uploaded_chart_img.getvalue()
-                b64_img = base64.b64encode(img_bytes).decode("utf-8")
-                data_url = f"data:image/png;base64,{b64_img}"
-
-                # 텍스트 컨텍스트 구성 (인식된 약어 / 후보명 등)
-                context_lines = []
-
-                if abbr_hits:
-                    context_lines.append("텍스트에서 인식된 약어/기술 목록:")
-                    for h in abbr_hits:
-                        line = f"- {h['key']} / {h['name_en']} / {h['name_ko']}"
-                        context_lines.append(line)
-
-                # 이미지 매칭 후보를 다시 한 번 계산해서 GPT에 힌트로 제공
-                matches, _ = (find_similar_icons(uploaded_chart_img, topk=5)
-                              if uploaded_chart_img is not None else ([], None))
-                if matches:
-                    context_lines.append("")
-                    context_lines.append("이미지로 매칭된 차트 기호 후보들:")
-                    for sim, icon in matches:
-                        label = icon.get("abbr") or "(이름 미입력)"
-                        context_lines.append(f"- {label} (sheet: {icon['sheet']}, sim: {sim:.2f})")
-
-                context_text = "\n".join(context_lines) if context_lines else "추가 힌트 없음."
-
-                # OpenAI Responses API 호출 (Vision + 텍스트)
-                resp = client.responses.create(
-                    model="gpt-4.1-mini",  # 필요에 따라 gpt-4.1, gpt-4.1-mini 등으로 변경 가능
-                    input=[
-                        {
-                            "role": "user",
-                            "content": [
-                                {
-                                    "type": "input_image",
-                                    "image_url": data_url,
-                                },
-                                {
-                                    "type": "input_text",
-                                    "text": (
-                                        "이 이미지는 뜨개질 도안의 차트 기호 한 칸입니다. "
-                                        "이미지와 아래 힌트를 참고하여, 이 기호가 어떤 의미의 차트 기호인지, "
-                                        "어떤 뜨개 기법을 의미하는지 **한국어로 자세히** 설명해 주세요.\n\n"
-                                        f"{context_text}"
-                                    ),
-                                },
-                            ],
-                        }
-                    ],
-                )
-
-                # 응답 텍스트 추출
-                try:
-                    # 새 SDK의 responses.create 결과 구조에 맞게 처리
-                    out = []
-                    for item in resp.output:
-                        for c in item.content:
-                            if getattr(c, "type", "") == "output_text":
-                                out.append(c.text)
-                    answer = "\n\n".join(out) if out else str(resp)
-                except Exception:
-                    # 혹시 구조가 다르면 전체 객체를 문자열로 출력
-                    answer = str(resp)
-
-                st.success("GPT 응답입니다.")
-                st.write(answer)
-
-            except Exception as e:
-                st.error(f"GPT 호출 중 오류: {e}")
+        st.error("텍스트를 거의 추출하지 못했습니다. 스캔 이미지 PDF일 수 있어요. 직접 텍스트를 타이핑해 주세요.")
 
 
-# -----------------------------------------------------------------------------
-# 4. ChatGPT에 직접 물어볼 때 쓸 프롬프트 생성
-# -----------------------------------------------------------------------------
-st.header("4️⃣ ChatGPT에 직접 물어볼 때 쓸 프롬프트")
+# --------------------------------------------------------------------------
+# 2. 텍스트 직접 입력 / 수정
+# --------------------------------------------------------------------------
+st.header("2️⃣ 텍스트 직접 입력 / 수정")
 
-st.write(
-    "만약 이 앱에서 GPT 호출이 잘 안 되거나, "
-    "직접 ChatGPT 웹사이트/앱에 물어보고 싶다면 아래 프롬프트를 복사해서 사용하세요."
+default_example = "예) k2tog, ssk, YO, 중심 5코 모아뜨기, 오른코 겹쳐 3코 모아뜨기 …"
+user_text = st.text_area(
+    "도안 설명이나 필요할 기술/약어를 여기에 붙여 넣으세요.",
+    value="",
+    placeholder=default_example,
+    height=200,
+    key="user_text_area",
 )
 
-# 프롬프트에 들어갈 요약 정보 구성
-prompt_lines = [
-    "너는 뜨개질 차트 기호를 분석하는 전문가야.",
-    "내가 곧 첨부할 이미지는 뜨개 도안(차트)에서 잘라낸 ‘기호 한 칸’이야.",
-    "",
-    "이미지의 모양을 보고 아래 형식으로 한국어로 답해 줘.",
-    "",
-    "1. 이 기호가 의미하는 뜨개 기법 이름 (한글 / 영문 약어 둘 다 가능하면 둘 다)",
-    "2. 어느 방향으로 실이 이동하는지, 어떤 코를 몇 코 모아뜨는지 등 구체적인 동작 설명",
-    "3. 주의사항이나 자주 헷갈리는 포인트가 있다면 같이 설명",
-    "",
-    "아래는 내가 가지고 있는 사전/앱에서 자동으로 찾아낸 힌트들이야.",
-    "필요하다면 참고해서 더 정확하게 설명해 줘.",
-    "",
-]
+abbr_hits = []
+if user_text.strip():
+    abbr_hits = find_abbrs_in_text(user_text)
+    st.markdown("---")
+    st.subheader(f"🔍 인식된 기술/약어: {len(abbr_hits)}개")
 
-if abbr_hits:
-    prompt_lines.append("▶ 텍스트에서 인식된 약어/기술 목록:")
-    for h in abbr_hits:
-        line = f"- {h['key']} / {h['name_en']} / {h['name_ko']}"
-        if h["desc"]:
-            line += f" — {h['desc']}"
-        prompt_lines.append(line)
-    prompt_lines.append("")
+    if abbr_hits:
+        for h in sorted(abbr_hits, key=lambda x: x["key"].lower()):
+            st.markdown(
+                f"- **{h['key']}** — {h.get('name_en','')} / {h.get('name_ko','')}"
+                + (f"<br/>{h['desc']}" if h.get("desc") else ""),
+                unsafe_allow_html=True,
+            )
+    else:
+        st.info("텍스트에서 인식된 약어/차트 기호가 아직 없습니다. 더 많은 내용을 붙여 넣어 보세요.")
+else:
+    st.info("위 텍스트 칸에 도안의 필요 기술/범례 설명을 붙여 넣으면, 여기에서 뜨개 약어를 찾아줍니다.")
 
-# 이미지 매칭 힌트도 추가
-if uploaded_chart_img is not None:
-    matches, _ = find_similar_icons(uploaded_chart_img, topk=5)
-    if matches:
-        prompt_lines.append("▶ 이미지로 매칭된 차트 기호 후보들:")
-        for sim, icon in matches:
-            label = icon.get("abbr") or "(이름 미입력)"
-            desc = icon.get("desc") or ""
-            line = f"- {label} (sheet: {icon['sheet']}, sim: {sim:.2f})"
-            if desc:
-                line += f" — {desc}"
-            prompt_lines.append(line)
-        prompt_lines.append("")
+# --------------------------------------------------------------------------
+# 3. (선택) 기호 이미지로 차트 기호 후보 찾기
+# --------------------------------------------------------------------------
+st.header("3️⃣ 기호 이미지로 차트 기호 후보 찾기 (선택)")
 
-prompt_lines.append(
-    "위 힌트는 100% 정답이 아닐 수도 있으니, 이미지 자체를 가장 우선으로 보고 판단해 줘."
+st.caption(
+    """
+차트 기호 한 칸만 **잘라서 스크린샷**으로 업로드하면,  
+엑셀에서 가져온 162개 차트 기호 중에서 **가장 비슷한 기호 후보**를 찾아줍니다.
+(지금은 전체 차트보다는 한 칸짜리 아이콘을 올릴 때 더 잘 맞아요.)
+"""
 )
 
-full_prompt = "\n".join(prompt_lines)
-
-st.text_area(
-    "ChatGPT에 복사해서 붙여 넣을 프롬프트",
-    value=full_prompt,
-    height=260,
+uploaded_icon = st.file_uploader(
+    "차트 기호 한 칸 스크린샷 업로드 (PNG/JPG)",
+    type=["png", "jpg", "jpeg"],
+    key="icon_uploader",
 )
 
-st.caption("※ 이 프롬프트를 복사한 뒤, ChatGPT에 이미지를 함께 올리고 붙여 넣어 사용하면 됩니다.")
+chart_hits = []
+if uploaded_icon is not None:
+    try:
+        img = Image.open(uploaded_icon)
+        st.image(img, caption="업로드한 기호 이미지", use_column_width=False)
+        with st.spinner("차트 기호 라이브러리와 비교 중…"):
+            chart_hits = find_similar_icons(img, topk=5)
+        if not chart_hits:
+            st.warning("차트 아이콘 인덱스를 찾지 못했습니다. (manifest.json 또는 PNG 경로를 확인하세요.)")
+        else:
+            st.subheader("🧵 가장 비슷한 차트 기호 후보들")
+            for rank, (score, icon) in enumerate(chart_hits, start=1):
+                cols = st.columns([1, 2])
+                with cols[0]:
+                    try:
+                        icon_img = Image.open(icon["path"])
+                        st.image(icon_img, use_column_width=True)
+                    except Exception:
+                        st.write("(이미지 로드 실패)")
+                with cols[1]:
+                    label = icon.get("abbr") or icon.get("desc") or icon["file"]
+                    st.markdown(f"**#{rank}. {label}**")
+                    st.caption(
+                        f"시트: {icon['sheet']} · 파일: {icon['file']} · MSE={score:.3f}"
+                    )
+    except Exception as ex:
+        st.error(f"이미지 처리 중 오류가 발생했습니다: {ex}")
+
+# --------------------------------------------------------------------------
+# 4. ChatGPT에 직접 물어볼 때 쓸 프롬프트
+# --------------------------------------------------------------------------
+st.header("💬 ChatGPT에 직접 물어볼 때 쓸 프롬프트")
+
+st.markdown(
+    """
+아래 버튼을 누르면,  
+위에서 입력한 텍스트와 이 앱이 알고 있는 **뜨개 약어/차트 기호 사전**을 한 번에 포함한 프롬프트를 만들어 줍니다.
+
+이 프롬프트를 **ChatGPT 대화창에 그대로 복사한 다음**,  
+같은 차트 이미지를 함께 업로드해서 “이 도안의 기호 설명을 표준 용어로 정리해 줘” 라고 요청하면 됩니다.
+"""
+)
+
+if st.button("🧶 ChatGPT용 프롬프트 만들기"):
+    prompt_text = build_prompt(user_text, abbr_hits, [h for h in chart_hits] if chart_hits else [])
+    st.success("프롬프트를 생성했습니다. 아래 내용을 복사해서 ChatGPT에 붙여 넣으세요.")
+    st.text_area(
+        "복사해서 ChatGPT에 붙여넣을 프롬프트",
+        value=prompt_text,
+        height=400,
+        key="gpt_prompt_area",
+    )
+
 st.divider()
-st.page_link("HOME.py", label="⬅️ 홈으로")
+st.page_link("HOME.py", label="🏠 홈으로")
