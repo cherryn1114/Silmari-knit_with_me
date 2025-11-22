@@ -1,79 +1,75 @@
 import streamlit as st
 from openai import OpenAI
 import json
+import os
 from PIL import Image
 import numpy as np
-import os
-
-st.set_page_config(page_title="필요 기술 / 약어 설명", layout="wide")
 
 client = OpenAI()
 
-# 매니페스트 로드
-MANIFEST_PATH = "assets/chart_from_excel/manifest.json"
-with open(MANIFEST_PATH, "r", encoding="utf-8") as f:
-    manifest = json.load(f)
+IMG_DIR = "assets/chart_from_excel"
+MANIFEST = "assets/chart_from_excel/manifest.json"
 
-# 모든 기호 이미지 로드
-catalog = []
-for sheet, item in manifest.items():
-    if not isinstance(item, dict) or "items" not in item:
-        continue
-    for ch in item["items"]:
-        catalog.append({
-            "file": ch["file"],
-            "abbr": ch.get("abbr", ""),
-            "desc": ch.get("desc", ""),
-            "sheet": sheet,
-            "path": os.path.join("assets/chart_from_excel", ch["file"])
-        })
+st.title("🔧 필요 기술 / 약어 설명")
 
-st.title("📘 필요 기술 / 약어 설명")
-st.markdown("이미지로 기호를 업로드하면 AI가 의미를 분석하고 가장 비슷한 기호를 추천해줍니다.")
+uploaded_file = st.file_uploader("이미지 또는 PDF 업로드", type=["png", "jpg", "jpeg"])
 
-uploaded = st.file_uploader("➡ 기호 이미지 업로드", type=["png", "jpg", "jpeg"])
+use_ai = st.checkbox("🤖 GPT 기반 의미 분석 사용 (추천)", value=True)
 
-if uploaded:
-    img = Image.open(uploaded)
-    st.image(img, caption="업로드한 이미지", use_column_width=True)
+# -----------------------------
+# 유틸 함수
+# -----------------------------
+def load_manifest():
+    with open(MANIFEST, "r", encoding="utf-8") as f:
+        return json.load(f)
 
-    # 🔥 Vision 모델로 의미 분석
+def encode_image(image: Image.Image):
+    arr = np.array(image.resize((256, 256))).astype(np.uint8)
+    return arr.tolist()
+
+def llm_match(img: Image.Image, manifest):
+    prompt = """
+너는 뜨개질 차트 기호 전문가야.
+아래 base64 이미지와 가장 유사한 기호를 찾고,
+해당 기호의 이름과 설명을 JSON 형식으로 반환해줘.
+
+반드시 JSON 한 줄로만 응답해.
+{"abbr": "...", "desc": "...", "file": "..."}
+"""
+
+    buffered = encode_image(img)
+
+    # ✨ 한글 포함을 위해 utf-8 인코딩 명시 + 문자열을 bytes로 변환하지 않음
     response = client.responses.create(
-        model="gpt-4o-mini-tts",  # Vision 기능 있는 모델이면 변경 가능
+        model="gpt-4.1-mini",
         input=[
-            {
-                "role": "user",
-                "content": [
-                    "다음 이미지는 뜨개질 도안의 기호입니다. 이 기호가 나타내는 뜻을 한국어로 정확히 설명해줘.",
-                    {"image": img}
-                ]
-            }
+            {"role": "system", "content": prompt},
+            {"role": "user", "content": json.dumps({"img": buffered}, ensure_ascii=False)}
         ]
     )
 
-    result_text = response.output_text
-    st.subheader("🧠 AI 해석")
-    st.write(result_text)
+    return response.output_text
 
-    # 🔍 카탈로그에서 가장 관련 높은 후보 출력 (LLM 활용)
-    catalog_text = "\n".join([f"{c['abbr']} - {c['desc']}" for c in catalog])
+# -----------------------------
+# 실행
+# -----------------------------
+if uploaded_file:
+    image = Image.open(uploaded_file).convert("RGB")
+    st.image(image, caption="업로드된 이미지", use_column_width=True)
 
-    match = client.responses.create(
-        model="gpt-4.1-mini",
-        input=f"""
-사용자가 업로드한 기호 의미:
-{result_text}
+    manifest = load_manifest()
 
-아래는 가능한 기호 목록입니다:
-{catalog_text}
+    if use_ai:
+        st.info("🤖 **GPT 기반 의미 분석 중...**")
+        try:
+            result = llm_match(image, manifest)
+            st.success("✔ 결과:")
+            st.write(result)
 
-가장 의미가 비슷한 5개를 정확도 높은 순서로 JSON 배열로 반환하세요.
-형식:
-[
-  {{"abbr": "", "desc": "", "file": ""}}
-]
-"""
-    )
+        except Exception as e:
+            st.error(str(e))
 
-    st.subheader("🔍 추천된 유사 기호")
-    st.write(match.output_text)
+    else:
+        st.warning("📌 GPT 분석 비활성화됨. CLIP 기반 매칭만 진행됩니다.")
+else:
+    st.info("이미지를 업로드하면 분석이 시작됩니다.")
