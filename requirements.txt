@@ -4,3 +4,7 @@ rapidfuzz>=3.6
 yt-dlp
 PyPDF2
 pdfminer.six>=20221105
+openai>=1.2.0
+Pillow
+numpy
+streamlit
