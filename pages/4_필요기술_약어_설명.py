@@ -4,7 +4,6 @@ import json
 import os
 from pathlib import Path
 from collections import defaultdict
-
 from PIL import Image, ImageOps
 import numpy as np
 
@@ -26,7 +25,6 @@ SYMBOLS_EXTRA_PATH = LIB_DIR / "symbols_extra.json"
 # -----------------------------------------------------------------------------
 @st.cache_data(show_spinner=False)
 def load_symbols():
-    """뜨개 약어 사전(symbols.json + symbols_extra.json) 병합."""
     base = {}
     extra = {}
     if SYMBOLS_PATH.exists():
@@ -38,21 +36,15 @@ def load_symbols():
                 extra = json.load(f)
         except json.JSONDecodeError:
             extra = {}
-    merged = {**base, **extra}
-    return merged
+    return {**base, **extra}
 
 
 @st.cache_data(show_spinner=False)
 def load_chart_manifest():
-    """엑셀에서 추출한 차트 기호 매니페스트 로드."""
     if not CHART_MANIFEST_PATH.exists():
         return {}
-
     with CHART_MANIFEST_PATH.open(encoding="utf-8") as f:
-        manifest = json.load(f)
-
-    # sheet_title -> { sheet, img_dir, items[...] }
-    return manifest
+        return json.load(f)
 
 
 SYMBOLS = load_symbols()
@@ -60,13 +52,11 @@ CHART_MAN = load_chart_manifest()
 
 
 # -----------------------------------------------------------------------------
-# 차트 아이콘 이미지 feature 준비 (간단한 코사인 유사도)
+# 이미지 특징 벡터 (간단한 유사도 기반)
 # -----------------------------------------------------------------------------
 @st.cache_resource(show_spinner=False)
 def build_icon_features():
-    """chart_from_excel 아래 png들을 벡터화해서 유사도 비교에 사용."""
     icons = []
-
     if not CHART_MAN:
         return icons
 
@@ -74,10 +64,8 @@ def build_icon_features():
         img_dir = info.get("img_dir", "")
         items = info.get("items", [])
 
-        # img_dir이 상대 경로면 chart_from_excel 기준으로 본다
         img_base = Path(img_dir)
         if not img_base.is_absolute():
-            # assets/chart_from_excel/폴더명
             img_base = CHART_EXCEL_DIR / img_base
 
         for it in items:
@@ -90,10 +78,9 @@ def build_icon_features():
 
             try:
                 img = Image.open(img_path).convert("L")
-            except Exception:
+            except:
                 continue
 
-            # 64x64로 맞추고 벡터화
             img_resized = ImageOps.fit(img, (64, 64))
             arr = np.asarray(img_resized, dtype="float32") / 255.0
             vec = arr.reshape(-1)
@@ -105,339 +92,176 @@ def build_icon_features():
                     "sheet": sheet_title,
                     "abbr": it.get("abbr", "").strip(),
                     "desc": it.get("desc", "").strip(),
-                    "file": file,
                     "path": str(img_path.relative_to(BASE_DIR)),
                     "vec": vec,
                 }
             )
-
     return icons
 
 
 ICON_FEATURES = build_icon_features()
 
 
-def find_similar_icons(upload_img: Image.Image, topk: int = 5):
-    """업로드한 기호 이미지와 가장 비슷한 차트 아이콘 topk 반환."""
+def find_similar_icons(upload_img, topk=5):
     if not ICON_FEATURES:
         return []
 
     img = upload_img.convert("L")
     img_resized = ImageOps.fit(img, (64, 64))
-    arr = np.asarray(img_resized, dtype="float32") / 255.0
-    vec = arr.reshape(-1)
-    norm = float(np.linalg.norm(vec)) or 1.0
+    vec = np.asarray(img_resized, dtype="float32").reshape(-1) / 255.0
+    norm = np.linalg.norm(vec) or 1.0
     vec = vec / norm
 
-    scores = []
+    results = []
     for icon in ICON_FEATURES:
-        s = float(np.dot(vec, icon["vec"]))  # cosine similarity
-        scores.append((s, icon))
+        score = float(np.dot(vec, icon["vec"]))
+        results.append((score, icon))
 
-    scores.sort(key=lambda x: x[0], reverse=True)
-    return scores[:topk]
+    results.sort(key=lambda x: x[0], reverse=True)
+    return results[:topk]
 
 
 # -----------------------------------------------------------------------------
-# 텍스트에서 약어 / 차트 기호 이름 찾기
+# 텍스트 약어 추출
 # -----------------------------------------------------------------------------
-def normalize(s: str) -> str:
-    return (s or "").strip().lower()
-
-
-def extract_abbr_from_text(text: str):
-    """입력 텍스트에서 뜨개 약어/용어 찾기."""
-    t = text.lower()
+def extract_abbr_from_text(text):
+    text = text.lower()
     hits = []
-
     for key, v in SYMBOLS.items():
-        labels = set()
-        labels.add(key)
-        labels.add(v.get("name_en", ""))
-        labels.add(v.get("name_ko", ""))
-        for a in v.get("aliases", []):
-            labels.add(a)
+        labels = set([key, v.get("name_en", ""), v.get("name_ko", "")])
+        labels.update(v.get("aliases", []))
 
         for label in labels:
-            label = (label or "").strip()
-            if not label:
-                continue
-            if label.lower() in t:
+            if label and label.lower() in text:
                 hits.append(
                     {
-                        "label": label,
                         "key": key,
+                        "label": label,
                         "name_en": v.get("name_en", ""),
                         "name_ko": v.get("name_ko", ""),
                         "desc": v.get("desc_ko", ""),
                     }
                 )
-                break  # 한 번 매칭되면 그 항목은 중복 없이
+                break
     return hits
 
 
-def extract_chart_names_from_text(text: str):
-    """입력 텍스트에서 차트 기호 이름(엑셀상의 이름) 찾기."""
-    if not CHART_MAN:
-        return []
-
-    t = text.lower()
+def extract_chart_names_from_text(text):
+    text = text.lower()
     hits = []
-
-    for sheet_title, info in CHART_MAN.items():
-        items = info.get("items", [])
-        for it in items:
-            abbr = (it.get("abbr") or "").strip()
-            if not abbr:
-                continue
-            if abbr.lower() in t:
-                hits.append(
-                    {
-                        "sheet": sheet_title,
-                        "abbr": abbr,
-                        "desc": it.get("desc", ""),
-                        "file": it.get("file", ""),
-                    }
-                )
-
-    return hits
-
-
-# 프롬프트에 넣을 이름 목록 생성
-def make_symbol_name_list():
-    names = set()
-    for k, v in SYMBOLS.items():
-        names.add(k)
-        names.add(v.get("name_en", ""))
-        names.add(v.get("name_ko", ""))
-        for a in v.get("aliases", []):
-            names.add(a)
-    names = {n.strip() for n in names if n and n.strip()}
-    return sorted(names)
-
-
-def make_chart_name_list():
-    names = set()
-    for _, info in CHART_MAN.items():
+    for sheet, info in CHART_MAN.items():
         for it in info.get("items", []):
             abbr = (it.get("abbr") or "").strip()
             if not abbr:
                 continue
-            if abbr.startswith("__dummy__"):
-                continue
-            names.add(abbr)
-    return sorted(names)
+            if abbr.lower() in text:
+                hits.append(
+                    {"sheet": sheet, "abbr": abbr, "desc": it.get("desc", "")}
+                )
+    return hits
 
 
-SYMBOL_NAME_LIST = make_symbol_name_list()
-CHART_NAME_LIST = make_chart_name_list()
-
-
-# -----------------------------------------------------------------------------
-# Streamlit UI 시작
-# -----------------------------------------------------------------------------
-st.set_page_config(
-    page_title="실마리 — 필요 기술 / 약어 설명",
-    page_icon="📘",
-    layout="wide",
+SYMBOL_NAME_LIST = sorted({k for k in SYMBOLS.keys()})
+CHART_NAME_LIST = sorted(
+    {it["abbr"] for _, info in CHART_MAN.items() for it in info.get("items", []) if it.get("abbr")}
 )
 
-st.title("📘 필요 기술 / 약어 설명")
+# -----------------------------------------------------------------------------
+# UI 시작
+# -----------------------------------------------------------------------------
+st.title("📘 필요 기술 / 약어 설명 (AI + 이미지 매칭)")
 
-st.write(
+st.info(
     """
-도안 설명이나 필요한 기술/약어 목록을 정리하는 페이지입니다.
-
-1. **텍스트**(도안 설명, 약어 목록)를 붙여 넣으면, 뜨개 약어 사전에서 관련 용어를 찾아줍니다.  
-2. **차트 기호 이미지**를 올리면, 엑셀에서 가져온 162개의 차트 기호 중 가장 비슷한 기호들을 찾아줍니다.  
-3. 마지막으로, ChatGPT에 직접 물어볼 때 쓸 **프롬프트**를 자동으로 만들어 줍니다.  
-   (GPT API는 사용하지 않으며, 이 페이지에서 만든 텍스트를 ChatGPT 웹에 복사해서 쓰면 됩니다.)
+📌 **ChatGPT 프롬프트를 이용하여 도안 기호를 표준 용어로 자동 정리할 수 있습니다.**  
+📌 ChatGPT 분석 결과는 다시 **1번 페이지에 붙여 넣으면 표 형식으로 정리됩니다.**
 """
 )
 
 st.divider()
 
-# -----------------------------------------------------------------------------
-# 1️⃣ 텍스트 기반 약어 / 차트 기호 이름 인식
-# -----------------------------------------------------------------------------
-st.markdown("### 1️⃣ 텍스트에서 기술/약어 찾기")
-
+# -----------------------------
+# 1) 텍스트 기반 분석
+# -----------------------------
 raw_text = st.text_area(
-    "도안 설명 또는 필요한 기술/약어들을 아래에 붙여 넣으세요.",
-    height=200,
-    placeholder="예) k2tog, ssk, YO, 중심 5코 모아뜨기, 오른코 겹쳐 3코 모아뜨기 …",
+    "도안 설명 / 필요한 기술 (붙여넣기)",
+    placeholder="예: k2tog, 오른코 3코 교차뜨기, YO ..."
 )
 
-abbr_hits = []
-chart_hits = []
+abbr_hits = extract_abbr_from_text(raw_text) if raw_text else []
+chart_hits = extract_chart_names_from_text(raw_text) if raw_text else []
 
-if raw_text.strip():
-    abbr_hits = extract_abbr_from_text(raw_text)
-    chart_hits = extract_chart_names_from_text(raw_text)
+if abbr_hits or chart_hits:
+    st.markdown("#### 🔍 인식된 용어 목록")
 
-st.markdown("#### 🔍 인식된 기술/약어")
-
-if not (abbr_hits or chart_hits):
-    st.info("텍스트에서 인식된 약어/차트 기호가 아직 없습니다. 위에 내용을 붙여 넣어 보세요.")
-else:
     if abbr_hits:
-        st.markdown("##### ▪ 뜨개 약어 사전에서 찾은 항목")
+        st.write("**▪ 뜨개 약어 사전 기반**")
         for h in abbr_hits:
-            st.markdown(
-                f"- **{h['label']}**  →  `{h['key']}` / {h['name_en']} / {h['name_ko']}"
-            )
-            if h["desc"]:
-                st.caption(h["desc"])
+            st.write(f"- **{h['label']}** → `{h['key']}` / {h['name_ko']}")
 
     if chart_hits:
-        st.markdown("##### ▪ 차트 기호 이름(엑셀 기준)에서 찾은 항목")
-        by_sheet = defaultdict(list)
+        st.write("**▪ 차트 기호 목록 기반**")
         for ch in chart_hits:
-            by_sheet[ch["sheet"]].append(ch)
-
-        for sheet_title in sorted(by_sheet.keys()):
-            st.markdown(f"###### 🧵 {sheet_title}")
-            for ch in by_sheet[sheet_title]:
-                line = f"- **{ch['abbr']}**"
-                if ch["desc"]:
-                    line += f" — {ch['desc']}"
-                st.markdown(line)
+            st.write(f"- **{ch['abbr']}** ({ch['sheet']})")
 
 st.divider()
 
-# -----------------------------------------------------------------------------
-# 2️⃣ 기호 이미지로 차트 기호 찾기 (이미지 매칭)
-# -----------------------------------------------------------------------------
-st.markdown("### 2️⃣ 기호 이미지로 차트 기호 찾기 (이미지 매칭)")
-
+# -----------------------------
+# 2) 이미지로 차트 기호 인식
+# -----------------------------
 uploaded_icon = st.file_uploader(
-    "PDF나 도안에서 차트 기호 한 칸을 잘라서 올려 보세요. (PNG / JPG / JPEG)",
-    type=["png", "jpg", "jpeg"],
-    key="icon_uploader",
+    "📎 기호 이미지 업로드 (차트 도안에서 잘라낸 한 칸)",
+    type=["png", "jpg", "jpeg"]
 )
 
-icon_matches = []
+if uploaded_icon:
+    img = Image.open(uploaded_icon)
+    st.image(img, width=200)
+    matches = find_similar_icons(img, topk=5)
 
-if uploaded_icon is not None:
-    try:
-        img = Image.open(uploaded_icon)
-        st.markdown("**업로드한 기호 이미지**")
-        st.image(img, use_column_width=False, width=260)
-
-        if not ICON_FEATURES:
-            st.warning("차트 아이콘 인덱스를 찾지 못했습니다. (manifest.json 또는 PNG 경로를 확인해 주세요.)")
-        else:
-            icon_matches = find_similar_icons(img, topk=6)
-            if not icon_matches:
-                st.info("비슷한 차트 기호를 찾지 못했습니다.")
-            else:
-                st.markdown("#### 🔗 비슷한 차트 기호 후보들")
-
-                for score, icon in icon_matches:
-                    cols = st.columns([1, 2])
-                    with cols[0]:
-                        try:
-                            st.image(str(BASE_DIR / icon["path"]), use_column_width=True)
-                        except Exception:
-                            st.write("(이미지 로드 실패)")
-
-                    with cols[1]:
-                        title = icon["abbr"] or "(이름 없음)"
-                        st.markdown(f"**{title}**")
-                        st.caption(f"소분류: {icon['sheet']}")
-                        if icon["desc"]:
-                            st.write(icon["desc"])
-                        st.caption(f"유사도 점수: {score:.3f}")
-
-    except Exception as e:
-        st.error(f"이미지 처리 중 오류가 발생했습니다: {e}")
+    st.markdown("### 🔗 가장 비슷한 차트 기호")
+    for score, m in matches:
+        cols = st.columns([1, 2])
+        with cols[0]:
+            st.image(str(BASE_DIR / m["path"]), width=120)
+        with cols[1]:
+            st.write(f"**{m['abbr']}**  — {m['sheet']}")
+            st.caption(f"유사도: {score:.3f}")
 
 st.divider()
 
-# -----------------------------------------------------------------------------
-# 3️⃣ ChatGPT에 직접 물어볼 때 쓸 프롬프트 생성
-# -----------------------------------------------------------------------------
-st.markdown("### 3️⃣ ChatGPT에 직접 물어볼 때 쓸 프롬프트")
+# -----------------------------
+# 3) ChatGPT용 프롬프트 생성
+# -----------------------------
+st.markdown("### 🤖 ChatGPT용 프롬프트 생성")
 
-st.write(
-    """
-이 프롬프트는 **ChatGPT 웹사이트**에서 사용할 용도입니다.
+prompt = f"""
+너는 뜨개질 차트 해석 전문가야.
 
-1. 아래 프롬프트를 통째로 복사  
-2. ChatGPT 대화창에 붙여넣기  
-3. 도안 이미지를 업로드하거나, 도안 설명/약어를 추가로 붙여넣기  
-4. ChatGPT에게 분석을 요청하면,  
-   - 지금 이 앱에서 보여준 **약어 사전 + 차트 기호 사전** 기준으로  
-   - 도안에 쓰인 기호들을 표준 용어로 **대치해서 표 형식으로 정리**해 달라고 요청하게 됩니다.
+도안에 있는 기호를 아래의 표준 용어 중 가장 가까운 개념으로 대치해서 정리해 줘.
+출력은 반드시 아래 형식:
+
+| 도안 기호 | 표준 용어 | 설명 |
+|-----------|-----------|------|
+
+📚 표준 용어 목록:
+{", ".join(SYMBOL_NAME_LIST + CHART_NAME_LIST)}
+
+📎 내가 추가할 도안:
+(여기에 이미지 업로드할게)
+
+📌 요청:
+- 이름이 다르더라도 동일 의미라면 표준 용어로 통일
+- 의미 모호하면 유사한 후보 여러 개 제시
 """
-)
 
-# 텍스트에서 인식된 항목을 프롬프트에 참고용으로 넣기
-abbr_labels = sorted({h["label"] for h in abbr_hits}) if abbr_hits else []
-chart_labels = sorted({h["abbr"] for h in chart_hits}) if chart_hits else []
+st.text_area("⬇ ChatGPT에 붙여넣기", value=prompt, height=300)
 
-# 뜨개 약어/차트 기호 사전 전체 이름 목록
-symbol_name_str = ", ".join(SYMBOL_NAME_LIST) if SYMBOL_NAME_LIST else "(사전 로드 실패)"
-chart_name_str = ", ".join(CHART_NAME_LIST) if CHART_NAME_LIST else "(차트 사전 로드 실패)"
 
-if raw_text.strip():
-    text_snippet = raw_text.strip()
-else:
-    text_snippet = "(여기에 도안 설명이나, 도안에 적힌 약어/기호 설명을 추가로 붙여넣으세요.)"
+### 🔘 복사 버튼 추가
+st.button("📋 프롬프트 복사", on_click=lambda: st.write(
+    "<script>navigator.clipboard.writeText(`" + prompt.replace("`", "\\`") + "`);</script>",
+    unsafe_allow_html=True
+))
 
-prompt_lines = []
-
-prompt_lines.append("너는 '뜨개질 차트 기호'와 '뜨개 약어'를 분석하는 전문가야.")
-prompt_lines.append("")
-prompt_lines.append("내가 업로드할 이미지는 **전체 뜨개 도안(차트)** 이고,")
-prompt_lines.append("각 칸에 있는 표기 하나가 '기호 한 칸'이야.")
-prompt_lines.append("도안 제작자마다 기호 이름과 설명이 다르기 때문에,")
-prompt_lines.append("아래에 제공하는 사전을 기준으로 **표준 이름으로 정리**해 줘.")
-prompt_lines.append("")
-prompt_lines.append("------------------------------------------------------------")
-prompt_lines.append("📚 1. 참고용 뜨개 약어 / 용어 사전")
-prompt_lines.append("")
-prompt_lines.append(symbol_name_str)
-prompt_lines.append("")
-prompt_lines.append("📚 2. 참고용 차트 기호(이미지) 이름 목록 (엑셀에서 가져온 표준 이름)")
-prompt_lines.append("")
-prompt_lines.append(chart_name_str)
-prompt_lines.append("------------------------------------------------------------")
-prompt_lines.append("")
-prompt_lines.append("🧵 지금 내가 가진 도안 설명 / 텍스트는 다음과 같아:")
-prompt_lines.append(text_snippet)
-prompt_lines.append("")
-
-if abbr_labels or chart_labels:
-    prompt_lines.append("또, 내가 미리 찾아본 기호 후보들은 아래와 같아 (참고만 해줘):")
-    if abbr_labels:
-        prompt_lines.append(f"- 텍스트에서 인식된 뜨개 약어/용어: {', '.join(abbr_labels)}")
-    if chart_labels:
-        prompt_lines.append(f"- 텍스트에서 인식된 차트 기호 이름: {', '.join(chart_labels)}")
-    prompt_lines.append("")
-
-prompt_lines.append("------------------------------------------------------------")
-prompt_lines.append("✏️ 네가 해 줄 일")
-prompt_lines.append("")
-prompt_lines.append("1. 내가 업로드한 도안 이미지를 보고, 사용된 기호들을 가능한 한 많이 추출해.")
-prompt_lines.append("2. 각 기호를 위의 뜨개 약어/차트 기호 사전에서 **가장 가까운 표준 용어(약어)**에 매핑해.")
-prompt_lines.append("3. 아래와 같은 **마크다운 표 형식**으로 정리해 줘:")
-prompt_lines.append("")
-prompt_lines.append("| 도안에 적힌 기호/이름 | 표준 뜨개 용어(약어) |")
-prompt_lines.append("|------------------------|----------------------|")
-prompt_lines.append("| (도안 표기 예시)       | (예: k2tog, 2/2 RC)  |")
-prompt_lines.append("")
-prompt_lines.append("4. 같은 의미의 기호가 여러 가지 이름으로 불릴 수 있으니,")
-prompt_lines.append("   최대한 **중복을 줄이고, 정리된 표**를 만들어 줘.")
-prompt_lines.append("")
-prompt_lines.append("설명 문장은 최소한으로 유지하고,")
-prompt_lines.append("가능하면 표 안에는 **'도안 표기'와 '표준 용어'**만 간단히 써 줘.")
-
-final_prompt = "\n".join(prompt_lines)
-
-st.text_area("📌 ChatGPT에 붙여넣을 프롬프트", value=final_prompt, height=380)
-
-st.caption("위 텍스트를 모두 복사해서 ChatGPT 대화창에 붙여넣고, 도안 이미지를 함께 업로드해서 질문하면 돼요.")
-
-st.divider()
-st.page_link("HOME.py", label="⬅️ 홈으로")
+st.caption("복사 후 👉 ChatGPT에 그대로 붙여넣고 도안 이미지를 업로드하세요.")
