@@ -1,7 +1,7 @@
 # pages/5_서술형_도안_및_코수_추적.py
 
 import re
-from typing import Optional, Tuple, Any
+from collections import Counter
 
 import streamlit as st
 
@@ -10,194 +10,271 @@ from lib.upload_utils import uploader_with_history
 
 
 st.set_page_config(
-    page_title="✏️ 서술형 도안 & 코 수 추적",
-    page_icon="✏️",
+    page_title="서술형 도안 & 코수 추적",
+    page_icon="📘",
     layout="wide",
 )
 
-st.title("✏️ 서술형 도안 & 코 수 추적")
+st.title("📘 서술형 도안 & 코수 추적")
 
+
+# ----------------------------------------------------
+# 0. 공통 도움말
+# ----------------------------------------------------
 st.markdown(
     """
-이 페이지에서는 **서술형 도안(PDF)** 을 올려서 텍스트를 추출하고,  
-그 도안의 한 줄을 골라 코 수 변화를 계산해 볼 수 있어요.
+이 페이지에서는 **서술형(문장형) 도안**을 다룰 수 있어요.
 
-1. 먼저 PDF를 업로드하고 텍스트를 추출해서 복사합니다.  
-2. 그런 다음, 특정 줄(예: `k55, m1L`)과 시작 코 수를 넣어 **최종 코 수**를 계산해 보세요.
+1. **PDF 도안에서 텍스트 추출** → 복사해서 사용  
+2. **한 줄 도안에서 코 수 변화 계산** → 시작 코 수 + (늘림/줄임) = 최종 코 수
+
+**주의:**  
+- k, p 처럼 단순 겉뜨기/안뜨기는 코 수 변화가 없다고 가정해요.  
+- `yo, m1l, m1r …` 는 **늘리는 기호(+1)**,  
+  `k2tog, ssk, ssp, p2tog …` 는 **모아뜨기(–1)** 로 계산해요.  
+- `… 3회 반복`, `… 3번 반복`, `… 3 times`, `… x3` 처럼  
+  **반복 횟수**가 적힌 문장은 한 번 계산한 뒤 그 횟수만큼 곱해요.
 """
 )
 
 st.divider()
 
-# -------------------------------------------------------------------
-# 1️⃣ PDF에서 텍스트 추출하기
-# -------------------------------------------------------------------
-st.header("1️⃣ 서술형 도안 PDF에서 텍스트 추출하기")
+# ====================================================
+# 1️⃣ PDF에서 도안 텍스트 추출하기
+# ====================================================
+st.header("1️⃣ PDF에서 도안 텍스트 추출하기")
 
-col_left, col_right = st.columns([1, 1.4])
+col_u1, col_u2 = st.columns([1.4, 2])
 
-with col_left:
-    st.markdown("#### 📂 도안 PDF 업로드 / 선택")
+with col_u1:
+    st.markdown("#### 📂 서술형 도안 PDF 업로드")
 
-    # uploader_with_history 가 **(UploadedFile, 저장경로)** 또는 None 을 반환한다고 가정
-    uploaded_info: Optional[Tuple[Any, str]] = uploader_with_history(
-        label="서술형 도안 PDF 업로드",
-        key="text_pattern_pdf",
-        # accept_types 나 기타 인자는 upload_utils 구현에 따라 무시될 수 있음
+    uploaded_file, current_path = uploader_with_history(
+        key="pattern_pdf",
+        label="Drag and drop file here",
+        help="서술형 도안이 들어 있는 PDF 파일을 올려 주세요.",
+        type=["pdf"],
     )
 
-    current_file_path: Optional[str] = None
-    current_file_name: Optional[str] = None
-
-    if uploaded_info:
-        file_obj, saved_path = uploaded_info
-        current_file_path = saved_path
-        # Streamlit UploadedFile 이면 name 속성이 있음
-        current_file_name = getattr(file_obj, "name", None) or saved_path
-
-        st.success(f"PDF 파일이 업로드되었습니다.\n\n현재 사용 중인 파일: `{current_file_name}`")
+    if current_path:
+        st.success(f"PDF 파일이 업로드되었습니다.\n\n현재 사용 중인 파일: `{current_path}`")
     else:
-        st.info("왼쪽 상단의 업로드 박스에서 서술형 도안 PDF를 올려 주세요.")
+        st.info("왼쪽에 있는 업로드 박스에 PDF 파일을 올려 주세요.")
 
-with col_right:
-    st.markdown("#### 📄 PDF에서 텍스트 추출")
-
-    if "pdf_extracted_text" not in st.session_state:
-        st.session_state["pdf_extracted_text"] = ""
-
-    if current_file_path:
-        if st.button("📕 PDF에서 텍스트 추출하기", type="primary"):
+    if current_path:
+        if st.button("📄 PDF에서 텍스트 추출하기", type="primary"):
             try:
-                # 🔑 여기에서 **문자열 경로만** extract_pdf_text 에 넘김
-                text = extract_pdf_text(current_file_path)
-                st.session_state["pdf_extracted_text"] = text
-                st.success("PDF에서 텍스트를 성공적으로 추출했습니다. 아래 텍스트 박스에서 복사해서 사용하세요.")
+                text = extract_pdf_text(current_path)
+                if not text.strip():
+                    st.warning("PDF에서 읽어 온 텍스트가 비어 있습니다. 스캔본(이미지) PDF일 수도 있어요.")
+                st.session_state["extracted_pattern_text"] = text
+                st.success("PDF에서 텍스트를 추출했습니다. 아래 텍스트 박스를 확인해 주세요.")
             except Exception as e:
                 st.error(f"PDF 텍스트 추출 중 오류가 발생했습니다: {e}")
-    else:
-        st.button("📕 PDF에서 텍스트 추출하기", disabled=True)
 
-    st.markdown("##### 🔎 추출된 도안 텍스트 (복사해서 사용하세요)")
+with col_u2:
+    st.markdown("#### 📋 추출된 도안 텍스트 (복사해서 사용하세요)")
+    extracted = st.session_state.get("extracted_pattern_text", "")
     st.text_area(
-        "추출된 도안 텍스트",
-        key="pdf_extracted_text",
-        height=250,
+        "PDF에서 읽어 온 텍스트",
+        value=extracted,
+        height=260,
     )
 
 st.divider()
 
-# -------------------------------------------------------------------
+# ====================================================
 # 2️⃣ 서술형 도안 한 줄에서 코 수 계산하기
-# -------------------------------------------------------------------
+# ====================================================
 st.header("2️⃣ 서술형 도안 한 줄에서 코 수 계산하기")
 
 st.markdown(
     """
-아래에 **현재 코 수**와 **해당 줄의 서술형 도안**을 적으면  
-그 줄이 끝났을 때의 **최종 코 수**를 대략 계산해 줍니다.
+예시:
 
-예시)
+- `k55, m1L`  →  **늘림 1코** → 시작 56코라면 **최종 57코**  
+- `k1, m1R 총 3회 반복`  →  (한 번에 +1코) × 3회 = **+3코 증가**  
+- `repeat k5, ssk 7 times`  →  ssk 한 번당 –1코 줄어듦 → **–7코 감소**
 
-* 시작 코 수: `56`  
-* 서술형 도안: `k55, m1L` → 결과: **57코**
-
-> ⚠️ 이 계산기는 **대략적인 참고용**이에요.  
-> 도안에 따라 예외적인 기호/표현이 있을 수 있으니, 항상 도안 설명도 함께 확인해 주세요.
+아래 입력 칸에는 **한 줄(또는 한 구간)의 도안 설명만** 넣어 주세요.
 """
 )
 
-calc_col1, calc_col2 = st.columns([1, 1])
+col1, col2 = st.columns([1, 2])
 
-with calc_col1:
-    start_sts = st.number_input("현재(시작) 코 수", min_value=0, value=0, step=1)
-    row_text = st.text_input(
-        "서술형 도안 한 줄 (예: `k55, m1L` 또는 `k3, yo, k2tog`)",
-        value="",
-        help="해당 줄의 내용만 간단히 적어 주세요. 쉼표(,) 또는 공백으로 구분해도 됩니다.",
+with col1:
+    start_sts = st.number_input("현재(시작) 코 수", min_value=0, step=1, value=0)
+
+with col2:
+    line_text = st.text_area(
+        "도안 한 줄(또는 한 구간) 설명",
+        placeholder="예) k55, m1L  \n예) k1, m1R 총 3회 반복  \n예) repeat k5, ssk 7 times",
+        height=120,
     )
 
-    run_calc = st.button("🧮 이 줄의 코 수 계산하기", type="primary")
 
-with calc_col2:
-    st.subheader("결과")
+# ----------------------------------------------------
+# 증·감 기호 정의
+# ----------------------------------------------------
+# 모두 소문자로 처리해서 비교할 예정
+INCREASE_WORDS = [
+    "yo",
+    "m1",
+    "m1l",
+    "m1r",
+    "m1lp",
+    "m1rp",
+    "inc",
+    "kfb",
+    "pfb",
+    "kll",
+    "krl",
+]
 
-    def estimate_delta(token: str) -> tuple[int, str]:
-        """
-        토큰 하나가 코 수에 얼마나 영향을 주는지 대략 추정.
-        (규칙은 단순화된 버전이라 100% 정확하지는 않을 수 있음)
-        """
-        t = token.strip().lower()
-        if not t:
-            return 0, "공백"
+DECREASE_WORDS = [
+    "k2tog",
+    "k3tog",
+    "ssk",
+    "ssp",
+    "skpo",
+    "skp",
+    "sk2p",
+    "p2tog",
+    "p3tog",
+    "cdd",
+]
 
-        # 숫자만 있는 경우 (코 수 변화 없음)
-        if t.isdigit():
-            return 0, "숫자"
 
-        # k55 / p12 같은 것: 코 수는 유지
-        m = re.match(r"(k|p)(\d+)", t)
-        if m:
-            n = int(m.group(2))
-            return 0, f"{m.group(1)}{n} (코 수 변화 없음)"
+def _normalize_text(text: str) -> str:
+    """공백/구두점 정리 + 소문자 변환."""
+    t = text.replace("\n", " ")
+    # 괄호, 콤마 등은 구분을 위해 공백으로
+    for ch in [",", ";", ":", "(", ")", "[", "]"]:
+        t = t.replace(ch, " ")
+    return t.lower()
 
-        # yo (구멍 만들기) → +1 (또는 숫자가 붙으면 그 수만큼)
-        if "yo" in t:
-            m = re.search(r"(\d+)", t)
-            inc = int(m.group(1)) if m else 1
-            return inc, f"yo 계열 늘리기 (+{inc})"
 
-        # m1 / m1l / m1r 등 → +1
-        if t.startswith("m1"):
-            return 1, "M1 계열 늘리기 (+1)"
+def _extract_repeat_info(text: str) -> tuple[str, int]:
+    """
+    문장 끝의 '3회', '3번', '3 times', 'x3' 등을 찾아서 (본문, 반복횟수) 반환.
+    찾지 못하면 (원본문, 1)
+    """
+    t = text.strip()
+    tl = t.lower()
 
-        # kfb / pfb / inc 계열 → +1 로 처리
-        if t in {"kfb", "pfb"} or "inc" in t:
-            return 1, "늘리기(+1)"
+    # 패턴 1: "... 3회 반복", "... 3 times", "... 3번"
+    m = re.search(r"(.*?)(\d+)\s*(회|번|times?)\s*(반복)?\s*$", tl)
+    if m:
+        count = int(m.group(2))
+        base = t[: m.start(2)].strip(" ,.;:()")
+        return base, max(count, 1)
 
-        # tog / ssk / ssp / k2tog / p3tog 등 → 모아뜨기
-        if "tog" in t or t.startswith("ssk") or t.startswith("ssp"):
-            m = re.search(r"(\d+)", t)
-            if m:
-                n = int(m.group(1))
-                # n코를 1코로 모으는 것으로 가정 → -(n-1)
-                dec = n - 1
-                return -dec, f"{n}코 모아뜨기 (–{dec})"
-            # 숫자가 없으면 2코 모아뜨기로 가정 → -1
-            return -1, "2코 모아뜨기 (–1)"
+    # 패턴 2: "... x3" / "... ×3" / "... * 3"
+    m2 = re.search(r"(.*?)[x×*]\s*(\d+)\s*$", tl)
+    if m2:
+        count = int(m2.group(2))
+        base = t[: m2.start(2)].strip(" ,.;:()x×*")
+        return base, max(count, 1)
 
-        # 그 외 기호는 기본적으로 코 수 변화 없다고 가정
-        return 0, "코 수 변화 없음"
+    return t, 1
 
-    if run_calc and row_text:
-        tokens = re.split(r"[,\s]+", row_text.strip())
-        cur = int(start_sts)
-        breakdown = []
 
-        for tok in tokens:
-            if not tok:
-                continue
-            delta, reason = estimate_delta(tok)
-            prev = cur
-            cur += delta
-            breakdown.append((tok, prev, delta, cur, reason))
+def _count_words(words, text_lower: str) -> Counter:
+    """
+    INCREASE_WORDS / DECREASE_WORDS 리스트에 있는 단어들이
+    text_lower 안에 각각 몇 번 등장하는지 센다.
+    """
+    cnt = Counter()
+    for w in words:
+        pattern = r"\b" + re.escape(w) + r"\b"
+        found = re.findall(pattern, text_lower)
+        if found:
+            cnt[w] = len(found)
+    return cnt
 
-        st.markdown(f"### ✅ 계산 결과: **{start_sts}코 → {cur}코**")
 
-        st.markdown("#### 🔍 토큰별 변화 내역")
-        for tok, prev, delta, after, reason in breakdown:
-            sign = "+" if delta > 0 else ""
-            st.write(f"- `{tok}` : {prev}코 → {after}코 ({sign}{delta}), _{reason}_")
+def compute_delta(text: str) -> tuple[int, Counter, Counter, int]:
+    """
+    한 번(1회) 수행했을 때의 증·감 코 수를 계산하고,
+    반복 횟수를 반영한 총 변화량도 함께 반환.
 
-    elif run_calc and not row_text:
-        st.warning("먼저 서술형 도안 한 줄을 입력해 주세요.")
+    반환:
+        total_delta  : 총 코 수 변화량 (늘림 - 줄임)
+        inc_counts   : 늘림 기호별 등장 횟수 (1회 기준)
+        dec_counts   : 줄임 기호별 등장 횟수 (1회 기준)
+        repeat_count : 반복 횟수
+    """
+    if not text.strip():
+        return 0, Counter(), Counter(), 1
 
+    # 반복 정보 분리
+    base_text, repeat_count = _extract_repeat_info(text)
+    base_norm = _normalize_text(base_text)
+
+    inc_counts = _count_words(INCREASE_WORDS, base_norm)
+    dec_counts = _count_words(DECREASE_WORDS, base_norm)
+
+    inc_total = sum(inc_counts.values())
+    dec_total = sum(dec_counts.values())
+
+    unit_delta = inc_total - dec_total          # 1회 수행 시 변화량
+    total_delta = unit_delta * repeat_count     # 반복까지 반영한 변화량
+
+    return total_delta, inc_counts, dec_counts, repeat_count
+
+
+# ----------------------------------------------------
+# 계산 버튼 동작
+# ----------------------------------------------------
+if st.button("✅ 이 줄 코 수 계산하기", type="primary"):
+    if not line_text.strip():
+        st.warning("도안 설명 한 줄을 입력해 주세요.")
+    else:
+        delta, inc_counts, dec_counts, repeat_count = compute_delta(line_text)
+
+        final_sts = start_sts + delta
+
+        st.subheader("🔎 계산 결과")
+
+        col_a, col_b = st.columns(2)
+
+        with col_a:
+            st.markdown(f"- **시작 코 수:** {start_sts}코")
+            st.markdown(f"- **반복 횟수:** × {repeat_count}")
+
+            inc_total = sum(inc_counts.values()) * repeat_count
+            dec_total = sum(dec_counts.values()) * repeat_count
+
+            st.markdown(f"- **늘림 총합:** +{inc_total}코")
+            st.markdown(f"- **줄임 총합:** −{dec_total}코")
+
+            if delta == 0:
+                st.info(f"코 수 변화가 없는 줄로 계산되었습니다. → **최종도 {final_sts}코**")
+            elif delta > 0:
+                st.success(f"총 **+{delta}코** 늘어납니다. → **최종 {final_sts}코**")
+            else:
+                st.error(f"총 **{delta}코**(줄어듦) 변화입니다. → **최종 {final_sts}코**")
+
+        with col_b:
+            st.markdown("#### 🔹 늘림 기호별 개수 (1회 기준)")
+            if inc_counts:
+                for k, v in inc_counts.items():
+                    st.markdown(f"- `{k}` : {v}회 → +{v}코")
+            else:
+                st.write("늘림 기호가 발견되지 않았어요.")
+
+            st.markdown("#### 🔻 줄임 기호별 개수 (1회 기준)")
+            if dec_counts:
+                for k, v in dec_counts.items():
+                    st.markdown(f"- `{k}` : {v}회 → −{v}코")
+            else:
+                st.write("줄임 기호가 발견되지 않았어요.")
+
+        st.info(
+            "다음 줄(다음 단계)을 계산할 때는 **위에서 나온 최종 코 수를 "
+            "다음 줄의 시작 코 수로 넣어서** 계속 이어서 계산하면 됩니다."
+        )
 
 st.divider()
 
-st.markdown(
-    """
-### 📎 홈으로 돌아가기
-
-- [🏠 HOME 페이지](HOME.py)를 통해 다른 기능(뜨개 약어 사전, 차트 기호 사전 등)으로 이동할 수 있어요.
-"""
-)
+st.markdown("🏠 [HOME 로 돌아가기](HOME.py)")
