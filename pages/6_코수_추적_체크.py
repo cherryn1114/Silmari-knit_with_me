@@ -1,7 +1,7 @@
 # pages/6_코수_추적_체크.py
 import streamlit as st
 from lib import parser
-
+from lib.upload_utils import uploader_with_history
 st.set_page_config(page_title="실마리 — 코수 추적/체크", page_icon="✅", layout="centered")
 st.title("✅ 코수 추적 / 체크")
 

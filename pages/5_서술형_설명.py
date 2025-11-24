@@ -1,6 +1,7 @@
 # pages/5_서술형_설명.py
 import streamlit as st
 from lib import parser
+from lib.upload_utils import uploader_with_history
 
 st.set_page_config(page_title="실마리 — 서술형 설명", page_icon="📝", layout="centered")
 st.title("📝 서술형 도안 설명")
