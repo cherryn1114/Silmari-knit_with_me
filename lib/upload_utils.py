@@ -1,107 +1,113 @@
 # lib/upload_utils.py
+# 파일 업로드 + 간단한 히스토리(새로고침/페이지 이동 후에도 마지막 파일 유지)
+
 from __future__ import annotations
 
-import streamlit as st
+import os
 from pathlib import Path
+from typing import Literal, Tuple, Optional
 
-# 업로드 파일이 저장될 폴더
-UPLOAD_DIR = Path("data/uploads")
+import streamlit as st
+from streamlit.runtime.uploaded_file_manager import UploadedFile
 
-
-def _ensure_upload_dir() -> None:
-    """업로드 폴더 없으면 생성."""
-    UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
-
-
-def list_uploaded_files() -> list[Path]:
-    """저장된 업로드 파일 전체 목록."""
-    _ensure_upload_dir()
-    return sorted(
-        [p for p in UPLOAD_DIR.iterdir() if p.is_file()],
-        key=lambda p: p.name,
-    )
+# 업로드된 파일을 저장할 기본 폴더
+UPLOAD_ROOT = Path("data/uploads")
 
 
-def save_uploaded_file(uploaded_file) -> Path:
+def _ensure_root() -> None:
+    """업로드 루트 폴더가 없으면 생성."""
+    UPLOAD_ROOT.mkdir(parents=True, exist_ok=True)
+
+
+def _get_types(accept: Literal["any", "pdf", "image", "excel", "pattern"]) -> Optional[list[str]]:
     """
-    Streamlit UploadedFile -> 디스크에 저장하고 Path 반환.
-    같은 이름이 있을 경우, _1, _2 ... 붙여서 중복 회피.
+    Streamlit file_uploader 에 넘길 type 리스트.
+    ❗ 여기에는 'PATTERN_PDF' 같은 커스텀 문자열이 들어가면 안 되고,
+       반드시 실제 확장자만 들어가야 함.
     """
-    _ensure_upload_dir()
-
-    original_name = uploaded_file.name
-    base = Path(original_name).stem
-    suffix = Path(original_name).suffix
-
-    dst = UPLOAD_DIR / original_name
-    counter = 1
-    while dst.exists():
-        dst = UPLOAD_DIR / f"{base}_{counter}{suffix}"
-        counter += 1
-
-    with open(dst, "wb") as f:
-        f.write(uploaded_file.getbuffer())
-
-    return dst
+    if accept == "pdf":
+        return ["pdf"]
+    if accept == "image":
+        return ["png", "jpg", "jpeg", "gif"]
+    if accept == "excel":
+        return ["xlsx", "xls"]
+    if accept == "pattern":
+        # 도안용: pdf + 이미지 모두 허용
+        return ["pdf", "png", "jpg", "jpeg"]
+    # any  또는 그 외 값 → 제한 없음
+    return None
 
 
 def uploader_with_history(
+    key: str,
     label: str,
-    type: list[str] | None = None,
-    key: str = "file_uploader",
-) -> Path | None:
+    accept: Literal["any", "pdf", "image", "excel", "pattern"] = "any",
+    subdir: str | None = None,
+) -> Tuple[Optional[UploadedFile], Optional[str]]:
     """
-    업로더 + 기존 업로드 파일 선택까지 한 번에 제공하는 헬퍼.
+    공용 업로더 함수.
 
-    - 새 파일을 업로드하면 data/uploads/ 밑에 저장
-    - 이미 저장된 파일들 중 하나를 selectbox로 선택 가능
-    - 반환값: 선택된 파일의 Path (선택 안 했으면 None)
+    - key: 페이지별 / 용도별 고유 키 (예: "pattern_pdf", "tech_abbr_pdf")
+    - label: 업로더에 표시될 라벨 텍스트
+    - accept:
+        - "pdf"     → pdf만
+        - "image"   → png/jpg/jpeg/gif
+        - "excel"   → xlsx/xls
+        - "pattern" → pdf + 이미지
+        - "any"     → 모든 파일
+    - subdir: data/uploads 아래의 하위 폴더 이름 (없으면 data/uploads 바로 아래에 저장)
+
+    리턴:
+        (현재 업로드된 UploadedFile 객체 또는 None,
+         디스크에 저장된 파일 경로(str) 또는 None)
     """
-    _ensure_upload_dir()
+    _ensure_root()
 
-    st.markdown(f"**{label}**")
+    types = _get_types(accept)
 
-    # 1) 새 파일 업로드
-    uploaded = st.file_uploader(
-        "새 파일 업로드",
-        type=type,
-        key=key,
+    # Streamlit 위젯 키는 겹치면 안 되어서 _uploader suffix를 붙여 줌
+    widget_key = f"{key}_uploader"
+
+    uploaded: UploadedFile | None = st.file_uploader(
+        label,
+        type=types,
+        key=widget_key,
     )
 
-    newest_path: Path | None = None
+    # 세션 상태 초기화
+    if "uploaded_files" not in st.session_state:
+        st.session_state["uploaded_files"] = {}
+
+    saved_path: Optional[str] = None
+
+    # 새 파일이 올라왔을 경우 → 디스크에 저장 + 세션에 경로 기록
     if uploaded is not None:
-        newest_path = save_uploaded_file(uploaded)
-        st.success(f"📁 파일이 저장되었습니다: `{newest_path.name}`")
+        target_dir = UPLOAD_ROOT
+        if subdir:
+            target_dir = target_dir / subdir
 
-    # 2) 기존 업로드 파일 목록
-    files = list_uploaded_files()
-    if not files:
-        st.info("아직 업로드된 파일이 없습니다. 위에서 파일을 업로드해 보세요.")
-        return newest_path
+        target_dir.mkdir(parents=True, exist_ok=True)
 
-    options = ["(파일 선택 안 함)"] + [f.name for f in files]
+        filename = uploaded.name
+        # 같은 이름이 이미 있으면 덮어쓰기
+        dest = target_dir / filename
 
-    # 방금 올린 파일이 있으면 그걸 기본 선택으로
-    if newest_path is not None:
-        try:
-            default_index = 1 + [f.name for f in files].index(newest_path.name)
-        except ValueError:
-            default_index = 0
+        with open(dest, "wb") as f:
+            f.write(uploaded.getbuffer())
+
+        saved_path = str(dest)
+        st.session_state["uploaded_files"][key] = saved_path
+
     else:
-        default_index = 0
+        # 이번에 새로 올린 건 없지만, 예전에 올린 경로가 있으면 그대로 사용
+        prev = st.session_state.get("uploaded_files", {}).get(key)
+        if prev and Path(prev).exists():
+            saved_path = prev
 
-    selected_label = st.selectbox(
-        "이미 업로드해 둔 파일 중에서 사용할 파일 선택",
-        options,
-        index=default_index,
-        key=f"{key}_select",
-    )
+    # 현재 사용 중인 파일 경로를 화면에 보여주기 (선택사항)
+    if saved_path:
+        st.success(f"현재 사용 중인 파일: `{Path(saved_path).name}`")
+    else:
+        st.info("아직 선택된 파일이 없습니다.")
 
-    if selected_label == "(파일 선택 안 함)":
-        return newest_path
-
-    for f in files:
-        if f.name == selected_label:
-            return f
-
-    return newest_path
+    return uploaded, saved_path
