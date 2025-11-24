@@ -1,115 +1,88 @@
 # lib/pdf_utils.py
-# PDF에서 텍스트를 추출하기 위한 유틸 함수 모음
-# - 1차: PyPDF2
-# - 2차: pdfminer.six
-#
-# 사용 예시:
-#   from lib.pdf_utils import extract_pdf_text_from_pdf
-#   text = extract_pdf_text_from_pdf("path/to/file.pdf")
+# PDF에서 텍스트 추출 관련 유틸 함수 모음
 
 from __future__ import annotations
 
 from pathlib import Path
+from typing import Union
+
+import pypdf
+from streamlit.runtime.uploaded_file_manager import UploadedFile
 
 
-# --------------------------------------------------------------------
-# 1) PyPDF2 백엔드
-# --------------------------------------------------------------------
-def _extract_with_pypdf(pdf_path: Path) -> str:
+PathLike = Union[str, Path]
+
+
+def _read_pdf_from_path(path: PathLike) -> str:
     """
-    PyPDF2로 텍스트를 추출한다.
-    라이브러리가 없거나 실패하면 빈 문자열을 반환.
-    """
-    try:
-        from PyPDF2 import PdfReader
-    except Exception:
-        # PyPDF2가 설치 안 되어 있으면 빈 문자열
-        return ""
-
-    try:
-        reader = PdfReader(str(pdf_path))
-        texts = []
-        for page in reader.pages:
-            try:
-                t = page.extract_text() or ""
-            except Exception:
-                t = ""
-            texts.append(t)
-        return "\n".join(texts)
-    except Exception:
-        return ""
-
-
-# --------------------------------------------------------------------
-# 2) pdfminer.six 백엔드
-# --------------------------------------------------------------------
-def _extract_with_pdfminer(pdf_path: Path) -> str:
-    """
-    pdfminer.six로 텍스트를 추출한다.
-    패키지가 없거나 실패하면 빈 문자열을 반환.
-    """
-    try:
-        from pdfminer.high_level import extract_text as pdfminer_extract_text
-    except Exception:
-        return ""
-
-    try:
-        text = pdfminer_extract_text(str(pdf_path)) or ""
-        return text
-    except Exception:
-        return ""
-
-
-# --------------------------------------------------------------------
-# 3) 품질 체크 & 메인 함수
-# --------------------------------------------------------------------
-def _looks_garbled(text: str) -> bool:
-    """
-    추출된 텍스트가 '심하게 깨진 것'처럼 보이면 True.
-    (아주 단순한 휴리스틱 – pdfminer를 한 번 더 시도할지 결정하는 용도)
-    """
-    if not text:
-        return True
-
-    # 너무 짧으면 의미있는 텍스트가 아닐 가능성이 높다고 가정
-    if len(text) < 50:
-        return True
-
-    # 비인쇄 제어문자가 너무 많은 경우
-    bad = sum(1 for ch in text if ord(ch) < 9 or (13 < ord(ch) < 32))
-    if bad / len(text) > 0.05:
-        return True
-
-    return False
-
-
-def extract_pdf_text_from_pdf(path: str | Path) -> str:
-    """
-    PDF 파일에서 텍스트를 추출해 문자열로 반환.
-    - 1차: PyPDF2 사용
-    - 1차 결과가 너무 짧거나/깨진 것 같으면 2차: pdfminer.six 사용
-    - 둘 다 실패하면 가능한 결과(또는 빈 문자열)를 반환
+    로컬 경로에 저장된 PDF 파일에서 텍스트를 추출해서 하나의 문자열로 돌려줍니다.
+    pypdf 가 까다로운 PDF 를 만나더라도 최대한 에러 없이 진행하도록 예외를 잡아줍니다.
     """
     pdf_path = Path(path)
 
-    # 1차: PyPDF2
-    text1 = _extract_with_pypdf(pdf_path).strip()
+    if not pdf_path.exists():
+        raise FileNotFoundError(f"PDF 파일을 찾을 수 없습니다: {pdf_path}")
 
-    if text1 and not _looks_garbled(text1):
-        return text1
+    text_chunks: list[str] = []
 
-    # 2차: pdfminer.six
-    text2 = _extract_with_pdfminer(pdf_path).strip()
-    if text2:
-        return text2
+    # strict=False 로 설정해서 조금 깨진 PDF 도 최대한 읽도록 함
+    with pdf_path.open("rb") as f:
+        try:
+            reader = pypdf.PdfReader(f, strict=False)
+        except Exception as e:  # 구조가 완전히 깨진 경우
+            # 상위 코드에서 에러 메시지를 보여줄 수 있도록 그대로 올려 보냄
+            raise RuntimeError(f"PDF 읽기 오류: {e}") from e
 
-    # 둘 다 실패하면 1차 결과라도 돌려준다(또는 빈 문자열)
-    return text1
+        # 어떤 이유로든 root 가 None 인 경우를 대비
+        try:
+            pages = reader.pages
+        except Exception as e:
+            raise RuntimeError(f"PDF 페이지 정보 읽기 오류: {e}") from e
+
+        for page in pages:
+            try:
+                page_text = page.extract_text() or ""
+            except Exception:
+                page_text = ""
+            text_chunks.append(page_text)
+
+    return "\n".join(text_chunks).strip()
 
 
-# 옛 코드 호환용: 예전 이름을 그대로 쓸 수 있게 래퍼 제공
-def extract_pdf_text(path: str | Path) -> str:
+def _read_pdf_from_uploaded(uploaded: UploadedFile, save_to: PathLike | None = None) -> str:
     """
-    이전 코드에서 사용하던 이름. extract_pdf_text_from_pdf와 동일.
+    Streamlit UploadedFile 객체에서 직접 텍스트를 추출합니다.
+    (지금은 page 5 에서는 경로 기반 함수를 쓰고 있어서, 이 함수는
+     혹시 다른 페이지에서 쓸 일이 생길 때를 대비해서 남겨둔 헬퍼예요.)
     """
-    return extract_pdf_text_from_pdf(path)
+    # 필요하면 임시 파일로 저장해서 _read_pdf_from_path 재사용
+    if save_to is None:
+        tmp_path = Path("data/uploads") / uploaded.name
+    else:
+        tmp_path = Path(save_to)
+
+    tmp_path.parent.mkdir(parents=True, exist_ok=True)
+    with tmp_path.open("wb") as f:
+        f.write(uploaded.getbuffer())
+
+    return _read_pdf_from_path(tmp_path)
+
+
+def extract_pdf_text(pdf_source: Union[PathLike, UploadedFile]) -> str:
+    """
+    공용 진입점 함수.
+
+    - pdf_source 가 문자열/Path 이면: 파일 경로로 간주하고 읽기
+    - pdf_source 가 UploadedFile 이면: 임시로 저장 후 읽기
+    """
+    if isinstance(pdf_source, (str, Path)):
+        return _read_pdf_from_path(pdf_source)
+
+    # Streamlit UploadedFile 인 경우
+    if isinstance(pdf_source, UploadedFile):
+        return _read_pdf_from_uploaded(pdf_source)
+
+    raise TypeError(
+        f"지원하지 않는 타입입니다: {type(pdf_source)}. "
+        "경로(str/Path) 또는 Streamlit UploadedFile 만 사용할 수 있습니다."
+    )

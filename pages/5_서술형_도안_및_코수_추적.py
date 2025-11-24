@@ -1,280 +1,198 @@
 # pages/5_서술형_도안_및_코수_추적.py
 
-import re
-from collections import Counter
-
 import streamlit as st
-
-from lib.pdf_utils import extract_pdf_text
+import re
+from typing import Dict, Tuple
 from lib.upload_utils import uploader_with_history
+from lib.pdf_utils import extract_pdf_text
 
 
+# ---------------------------------------------------------
+# Streamlit 기본 설정
+# ---------------------------------------------------------
 st.set_page_config(
-    page_title="서술형 도안 & 코수 추적",
-    page_icon="📘",
-    layout="wide",
+    page_title="서술형 도안 & 코 수 추적",
+    page_icon="🧮",
+    layout="wide"
 )
 
-st.title("📘 서술형 도안 & 코수 추적")
+st.title("🧶 서술형 도안 & 코 수 추적")
+
+st.markdown("""
+서술형 도안의 문장을 한 줄씩 넣으면 증가/감소 코 수를 계산해 주는 페이지입니다.
+
+### 📌 계산 규칙 (기본)
+- **k, p 등 단순 겉뜨기/안뜨기** → 코 수 변화 없음 (0)
+- **yo, m1, m1l, m1r 등 늘리기** → +1 증가
+- **k2tog, ssk, ssp, p2tog 등 2코 모아뜨기** → -1 감소
+- **k3tog, p3tog 등 3코 모아뜨기** → -2 감소
+- **반복 표현**  
+  - “3회 반복”, “3번 반복”, “×3”, “3 times”, “\* ~ \* 반복” 모두 반복 횟수 적용
+""")
 
 
-# ----------------------------------------------------
-# 0. 공통 도움말
-# ----------------------------------------------------
-st.markdown(
-    """
-이 페이지에서는 **서술형(문장형) 도안**을 다룰 수 있어요.
-
-1. **PDF 도안에서 텍스트 추출** → 복사해서 사용  
-2. **한 줄 도안에서 코 수 변화 계산** → 시작 코 수 + (늘림/줄임) = 최종 코 수
-
-**주의:**  
-- k, p 처럼 단순 겉뜨기/안뜨기는 코 수 변화가 없다고 가정해요.  
-- `yo, m1l, m1r …` 는 **늘리는 기호(+1)**,  
-  `k2tog, ssk, ssp, p2tog …` 는 **모아뜨기(–1)** 로 계산해요.  
-- `… 3회 반복`, `… 3번 반복`, `… 3 times`, `… x3` 처럼  
-  **반복 횟수**가 적힌 문장은 한 번 계산한 뒤 그 횟수만큼 곱해요.
-"""
-)
-
-st.divider()
-
-# ====================================================
+# ============================================================
 # 1️⃣ PDF에서 도안 텍스트 추출하기
-# ====================================================
+# ============================================================
 st.header("1️⃣ PDF에서 도안 텍스트 추출하기")
 
-col_u1, col_u2 = st.columns([1.4, 2])
-
-with col_u1:
-    st.markdown("#### 📂 서술형 도안 PDF 업로드")
-
-    uploaded_file, current_path = uploader_with_history(
-        key="pattern_pdf",
-        label="Drag and drop file here",
-        help="서술형 도안이 들어 있는 PDF 파일을 올려 주세요.",
-        type=["pdf"],
-    )
-
-    if current_path:
-        st.success(f"PDF 파일이 업로드되었습니다.\n\n현재 사용 중인 파일: `{current_path}`")
-    else:
-        st.info("왼쪽에 있는 업로드 박스에 PDF 파일을 올려 주세요.")
-
-    if current_path:
-        if st.button("📄 PDF에서 텍스트 추출하기", type="primary"):
-            try:
-                text = extract_pdf_text(current_path)
-                if not text.strip():
-                    st.warning("PDF에서 읽어 온 텍스트가 비어 있습니다. 스캔본(이미지) PDF일 수도 있어요.")
-                st.session_state["extracted_pattern_text"] = text
-                st.success("PDF에서 텍스트를 추출했습니다. 아래 텍스트 박스를 확인해 주세요.")
-            except Exception as e:
-                st.error(f"PDF 텍스트 추출 중 오류가 발생했습니다: {e}")
-
-with col_u2:
-    st.markdown("#### 📋 추출된 도안 텍스트 (복사해서 사용하세요)")
-    extracted = st.session_state.get("extracted_pattern_text", "")
-    st.text_area(
-        "PDF에서 읽어 온 텍스트",
-        value=extracted,
-        height=260,
-    )
-
-st.divider()
-
-# ====================================================
-# 2️⃣ 서술형 도안 한 줄에서 코 수 계산하기
-# ====================================================
-st.header("2️⃣ 서술형 도안 한 줄에서 코 수 계산하기")
-
-st.markdown(
-    """
-예시:
-
-- `k55, m1L`  →  **늘림 1코** → 시작 56코라면 **최종 57코**  
-- `k1, m1R 총 3회 반복`  →  (한 번에 +1코) × 3회 = **+3코 증가**  
-- `repeat k5, ssk 7 times`  →  ssk 한 번당 –1코 줄어듦 → **–7코 감소**
-
-아래 입력 칸에는 **한 줄(또는 한 구간)의 도안 설명만** 넣어 주세요.
-"""
+uploaded_file, saved_path = uploader_with_history(
+    key="pattern_pdf",
+    label="📄 서술형 도안 PDF 업로드",
+    help_text="PDF 파일을 업로드한 후 텍스트를 추출하여 아래에 표시합니다."
 )
 
-col1, col2 = st.columns([1, 2])
+if uploaded_file:
+    st.success(f"PDF 파일이 업로드되었습니다: **{uploaded_file.name}**")
 
-with col1:
-    start_sts = st.number_input("현재(시작) 코 수", min_value=0, step=1, value=0)
+    if st.button("📕 PDF에서 텍스트 추출하기", type="primary"):
+        try:
+            text = extract_pdf_text(saved_path)
+            st.success("텍스트를 성공적으로 추출했습니다. 아래에서 복사해 활용하세요.")
+            st.text_area("📄 추출된 도안 텍스트", value=text, height=300)
+        except Exception as e:
+            st.error("❌ PDF 텍스트 추출 중 오류가 발생했습니다.")
+            st.exception(e)
 
-with col2:
-    line_text = st.text_area(
-        "도안 한 줄(또는 한 구간) 설명",
-        placeholder="예) k55, m1L  \n예) k1, m1R 총 3회 반복  \n예) repeat k5, ssk 7 times",
-        height=120,
+
+
+# ============================================================
+# 2️⃣ 서술형 도안 한 줄에서 코 수 계산하기
+# ============================================================
+
+st.header("2️⃣ 서술형 도안 한 줄에서 코 수 계산하기")
+
+start_sts = st.number_input("🔢 시작 코 수", min_value=0, value=56, step=1)
+line_text = st.text_area("✏️ 도안 한 줄 입력", height=120)
+
+# ------------------------------
+# 코 수 변화 계산 규칙
+# ------------------------------
+INC_PATTERNS = ["yo", "m1", "m1l", "m1r", "yo."]
+DEC1_PATTERNS = ["k2tog", "ssk", "ssp", "p2tog"]
+DEC2_PATTERNS = ["k3tog", "p3tog"]
+
+# 반복 패턴 인식
+REPEAT_PATTERNS = [
+    r"(\d+)\s*회\s*반복",      # 3회 반복
+    r"(\d+)\s*번\s*반복",      # 3번 반복
+    r"×\s*(\d+)",              # ×3
+    r"x\s*(\d+)",              # x3
+    r"(\d+)\s*times"           # 3 times
+]
+
+
+def count_st_changes(text: str) -> Tuple[int, Dict[str, int]]:
+    """도안 한 줄의 총 증가/감소 코 수 계산"""
+
+    delta = 0
+    detail = {}
+
+    # 1) 반복 횟수 찾기
+    repeat = 1
+    for pat in REPEAT_PATTERNS:
+        m = re.search(pat, text, flags=re.IGNORECASE)
+        if m:
+            repeat = int(m.group(1))
+            break
+
+    # 2) 요소별 계산
+    lowered = text.lower()
+
+    # 증가 (+1)
+    for inc in INC_PATTERNS:
+        c = lowered.count(inc)
+        if c:
+            detail[inc] = c * repeat
+            delta += c * repeat * 1
+
+    # 2코 모아뜨기 (-1)
+    for d in DEC1_PATTERNS:
+        c = lowered.count(d)
+        if c:
+            detail[d] = c * repeat
+            delta -= c * repeat * 1
+
+    # 3코 모아뜨기 (-2)
+    for d in DEC2_PATTERNS:
+        c = lowered.count(d)
+        if c:
+            detail[d] = c * repeat
+            delta -= c * repeat * 2
+
+    return delta, detail
+
+
+if st.button("🧮 코 수 계산하기", type="primary"):
+    if not line_text.strip():
+        st.warning("도안 문장을 입력해주세요.")
+    else:
+        delta, detail = count_st_changes(line_text)
+        result = start_sts + delta
+
+        st.subheader("📌 계산 결과")
+
+        st.write(f"- 시작 코 수: **{start_sts}코**")
+        st.write(f"- 변화량: **{delta:+}코**")
+        st.write(f"- 👉 최종 코 수: **{result}코**")
+
+        with st.expander("🔍 상세 계산 보기"):
+            for k, v in detail.items():
+                sign = "+" if k in INC_PATTERNS else "-"
+                st.write(f"• {k} × {v} → {sign}{v}")
+
+
+# ============================================================
+# 3️⃣ ChatGPT에게 물어볼 때 쓸 프롬프트 만들기 (최종 정제 버전)
+# ============================================================
+
+st.header("3️⃣ ChatGPT 프롬프트 생성기")
+
+st.markdown("""
+✔ **프롬프트에는 두 가지 정보만 포함됩니다.**  
+1) 시작 코 수  
+2) 도안 한 줄  
+
+이 외의 계산 결과/예상코수/참고 문구 등은 **일절 포함되지 않습니다.**
+""")
+
+colA, colB = st.columns(2)
+
+with colA:
+    prompt_sts = st.number_input(
+        "🔢 (프롬프트용) 시작 코 수",
+        min_value=0,
+        value=start_sts,
+        step=1,
     )
 
+prompt_line = st.text_area(
+    "✏️ (프롬프트용) 도안 한 줄",
+    value=line_text,
+    height=120,
+    placeholder="ChatGPT에게 분석시킬 도안 한 줄을 붙여넣으세요."
+)
 
-# ----------------------------------------------------
-# 증·감 기호 정의
-# ----------------------------------------------------
-# 모두 소문자로 처리해서 비교할 예정
-INCREASE_WORDS = [
-    "yo",
-    "m1",
-    "m1l",
-    "m1r",
-    "m1lp",
-    "m1rp",
-    "inc",
-    "kfb",
-    "pfb",
-    "kll",
-    "krl",
-]
-
-DECREASE_WORDS = [
-    "k2tog",
-    "k3tog",
-    "ssk",
-    "ssp",
-    "skpo",
-    "skp",
-    "sk2p",
-    "p2tog",
-    "p3tog",
-    "cdd",
-]
-
-
-def _normalize_text(text: str) -> str:
-    """공백/구두점 정리 + 소문자 변환."""
-    t = text.replace("\n", " ")
-    # 괄호, 콤마 등은 구분을 위해 공백으로
-    for ch in [",", ";", ":", "(", ")", "[", "]"]:
-        t = t.replace(ch, " ")
-    return t.lower()
-
-
-def _extract_repeat_info(text: str) -> tuple[str, int]:
-    """
-    문장 끝의 '3회', '3번', '3 times', 'x3' 등을 찾아서 (본문, 반복횟수) 반환.
-    찾지 못하면 (원본문, 1)
-    """
-    t = text.strip()
-    tl = t.lower()
-
-    # 패턴 1: "... 3회 반복", "... 3 times", "... 3번"
-    m = re.search(r"(.*?)(\d+)\s*(회|번|times?)\s*(반복)?\s*$", tl)
-    if m:
-        count = int(m.group(2))
-        base = t[: m.start(2)].strip(" ,.;:()")
-        return base, max(count, 1)
-
-    # 패턴 2: "... x3" / "... ×3" / "... * 3"
-    m2 = re.search(r"(.*?)[x×*]\s*(\d+)\s*$", tl)
-    if m2:
-        count = int(m2.group(2))
-        base = t[: m2.start(2)].strip(" ,.;:()x×*")
-        return base, max(count, 1)
-
-    return t, 1
-
-
-def _count_words(words, text_lower: str) -> Counter:
-    """
-    INCREASE_WORDS / DECREASE_WORDS 리스트에 있는 단어들이
-    text_lower 안에 각각 몇 번 등장하는지 센다.
-    """
-    cnt = Counter()
-    for w in words:
-        pattern = r"\b" + re.escape(w) + r"\b"
-        found = re.findall(pattern, text_lower)
-        if found:
-            cnt[w] = len(found)
-    return cnt
-
-
-def compute_delta(text: str) -> tuple[int, Counter, Counter, int]:
-    """
-    한 번(1회) 수행했을 때의 증·감 코 수를 계산하고,
-    반복 횟수를 반영한 총 변화량도 함께 반환.
-
-    반환:
-        total_delta  : 총 코 수 변화량 (늘림 - 줄임)
-        inc_counts   : 늘림 기호별 등장 횟수 (1회 기준)
-        dec_counts   : 줄임 기호별 등장 횟수 (1회 기준)
-        repeat_count : 반복 횟수
-    """
-    if not text.strip():
-        return 0, Counter(), Counter(), 1
-
-    # 반복 정보 분리
-    base_text, repeat_count = _extract_repeat_info(text)
-    base_norm = _normalize_text(base_text)
-
-    inc_counts = _count_words(INCREASE_WORDS, base_norm)
-    dec_counts = _count_words(DECREASE_WORDS, base_norm)
-
-    inc_total = sum(inc_counts.values())
-    dec_total = sum(dec_counts.values())
-
-    unit_delta = inc_total - dec_total          # 1회 수행 시 변화량
-    total_delta = unit_delta * repeat_count     # 반복까지 반영한 변화량
-
-    return total_delta, inc_counts, dec_counts, repeat_count
-
-
-# ----------------------------------------------------
-# 계산 버튼 동작
-# ----------------------------------------------------
-if st.button("✅ 이 줄 코 수 계산하기", type="primary"):
-    if not line_text.strip():
-        st.warning("도안 설명 한 줄을 입력해 주세요.")
+if st.button("📝 프롬프트 생성하기", type="primary"):
+    if not prompt_line.strip():
+        st.warning("도안 한 줄을 입력해주세요.")
     else:
-        delta, inc_counts, dec_counts, repeat_count = compute_delta(line_text)
+        final_prompt = f"""
+너는 뜨개질 서술형 도안의 코 수 변화를 분석하는 전문가야.
 
-        final_sts = start_sts + delta
+아래 정보를 기반으로 해당 줄의 코 수 증가/감소량과 최종 코 수를 계산해 줘:
 
-        st.subheader("🔎 계산 결과")
+- 시작 코 수: {prompt_sts}코
+- 도안 한 줄: "{prompt_line.strip()}"
 
-        col_a, col_b = st.columns(2)
+위 내용을 분석해서:
+1) 증가/감소한 코 수  
+2) 최종 코 수  
+3) 계산 과정 설명  
+을 한국어로 설명해 줘.
+""".strip()
 
-        with col_a:
-            st.markdown(f"- **시작 코 수:** {start_sts}코")
-            st.markdown(f"- **반복 횟수:** × {repeat_count}")
+        st.subheader("📋 ChatGPT에 붙여넣을 프롬프트")
 
-            inc_total = sum(inc_counts.values()) * repeat_count
-            dec_total = sum(dec_counts.values()) * repeat_count
-
-            st.markdown(f"- **늘림 총합:** +{inc_total}코")
-            st.markdown(f"- **줄임 총합:** −{dec_total}코")
-
-            if delta == 0:
-                st.info(f"코 수 변화가 없는 줄로 계산되었습니다. → **최종도 {final_sts}코**")
-            elif delta > 0:
-                st.success(f"총 **+{delta}코** 늘어납니다. → **최종 {final_sts}코**")
-            else:
-                st.error(f"총 **{delta}코**(줄어듦) 변화입니다. → **최종 {final_sts}코**")
-
-        with col_b:
-            st.markdown("#### 🔹 늘림 기호별 개수 (1회 기준)")
-            if inc_counts:
-                for k, v in inc_counts.items():
-                    st.markdown(f"- `{k}` : {v}회 → +{v}코")
-            else:
-                st.write("늘림 기호가 발견되지 않았어요.")
-
-            st.markdown("#### 🔻 줄임 기호별 개수 (1회 기준)")
-            if dec_counts:
-                for k, v in dec_counts.items():
-                    st.markdown(f"- `{k}` : {v}회 → −{v}코")
-            else:
-                st.write("줄임 기호가 발견되지 않았어요.")
-
-        st.info(
-            "다음 줄(다음 단계)을 계산할 때는 **위에서 나온 최종 코 수를 "
-            "다음 줄의 시작 코 수로 넣어서** 계속 이어서 계산하면 됩니다."
-        )
-
-st.divider()
-
-st.markdown("🏠 [HOME 로 돌아가기](HOME.py)")
+        st.text_area("아래 내용을 복사하면 됩니다:", value=final_prompt, height=260)
+        st.success("프롬프트가 생성되었습니다! ChatGPT 창에 붙여넣어 사용하세요.")
