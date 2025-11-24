@@ -68,7 +68,7 @@ line_text = st.text_area("✏️ 도안 한 줄 입력", height=120)
 # ------------------------------
 # 코 수 변화 계산 규칙
 # ------------------------------
-INC_PATTERNS = ["yo", "m1", "m1l", "m1r", "yo."]
+INC_PATTERNS = ["yo", "m1l", "m1r", "yo."]
 DEC1_PATTERNS = ["k2tog", "ssk", "ssp", "p2tog"]
 DEC2_PATTERNS = ["k3tog", "p3tog"]
 
